@@ -1,16 +1,20 @@
+"""
+teste les modules du jeu
+"""
+
 import os
-import sys
 import math
 import pygame
 import engine
+import entities
+
 pygame.init()
 print("init...")
 
 
 show_fps = True
 w = 64
-x = 0
-y = 0
+
 
 myfont = pygame.font.SysFont("monospace", 15)
 
@@ -37,10 +41,8 @@ textures = {
     "2": foret
 }
 
-playeRect = pygame.Rect(x, y, w, w)
 
 direction = [0, 0, 0, 0]
-current = gauche
 
 
 framerate = 50
@@ -52,25 +54,6 @@ state = 1
 
 last = pygame.time.get_ticks()
 
-"""
-def loadMap(carte):
-    wall = pygame.Surface((width, height))
-
-    x = 0
-    for l in carte:
-        y = 0
-        for p in l:
-            if (p == 0):
-                wall.blit(eau, (x, y))
-            if (p == 1):
-                wall.blit(terre, (x, y))
-            if (p == 2):
-                wall.blit(foret, (x, y))
-
-            y += w
-        x += w
-    return wall
-"""
 
 wall = m.render(textures)
 
@@ -87,7 +70,20 @@ def waitf():
 
 Pspeed = 5
 
-faces = [droite, bas, gauche, haut]
+faces = [droite, bas, gauche, haut]  # textures
+
+p1 = entities.Player(0, 0, faces)
+
+
+def findDirection(direction, last):
+    i = 0
+    l = last
+    for d in direction:
+        if d == 1:
+            l = i
+        i += 1
+    return l
+
 
 print("init done in {}ms".format(pygame.time.get_ticks()))
 while state:
@@ -105,72 +101,51 @@ while state:
             m.grid[x][y] = str(s)
             wall = m.render(textures)
         if event.type == pygame.KEYDOWN:
-
-            if event.key == pygame.K_s:
+            if event.key == pygame.K_s:  # sauvegarde
                 m.save()
+            # Mouvements
             if event.key == pygame.K_LEFT:
-                current = gauche
+                p1.setFace(entities.PlayerFaces["left"])
                 direction[2] = 1
             if event.key == pygame.K_UP:
-                current = haut
+                p1.setFace(entities.PlayerFaces["up"])
                 direction[3] = 1
             if event.key == pygame.K_DOWN:
-                current = bas
+                p1.setFace(entities.PlayerFaces["down"])
                 direction[1] = 1
             if event.key == pygame.K_RIGHT:
-                current = droite
+                p1.setFace(entities.PlayerFaces["right"])
                 direction[0] = 1
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT:
                 direction[2] = 0
-                i = 0
-                for d in direction:
-                    if d == 1:
-                        current = faces[i]
-                    i += 1
+                p1.setFace(findDirection(direction, 2))
             if event.key == pygame.K_UP:
                 direction[3] = 0
-                i = 0
-                for d in direction:
-                    if d == 1:
-                        current = faces[i]
-                    i += 1
+                p1.setFace(findDirection(direction, 3))
             if event.key == pygame.K_DOWN:
                 direction[1] = 0
-                i = 0
-                for d in direction:
-                    if d == 1:
-                        current = faces[i]
-                    i += 1
+                p1.setFace(findDirection(direction, 1))
             if event.key == pygame.K_RIGHT:
                 direction[0] = 0
-                i = 0
-                for d in direction:
-                    if d == 1:
-                        current = faces[i]
-                    i += 1
-        if event.type == pygame.QUIT:
+                p1.setFace(findDirection(direction, 0))
+        if event.type == pygame.QUIT:  # quitter quand on ferme la fenêtre
             state = 0
+
+    # applique les mouvements
     if direction[0] == 1:
-        playeRect.x += Pspeed
+        p1.x += Pspeed
     if direction[2] == 1:
-        playeRect.x -= Pspeed
+        p1.x -= Pspeed
     if direction[1] == 1:
-        playeRect.y += Pspeed
+        p1.y += Pspeed
     if direction[3] == 1:
-        playeRect.y -= Pspeed
+        p1.y -= Pspeed
+    # affichage
     screen.fill(black)
     screen.blit(wall, (0, 0))
-    screen.blit(current, playeRect)
+    p1.render(screen)
     if show_fps:
         label = myfont.render(str(fps), 1, (0, 255, 0))
         screen.blit(label, (width-40, 0))
     pygame.display.flip()
-"""
-    ballrect = ballrect.move(speed)
-    if ballrect.left < 0 or ballrect.right > width:
-        speed[0] = -speed[0]
-    if ballrect.top < 0 or ballrect.bottom > height:
-        speed[1] = -speed[1]
-"""
-# screen.blit(ball, ballrect)
