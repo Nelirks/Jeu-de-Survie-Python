@@ -1,4 +1,3 @@
-
 import os
 import sys
 import math
@@ -47,7 +46,7 @@ current = gauche
 framerate = 50
 
 m = engine.Carte(os.path.join("assets", "levels", "map1.mp"),
-               mode="edit", dimensions=(int(width//w), int(height//w)))
+                 mode="edit", dimensions=(int(width//w), int(height//w)))
 
 state = 1
 
