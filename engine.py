@@ -1,6 +1,28 @@
 import pygame
 
 
+class Engine:
+    width = 0
+    height = 0
+    state = 0
+
+    def __init__(self, resolution):
+        """
+        création de la fenêtre du jeu
+        """
+        self.width, self.height = resolution
+        pygame.init()
+        self.screen = pygame.display.set_mode(resolution)
+        self.state = 1
+
+    def runEvents(self):
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                self.state = 0
+        return events
+
+
 def doubleArraygen(x, y):
     """
     Générateur de tableau à deux entrées rempli de base de "0"

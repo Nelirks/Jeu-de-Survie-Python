@@ -8,7 +8,6 @@ import pygame
 import engine
 import entities
 
-pygame.init()
 print("init...")
 
 
@@ -16,15 +15,13 @@ show_fps = True
 w = 64
 
 
-myfont = pygame.font.SysFont("monospace", 15)
-
-
 size = width, height = 1280, 960
 
+g = engine.Engine(size)
+
+myfont = pygame.font.SysFont("monospace", 15)
 
 black = 0, 0, 0
-
-screen = pygame.display.set_mode(size)
 
 
 haut = pygame.image.load(os.path.join('assets', "haut.png"))
@@ -50,7 +47,6 @@ framerate = 50
 m = engine.Carte(os.path.join("assets", "levels", "map1.mp"),
                  mode="edit", dimensions=(int(width//w), int(height//w)))
 
-state = 1
 
 last = pygame.time.get_ticks()
 
@@ -68,28 +64,18 @@ def waitf():
     return l
 
 
-Pspeed = 5
-
 faces = [droite, bas, gauche, haut]  # textures
 
 p1 = entities.Player(0, 0, faces)
 
 
-def findDirection(direction, last):
-    i = 0
-    l = last
-    for d in direction:
-        if d == 1:
-            l = i
-        i += 1
-    return l
-
-
 print("init done in {}ms".format(pygame.time.get_ticks()))
-while state:
+while g.state:
     fps = waitf()
-
-    for event in pygame.event.get():
+    events = g.runEvents()
+    # Mouvements
+    p1.update(events)
+    for event in events:
         if event.type == pygame.MOUSEBUTTONDOWN:
             pos = pygame.mouse.get_pos()
             x = math.floor(pos[0] / w)
@@ -103,49 +89,16 @@ while state:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_s:  # sauvegarde
                 m.save()
-            # Mouvements
-            if event.key == pygame.K_LEFT:
-                p1.setFace(entities.PlayerFaces["left"])
-                direction[2] = 1
-            if event.key == pygame.K_UP:
-                p1.setFace(entities.PlayerFaces["up"])
-                direction[3] = 1
-            if event.key == pygame.K_DOWN:
-                p1.setFace(entities.PlayerFaces["down"])
-                direction[1] = 1
-            if event.key == pygame.K_RIGHT:
-                p1.setFace(entities.PlayerFaces["right"])
-                direction[0] = 1
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT:
-                direction[2] = 0
-                p1.setFace(findDirection(direction, 2))
-            if event.key == pygame.K_UP:
-                direction[3] = 0
-                p1.setFace(findDirection(direction, 3))
-            if event.key == pygame.K_DOWN:
-                direction[1] = 0
-                p1.setFace(findDirection(direction, 1))
-            if event.key == pygame.K_RIGHT:
-                direction[0] = 0
-                p1.setFace(findDirection(direction, 0))
-        if event.type == pygame.QUIT:  # quitter quand on ferme la fenêtre
-            state = 0
 
-    # applique les mouvements
-    if direction[0] == 1:
-        p1.x += Pspeed
-    if direction[2] == 1:
-        p1.x -= Pspeed
-    if direction[1] == 1:
-        p1.y += Pspeed
-    if direction[3] == 1:
-        p1.y -= Pspeed
     # affichage
-    screen.fill(black)
-    screen.blit(wall, (0, 0))
-    p1.render(screen)
+    g.screen.fill(black)
+    g.screen.blit(wall, (0, 0))
+    p1.render(g.screen)
     if show_fps:
         label = myfont.render(str(fps), 1, (0, 255, 0))
-        screen.blit(label, (width-40, 0))
+        g.screen.blit(label, (width-40, 0))
     pygame.display.flip()
+
+
+print("goodbye")
+pygame.quit()  # dernière opération : décharger pygame
