@@ -11,8 +11,10 @@ class Entity:
     """
     x = 0
     y = 0
+    life = 0
+    effects = []
 
-    def __init__(self, x, y, texture):
+    def __init__(self, x, y, texture, life=0):
         """
         création de l'entitée
         """
@@ -25,6 +27,17 @@ class Entity:
         affichage de l'entitée avec la texture sur screen
         """
         screen.blit(self.texture, (self.x, self.y))
+
+    def takeDamage(self, damage):
+        self.life -= damage  # ajouter du random
+
+    def takeMagicDamage(self, magicDamage, mDamageType):
+        # à faire : résistance / faiblesse éléments
+        ratio = 1  # à changer en fonction des faiblesses et résistances
+        self.life -= magicDamage*ratio
+        if mDamageType == "fire":
+            # à faire : classe effet et appliquation des effets
+            self.effects.append("fire")
 
 
 class Player(Entity):
