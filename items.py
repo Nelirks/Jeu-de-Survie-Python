@@ -35,9 +35,11 @@ class Weapon(Item):
     """
 
     damage = 0
+    portee = 1
 
-    def __init__(self, nom, texture, damage=0, description=''):
+    def __init__(self, nom, texture, damage=0, portee=1, description=''):
         self.damage = damage
+        self.portee = portee
         super().__init__(nom, texture, description)
 
     def applyDamage(self, entity):
@@ -47,6 +49,7 @@ class Weapon(Item):
         entity.takeDamage(self.damage)
 
 
+'''
 class MagicWeapon(Weapon):
     """
     arme magiqe : applique des dégats magiques d'un certain type
@@ -63,3 +66,4 @@ class MagicWeapon(Weapon):
     def applyDamage(self, entity):
         entity.takeMagicDamage(self.magicDamage, self.mDamageType)
         super().applyDamage(entity)
+'''
