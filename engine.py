@@ -5,8 +5,12 @@ class Engine:
     width = 0
     height = 0
     state = 0
+    renderList = []
+    fps = 0
+    framerate = 50
+    last = 0
 
-    def __init__(self, resolution):
+    def __init__(self, resolution, framerate=50):
         """
         création de la fenêtre du jeu
         """
@@ -14,6 +18,9 @@ class Engine:
         pygame.init()
         self.screen = pygame.display.set_mode(resolution)
         self.state = 1
+        self.fpsfont = pygame.font.SysFont("monospace", 15)
+        self.framerate = 50
+        self.last = pygame.time.get_ticks()
 
     def runEvents(self):
         events = pygame.event.get()
@@ -21,6 +28,49 @@ class Engine:
             if event.type == pygame.QUIT:
                 self.state = 0
         return events
+
+    """
+    test de trucs
+    def removeOfRender(self, objet):
+        '''
+        enlève l'objet de la liste de rendu
+        '''
+        i = 0
+        for ob in self.renderList:
+            if ob == objet:
+                self.renderList.pop(i)
+                break
+
+            i += 1
+
+    def addToRender(self, objet, priority):
+        i = 0
+        max = 0
+        for o in self.renderList:
+            if o[0] > priority:
+                break
+            i += 1
+
+        self.renderList.insert(i, [priority, objet])
+    
+    def render(self, showFps=False, waitFrame=True):
+        for o in self.renderList:
+            o[1].render()
+        if showFps:
+            label = self.fpsfont.render(str(self.fps), 1, (0, 255, 0))
+            self.screen.blit(label, (self.width-40, 0))
+        if waitFrame:
+            self.waitFramerate()
+    """
+
+    def waitFramerate(self):
+
+        while(pygame.time.get_ticks() - self.last < 1000/self.framerate):
+            pass
+        self.fps = round(1000/(pygame.time.get_ticks() - self.last))
+
+        self.last = pygame.time.get_ticks()
+        return self.fps
 
 
 def doubleArraygen(x, y):

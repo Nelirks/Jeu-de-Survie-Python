@@ -71,7 +71,7 @@ p1 = entities.Player(0, 0, faces)
 
 print("init done in {}ms".format(pygame.time.get_ticks()))
 while g.state:
-    fps = waitf()
+    fps = g.waitFramerate()
     events = g.runEvents()
     # Mouvements
     p1.update(events)
