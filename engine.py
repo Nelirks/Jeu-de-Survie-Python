@@ -2,10 +2,13 @@ import pygame
 
 
 class Engine:
+    """
+    classe de gestion de la fenêtre du jeu
+    """
     width = 0
     height = 0
     state = 0
-    renderList = []
+    #renderList = []
     fps = 0
     framerate = 50
     last = 0
@@ -63,13 +66,16 @@ class Engine:
             self.waitFramerate()
     """
 
-    def waitFramerate(self):
+    def waitFramerate(self, showFps=False):
 
         while(pygame.time.get_ticks() - self.last < 1000/self.framerate):
             pass
         self.fps = round(1000/(pygame.time.get_ticks() - self.last))
 
         self.last = pygame.time.get_ticks()
+        if showFps:
+            label = self.fpsfont.render(str(self.fps), 1, (0, 255, 0))
+            self.screen.blit(label, (self.width-40, 0))
         return self.fps
 
 
@@ -108,10 +114,10 @@ class Carte:
     grid = []
     width = 0  # taille suivant x
     height = 0  # taille suivant y
-    tileSize = 64  # lageur et longuer d'une texture de la carte
+    tileSize = 32  # lageur et longuer d'une texture de la carte
     path = ""  # chemin du fichier
 
-    def __init__(self, path, mode="load", dimensions=(10, 10), tileSize=64):
+    def __init__(self, path, mode="load", dimensions=(10, 10), tileSize=32):
         """
         __init__(path, mode="load", dimensions=(10, 10), tileSize=64)  : création de l'objet carte
             path : chemin d'accès ,

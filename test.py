@@ -12,14 +12,7 @@ print("init...")
 
 
 show_fps = True
-w = 64
 
-
-size = width, height = 1280, 960
-
-g = engine.Engine(size)
-
-myfont = pygame.font.SysFont("monospace", 15)
 
 black = 0, 0, 0
 
@@ -30,7 +23,8 @@ droite = pygame.image.load(os.path.join('assets', "droite.png"))
 gauche = pygame.image.load(os.path.join('assets', "gauche.png"))
 terre = pygame.image.load(os.path.join('assets', "terre.png"))
 eau = pygame.image.load(os.path.join('assets', "eau.png"))
-foret = pygame.image.load(os.path.join('assets', "foret.png"))
+foret = pygame.image.load(os.path.join(
+    'assets', "Foliage_dark32.png"))
 
 textures = {
     "0": eau,
@@ -44,10 +38,14 @@ direction = [0, 0, 0, 0]
 
 framerate = 50
 
+
 m = engine.Carte(os.path.join("assets", "levels", "map1.mp"),
-                 mode="edit", dimensions=(int(width//w), int(height//w)))
+                 mode="load")
 
+size = width, height = m.width * m.tileSize, m.height*m.tileSize
+g = engine.Engine(size)
 
+myfont = pygame.font.SysFont("monospace", 15)
 last = pygame.time.get_ticks()
 
 
@@ -68,6 +66,7 @@ faces = [droite, bas, gauche, haut]  # textures
 
 p1 = entities.Player(0, 0, faces)
 
+w = m.tileSize
 
 print("init done in {}ms".format(pygame.time.get_ticks()))
 while g.state:
