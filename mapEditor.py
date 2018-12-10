@@ -3,6 +3,7 @@ import entities
 import pygame
 import os
 import sys
+import math
 pygame.init()
 
 wall = 1
@@ -51,10 +52,21 @@ for i in textures:
 
 imax = len(tindex)
 
+w = wall.tileSize
+
 while e.state:
     events = e.runEvents()
     for ev in events:
+        if ev.type == pygame.MOUSEBUTTONDOWN:
+            pos = pygame.mouse.get_pos()
+            x = math.floor(pos[0] / w)
+            y = math.floor(pos[1] / w)
+            print(x, y, iTextures, tindex[iTextures])
+            wall.edit(x, y, tindex[iTextures])
+            r = wall.render(textures)
         if ev.type == pygame.KEYDOWN:
+            if ev.key == pygame.K_s:
+                wall.save()
             if ev.key == pygame.K_TAB:
                 iTextures += 1
                 if iTextures >= imax:
