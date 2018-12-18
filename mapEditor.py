@@ -6,6 +6,12 @@ import sys
 import math
 pygame.init()
 
+
+"""
+Map editor : edit map
+usage : python mapEditor.py <new-edit> <path> <width> <height>
+"""
+
 wall = 1
 size = (1, 1)
 
@@ -24,7 +30,7 @@ def edit(argv):
     global wall
     global size
     path = argv[2]
-    print("editing {} ".format(sys.argv[1]))
+    print("editing {} ".format(sys.argv[2]))
     wall = engine.Carte(path, mode="edit")
     size = (wall.width, wall.height)
 
@@ -42,7 +48,7 @@ mode = {"edit": edit, "new": new}
 mode[sys.argv[1]](sys.argv)
 e = engine.Engine(
     (size[0]*wall.tileSize + wall.tileSize+2, size[1]*wall.tileSize))
-
+pygame.display.set_caption("map editor", "ha")
 
 r = wall.render(textures)
 iTextures = 0
@@ -67,6 +73,7 @@ while e.state:
         if ev.type == pygame.KEYDOWN:
             if ev.key == pygame.K_s:
                 wall.save()
+                print("saved {}".format(wall.path))
             if ev.key == pygame.K_TAB:
                 iTextures += 1
                 if iTextures >= imax:
