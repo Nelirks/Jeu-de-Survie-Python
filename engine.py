@@ -116,6 +116,7 @@ class Carte:
     height = 0  # taille suivant y
     tileSize = 32  # lageur et longuer d'une texture de la carte
     path = ""  # chemin du fichier
+    blockingTiles = ["0"]
 
     def __init__(self, path, mode="load", dimensions=(10, 10), tileSize=32):
         """
@@ -169,6 +170,25 @@ class Carte:
 
     def edit(self, x, y, textureIndex):
         self.grid[x][y] = textureIndex
+
+    def collide(self, x, y, w):
+        i = 0
+        for l in self.grid:
+            j = 0
+            for t in l:
+                block = False
+                result = []
+                for c in self.blockingTiles:
+                    if c == t:
+                        block = True
+                        break
+                if block:
+                    if x+w > i:
+                        pass
+
+                j += 1
+            i += 1
+        return result
 
     def render(self, textures):
         """carte.render(textures) : renvoi un objet surface de la librairie Pygame avec le rendu de la carte
