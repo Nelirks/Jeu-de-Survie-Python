@@ -1,4 +1,6 @@
 import pygame
+import threading
+import time
 
 
 class Engine:
@@ -68,8 +70,12 @@ class Engine:
 
     def waitFramerate(self, showFps=False):
 
+        pygame.time.wait(int(1000/self.framerate -
+                             (pygame.time.get_ticks() - self.last)))
+        """
         while(pygame.time.get_ticks() - self.last < 1000/self.framerate):
             pass
+            """
         self.fps = round(1000/(pygame.time.get_ticks() - self.last))
 
         self.last = pygame.time.get_ticks()
@@ -118,13 +124,14 @@ class Carte:
     path = ""  # chemin du fichier
     blockingTiles = ["0"]
 
-    def __init__(self, path, mode="load", dimensions=(10, 10), tileSize=32):
+    def __init__(self, path, textures, mode="load", dimensions=(10, 10), tileSize=32):
         """
         __init__(path, mode="load", dimensions=(10, 10), tileSize=64)  : création de l'objet carte
             path : chemin d'accès ,
             mode : ["load" / "new" / "edit" ] charger / créer / éditer , charger (load) par défaut
             dimensions : taille en x et y
         """
+        self.textures = textures
         self.grid = []
         self.tileSize = tileSize
         self.path = path
@@ -190,7 +197,14 @@ class Carte:
             i += 1
         return result
 
-    def render(self, textures):
+    def renderThread(self, line, surface, x):
+        y = 0
+        for p in line:
+            # ajoute la texture à l'index p aux coordonnées x et y
+            surface.blit(self.textures[p], (x, y))
+            y += self.tileSize
+
+    def render(self, surface):
         """carte.render(textures) : renvoi un objet surface de la librairie Pygame avec le rendu de la carte
             textures : dictionnaire des différentes textures référencés dans le fichier carte,
                 il doit contenir au moins une surface pour l'index "0" 
@@ -198,14 +212,24 @@ class Carte:
                                         "1": SurfaceTerre, 
                                         "arbre": SurfaceArbre} 
         """
-        surface = pygame.Surface(
-            (self.width*self.tileSize, self.height*self.tileSize))  # surface où va être rendu la carte
         x = 0
+
+        threads = []
         for l in self.grid:
+
+            t = threading.Thread(
+                target=self.renderThread, args=(l, surface, x))
+            threads.append(t)
+            t.start()
+            """
             y = 0
             for p in l:
                 # ajoute la texture à l'index p aux coordonnées x et y
-                surface.blit(textures[p], (x, y))
+                surface.blit(self.textures[p], (x, y))
                 y += self.tileSize
+            """
             x += self.tileSize
+
+        for t in threads:
+            t.join()
         return surface

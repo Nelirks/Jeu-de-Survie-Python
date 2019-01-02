@@ -39,7 +39,7 @@ direction = [0, 0, 0, 0]
 framerate = 50
 
 
-m = engine.Carte(os.path.join("assets", "levels", "map1.mp"),
+m = engine.Carte(os.path.join("assets", "levels", "map1.mp"), textures,
                  mode="load")
 
 size = width, height = m.width * m.tileSize, m.height*m.tileSize
@@ -79,12 +79,16 @@ while g.state:
             pos = pygame.mouse.get_pos()
             x = math.floor(pos[0] / w)
             y = math.floor(pos[1] / w)
-            s = int(m.grid[x][y])
-            s += 1
-            if s > 2:
-                s = 0
-            m.grid[x][y] = str(s)
-            wall = m.render(textures)
+            try:
+                s = int(m.grid[x][y])
+                s += 1
+                if s > 2:
+                    s = 0
+                m.grid[x][y] = str(s)
+                wall = m.render()
+            except:
+                print("invalid place")
+
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_s:  # sauvegarde
                 m.save()

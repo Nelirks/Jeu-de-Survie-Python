@@ -31,7 +31,7 @@ def edit(argv):
     global size
     path = argv[2]
     print("editing {} ".format(sys.argv[2]))
-    wall = engine.Carte(path, mode="edit")
+    wall = engine.Carte(path, textures, mode="edit")
     size = (wall.width, wall.height)
 
 
@@ -41,7 +41,7 @@ def new(argv):
     path = argv[2]
     size = (int(argv[3]), int(argv[4]))
     print("creating {} ".format(sys.argv[2]))
-    wall = engine.Carte(path, mode="new", dimensions=size)
+    wall = engine.Carte(path, textures, mode="new", dimensions=size)
 
 
 mode = {"edit": edit, "new": new}
@@ -50,7 +50,9 @@ e = engine.Engine(
     (size[0]*wall.tileSize + wall.tileSize+2, size[1]*wall.tileSize))
 pygame.display.set_caption("map editor", "ha")
 
-r = wall.render(textures)
+r = pygame.Surface(
+    (wall.width*wall.tileSize, wall.height*wall.tileSize))
+wall.render(r)
 iTextures = 0
 tindex = []
 for i in textures:
@@ -59,6 +61,23 @@ for i in textures:
 imax = len(tindex)
 
 w = wall.tileSize
+e.screen.blit(r, (0, 0))
+
+
+def show():
+    wall.render(r)
+    e.screen.blit(r, (0, 0))
+    y = 0
+    for t in textures:
+        e.screen.blit(textures[t], (e.width - wall.tileSize - 1, y))
+        if y == iTextures * wall.tileSize:
+            pygame.draw.rect(e.screen, (255, 255, 0), pygame.Rect(
+                e.width-wall.tileSize - 1, y, wall.tileSize, wall.tileSize), 1)
+        y += wall.tileSize
+    pygame.display.flip()
+
+
+show()
 
 while e.state:
     events = e.runEvents()
@@ -68,8 +87,12 @@ while e.state:
             x = math.floor(pos[0] / w)
             y = math.floor(pos[1] / w)
             print(x, y, iTextures, tindex[iTextures])
-            wall.edit(x, y, tindex[iTextures])
-            r = wall.render(textures)
+            try:
+                wall.edit(x, y, tindex[iTextures])
+            except:
+                print("invalid location")
+            show()
+
         if ev.type == pygame.KEYDOWN:
             if ev.key == pygame.K_s:
                 wall.save()
@@ -78,16 +101,6 @@ while e.state:
                 iTextures += 1
                 if iTextures >= imax:
                     iTextures = 0
-    e.screen.fill((0, 0, 0))
-    e.screen.blit(r, (0, 0))
+                show()
 
-    y = 0
-    for t in textures:
-        e.screen.blit(textures[t], (e.width - wall.tileSize - 1, y))
-        if y == iTextures * wall.tileSize:
-            pygame.draw.rect(e.screen, (255, 255, 0), pygame.Rect(
-                e.width-wall.tileSize - 1, y, wall.tileSize, wall.tileSize), 1)
-        y += wall.tileSize
-
-    e.waitFramerate(showFps=True)
-    pygame.display.flip()
+    e.waitFramerate(showFps=False)
