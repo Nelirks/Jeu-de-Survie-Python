@@ -15,23 +15,13 @@ usage : python mapEditor.py <new-edit> <path> <width> <height>
 wall = 1
 size = (1, 1)
 
-terre = pygame.image.load(os.path.join('assets', "terre.png"))
-eau = pygame.image.load(os.path.join('assets', "eau.png"))
-foret = pygame.image.load(os.path.join('assets', "Foliage_dark32.png"))
-
-textures = {
-    "0": eau,
-    "1": terre,
-    "2": foret
-}
-
 
 def edit(argv):
     global wall
     global size
     path = argv[2]
     print("editing {} ".format(sys.argv[2]))
-    wall = engine.Carte(path, textures, mode="edit")
+    wall = engine.Carte(path, mode="edit")
     size = (wall.width, wall.height)
 
 
@@ -41,7 +31,7 @@ def new(argv):
     path = argv[2]
     size = (int(argv[3]), int(argv[4]))
     print("creating {} ".format(sys.argv[2]))
-    wall = engine.Carte(path, textures, mode="new", dimensions=size)
+    wall = engine.Carte(path, mode="new", dimensions=size)
 
 
 mode = {"edit": edit, "new": new}
@@ -55,7 +45,7 @@ r = pygame.Surface(
 wall.render(r)
 iTextures = 0
 tindex = []
-for i in textures:
+for i in wall.textures:
     tindex.append(i)
 
 imax = len(tindex)
@@ -68,8 +58,8 @@ def show():
     wall.render(r)
     e.screen.blit(r, (0, 0))
     y = 0
-    for t in textures:
-        e.screen.blit(textures[t], (e.width - wall.tileSize - 1, y))
+    for t in wall.textures:
+        e.screen.blit(wall.textures[t], (e.width - wall.tileSize - 1, y))
         if y == iTextures * wall.tileSize:
             pygame.draw.rect(e.screen, (255, 255, 0), pygame.Rect(
                 e.width-wall.tileSize - 1, y, wall.tileSize, wall.tileSize), 1)
