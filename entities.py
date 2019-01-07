@@ -22,14 +22,14 @@ class Entity:
         self.y = y
         self.texture = texture
 
-    def render(self, screen):
+    def render(self, surface):
         """
         affichage de l'entitée avec la texture sur screen
         """
-        screen.blit(self.texture, (self.x, self.y))
+        surface.blit(self.texture, (self.x, self.y))
 
     def takeDamage(self, damage):
-        self.life -= damage  # ajouter du random
+        self.life -= damage  # Todo : ajouter du random
 
     def takeMagicDamage(self, magicDamage, mDamageType):
         # à faire : résistance / faiblesse éléments

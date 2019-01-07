@@ -169,6 +169,8 @@ class Carte:
                 self.height = int(self.height)
                 line = file.readline()  # nom du set
                 self.setNum = int(line)
+                if setNum!=-1 and setNum != self.setNum:
+                    self.setNum = setNum
                 line = file.readline()  # set à charger
                 self.tileset = line.split(" ")
                 if (tileset != self.tileset and tileset != []):
@@ -185,10 +187,10 @@ class Carte:
     def loadTextures(self):
         path = os.path.join(os.path.curdir, "assets", "sets", str(self.setNum))
         for t in self.tileset:
-            self.textures[t] = pygame.image.load(os.path.join(path, t))
+            self.textures[t] = pygame.image.load(os.path.join(path, t+".png"))
 
     def save(self):
-        """Sauvegare de la carte à l'emplacement spécifié lors de la création"""
+        """Sauvegarde de la carte à l'emplacement spécifié lors de la création"""
         with open(self.path, "w") as file:  # sauvegarder à l'emplacement défini dans path
             file.write("{} {}\n".format(self.width, self.height))
             file.write(str(self.setNum)+"\n")
