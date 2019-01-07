@@ -39,11 +39,15 @@ direction = [0, 0, 0, 0]
 framerate = 50
 
 
-m = engine.Carte(os.path.join("assets", "levels", "map1.mp"), textures,
-                 mode="load")
+m = engine.Carte(os.path.join("assets", "levels", "map1.mp"))
 
 size = width, height = m.width * m.tileSize, m.height*m.tileSize
+
+
 g = engine.Engine(size)
+
+
+
 
 myfont = pygame.font.SysFont("monospace", 15)
 last = pygame.time.get_ticks()
