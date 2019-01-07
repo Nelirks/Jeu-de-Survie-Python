@@ -1,6 +1,7 @@
 import pygame
 import threading
 import time
+import os
 
 
 class Engine:
@@ -10,7 +11,7 @@ class Engine:
     width = 0
     height = 0
     state = 0
-    #renderList = []
+    # renderList = []
     fps = 0
     framerate = 50
     last = 0
@@ -57,7 +58,7 @@ class Engine:
             i += 1
 
         self.renderList.insert(i, [priority, objet])
-    
+
     def render(self, showFps=False, waitFrame=True):
         for o in self.renderList:
             o[1].render()
@@ -112,10 +113,10 @@ class Carte:
             textureIndex : chaîne de caractères
         - carte.render(textures) : renvoi un objet surface de la librairie Pygame avec le rendu de la carte
             textures : dictionnaire des différentes textures référencés dans le fichier carte,
-                il doit contenir au moins une surface pour l'index "0" 
+                il doit contenir au moins une surface pour l'index "0"
                 exemple : textures =   {"0": SurfaceEau,
-                                        "1": SurfaceTerre, 
-                                        "arbre": SurfaceArbre} 
+                                        "1": SurfaceTerre,
+                                        "arbre": SurfaceArbre}
     """
     grid = []
     width = 0  # taille suivant x
@@ -123,15 +124,15 @@ class Carte:
     tileSize = 32  # lageur et longuer d'une texture de la carte
     path = ""  # chemin du fichier
     blockingTiles = ["0"]
+    textures = dict()
 
-    def __init__(self, path, textures, mode="load", dimensions=(10, 10), tileSize=32):
+    def __init__(self, path, mode="load", dimensions=(10, 10), tileSize=32, setNum=-1, tileset=[]):
         """
         __init__(path, mode="load", dimensions=(10, 10), tileSize=64)  : création de l'objet carte
             path : chemin d'accès ,
             mode : ["load" / "new" / "edit" ] charger / créer / éditer , charger (load) par défaut
             dimensions : taille en x et y
         """
-        self.textures = textures
         self.grid = []
         self.tileSize = tileSize
         self.path = path
@@ -143,33 +144,57 @@ class Carte:
                 (self.width, self.height) = line.split()
                 self.width = int(self.width)
                 self.height = int(self.height)
+                line = file.readline()  # nom du set
+                self.setNum = int(line)
+                line = file.readline()  # set à charger
+                self.tileset = line.split(" ")
                 line = file.readline()
                 while line != "":
                     self.grid.append(line.split())
                     line = file.readline()
+                self.loadTextures()
         elif mode == "new":  # création d'une nouvelle carte
             self.grid = doubleArraygen(dimensions[0], dimensions[1])
             self.width = dimensions[0]
             self.height = dimensions[1]
+            self.setNum = setNum
+            self.tileset = tileset
+            self.loadTextures()
         elif mode == "edit":
             with open(path, "r") as file:  # ouverture du fichier
                 self.grid = []
-                line = file.readline()
+                line = file.readline()  # longueur / largeur
                 (self.width, self.height) = line.split()
                 self.width = int(self.width)
                 self.height = int(self.height)
+                line = file.readline()  # nom du set
+                self.setNum = int(line)
+                line = file.readline()  # set à charger
+                self.tileset = line.split(" ")
+                if (tileset != self.tileset and tileset != []):
+                    self.tileset = tileset
                 line = file.readline()
                 while line != "":
                     self.grid.append(line.split())
                     line = file.readline()
+                self.loadTextures()
 
         else:
             raise ValueError("invalid mode")
+
+    def loadTextures(self):
+        path = os.path.join(os.path.curdir, "assets", "sets", str(self.setNum))
+        for t in self.tileset:
+            self.textures[t] = pygame.image.load(os.path.join(path, t))
 
     def save(self):
         """Sauvegare de la carte à l'emplacement spécifié lors de la création"""
         with open(self.path, "w") as file:  # sauvegarder à l'emplacement défini dans path
             file.write("{} {}\n".format(self.width, self.height))
+            file.write(str(self.setNum)+"\n")
+            for s in self.tileset:
+                file.write("{} ".format(s))
+            file.write("\n")
             for line in self.grid:
                 for c in line:
                     file.write("{} ".format(c))
@@ -179,6 +204,7 @@ class Carte:
         self.grid[x][y] = textureIndex
 
     def collide(self, x, y, w):
+        # cassé
         i = 0
         for l in self.grid:
             j = 0
@@ -207,10 +233,10 @@ class Carte:
     def render(self, surface):
         """carte.render(textures) : renvoi un objet surface de la librairie Pygame avec le rendu de la carte
             textures : dictionnaire des différentes textures référencés dans le fichier carte,
-                il doit contenir au moins une surface pour l'index "0" 
+                il doit contenir au moins une surface pour l'index "0"
                 exemple : textures =   {"0": SurfaceEau,
-                                        "1": SurfaceTerre, 
-                                        "arbre": SurfaceArbre} 
+                                        "1": SurfaceTerre,
+                                        "arbre": SurfaceArbre}
         """
         x = 0
 
