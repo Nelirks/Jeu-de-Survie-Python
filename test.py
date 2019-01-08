@@ -17,22 +17,6 @@ show_fps = True
 black = 0, 0, 0
 
 
-haut = pygame.image.load(os.path.join('assets', "haut.png"))
-bas = pygame.image.load(os.path.join('assets', "bas.png"))
-droite = pygame.image.load(os.path.join('assets', "droite.png"))
-gauche = pygame.image.load(os.path.join('assets', "gauche.png"))
-terre = pygame.image.load(os.path.join('assets', "terre.png"))
-eau = pygame.image.load(os.path.join('assets', "eau.png"))
-foret = pygame.image.load(os.path.join(
-    'assets', "Foliage_dark32.png"))
-
-textures = {
-    "0": eau,
-    "1": terre,
-    "2": foret
-}
-
-
 direction = [0, 0, 0, 0]
 
 
@@ -45,8 +29,6 @@ size = width, height = m.width * m.tileSize, m.height*m.tileSize
 
 
 g = engine.Engine(size)
-
-
 
 
 myfont = pygame.font.SysFont("monospace", 15)
