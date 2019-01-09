@@ -109,7 +109,7 @@ class Carte:
             mode : [load / new / edit] charger / créer / éditer
             dimensions : taille en x et y
         - carte.save(): sauvegare de la carte à l'emplacement spécifié lors de la création
-        - carte.edit(x,y,textureIndex) : self.grid[x][y] = textureIndex
+        - carte.edit(x,y,textureIndex) : self.sgrid[x][y] = textureIndex
             textureIndex : chaîne de caractères
         - carte.render(textures) : renvoi un objet surface de la librairie Pygame avec le rendu de la carte
             textures : dictionnaire des différentes textures référencés dans le fichier carte,
@@ -118,15 +118,17 @@ class Carte:
                                         "1": SurfaceTerre,
                                         "arbre": SurfaceArbre}
     """
-    grid = []
-    width = 0  # taille suivant x
-    height = 0  # taille suivant y
+    sgrid = []  # fond "solide"
+    egrid = []  # entitées
+    width = 0  # taille prise par la carte sur x
+    height = 0  # taille prise par la carte sur y
+    size = []  # caractéristiques de la grille (largeur, hauteur)
     tileSize = 32  # lageur et longuer d'une texture de la carte
     path = ""  # chemin du fichier
     blockingTiles = ["0"]
     textures = dict()
 
-    def __init__(self, path, mode="load", dimensions=(10, 10), tileSize=32, setNum=-1, tileset=[]):
+    def __init__(self, path, mode="load", dimensions=(10, 10), tileSize=32, setNum="-1"):
         """
         __init__(path, mode="load", dimensions=(10, 10), tileSize=64)  : création de l'objet carte
             path : chemin d'accès ,
@@ -137,93 +139,119 @@ class Carte:
         self.tileSize = tileSize
         self.path = path
         # détection du mode
+
+        """
+        les données de la carte sont stockées dans un dossier avec :
+            un fichier info contenant la largeur et la longuer, le numéro du set de textures
+            un fichier solid contenant la grille de la carte (arrière plan)
+            un fichier entities contenant la grille des entitées (premier plan , ex : arbres, monstres)
+        """
         if mode == "load":
-            with open(path, "r") as file:  # ouverture du fichier
-                self.grid = []
-                line = file.readline()
-                (self.width, self.height) = line.split()
-                self.width = int(self.width)
-                self.height = int(self.height)
-                line = file.readline()  # nom du set
-                self.setNum = int(line)
-                line = file.readline()  # set à charger
-                self.tileset = line.split(" ")
-                line = file.readline()
-                while line != "":
-                    self.grid.append(line.split())
-                    line = file.readline()
-                self.loadTextures()
+            info = open(os.path.join(path, "info"),
+                        "r")   # obtention des infos
+            self.size = info.readline().split()
+            self.size = [int(self.size[0]), int(self.size[1])]
+            self.width = self.size[0]*self.tileSize
+            self.height = self.size[1]*self.tileSize
+            self.setNum = info.readline()
+            info.close()
+
+            solid = open(os.path.join(path, "solid"))  # grille "solide"
+            line = solid.readline()
+            while line != "":
+                self.sgrid.append(line.split())
+                line = solid.readline()
+            solid.close()
+
+            # grille des entitées
+            entities = open(os.path.join(path, "entities"))
+            line = entities.readline()
+            while line != "":
+                self.egrid.append(line.split())
+                line = entities.readline()
+            entities.close()
+
+            self.loadTextures()
+
         elif mode == "new":  # création d'une nouvelle carte
-            self.grid = doubleArraygen(dimensions[0], dimensions[1])
-            self.width = dimensions[0]
-            self.height = dimensions[1]
+            self.sgrid = doubleArraygen(dimensions[0], dimensions[1])
+            self.egrid = doubleArraygen(dimensions[0], dimensions[1])
+            self.size = dimensions
+            self.width = dimensions[0] * self.tileSize
+            self.height = dimensions[1] * self.tileSize
             self.setNum = setNum
-            self.tileset = tileset
             self.loadTextures()
         elif mode == "edit":
-            with open(path, "r") as file:  # ouverture du fichier
-                self.grid = []
-                line = file.readline()  # longueur / largeur
-                (self.width, self.height) = line.split()
-                self.width = int(self.width)
-                self.height = int(self.height)
-                line = file.readline()  # nom du set
-                self.setNum = int(line)
-                if setNum!=-1 and setNum != self.setNum:
-                    self.setNum = setNum
-                line = file.readline()  # set à charger
-                self.tileset = line.split(" ")
-                if (tileset != self.tileset and tileset != []):
-                    self.tileset = tileset
-                line = file.readline()
-                while line != "":
-                    self.grid.append(line.split())
-                    line = file.readline()
-                self.loadTextures()
+            info = open(os.path.join(path, "info"),
+                        "r")   # obtention des infos
+            self.size = info.readline().split()
+            self.size = [int(self.size[0]), int(self.size[1])]
+            self.width = self.size[0]*self.tileSize
+            self.height = self.size[1]*self.tileSize
+            self.setNum = info.readline()
+            info.close()
+
+            solid = open(os.path.join(path, "solid"))  # grille "solide"
+            line = solid.readline()
+            while line != "":
+                self.sgrid.append(line.split())
+                line = solid.readline()
+            solid.close()
+
+            # grille des entitées
+            entities = open(os.path.join(path, "entities"))
+            line = entities.readline()
+            while line != "":
+                self.egrid.append(line.split())
+                line = entities.readline()
+            entities.close()
+
+            if setNum != "-1":
+                self.setNum = setNum
+            self.loadTextures()
 
         else:
             raise ValueError("invalid mode")
 
     def loadTextures(self):
-        path = os.path.join(os.path.curdir, "assets", "sets", str(self.setNum))
-        for t in self.tileset:
-            self.textures[t] = pygame.image.load(os.path.join(path, t+".png"))
+        path = os.path.join(os.path.curdir, "assets", "sets", self.setNum)
 
     def save(self):
         """Sauvegarde de la carte à l'emplacement spécifié lors de la création"""
-        with open(self.path, "w") as file:  # sauvegarder à l'emplacement défini dans path
-            file.write("{} {}\n".format(self.width, self.height))
-            file.write(str(self.setNum)+"\n")
-            for s in self.tileset:
-                file.write("{} ".format(s))
-            file.write("\n")
-            for line in self.grid:
-                for c in line:
-                    file.write("{} ".format(c))
-                file.write("\n")
+
+        """
+        les données de la carte sont stockées dans un dossier avec :
+            un fichier info contenant la largeur et la longuer, le numéro du set de textures
+            un fichier solid contenant la grille de la carte (arrière plan)
+            un fichier entities contenant la grille des entitées (premier plan , ex : arbres, monstres)
+        """
+        info = open(os.path.join(self.path, "info"), "w")
+        info.write("{} {}\n".format(self.size[0], self.size[1]))
+        info.write(self.setNum)
+        info.close()
+
+        solid = open(os.path.join(
+            self.path, "solid"), "w")  # sauvegarder à l'emplacement défini dans path
+        for line in self.sgrid:
+            for c in line:
+                solid.write("{} ".format(c))
+            solid.write("\n")
+        solid.close()
+
+        entities = open(os.path.join(
+            self.path, "entities"), "w")  # sauvegarder à l'emplacement défini dans path
+        for line in self.egrid:
+            for c in line:
+                entities.write("{} ".format(c))
+            entities.write("\n")
+        entities.close()
 
     def edit(self, x, y, textureIndex):
         self.grid[x][y] = textureIndex
 
     def collide(self, x, y, w):
         # cassé
-        i = 0
-        for l in self.grid:
-            j = 0
-            for t in l:
-                block = False
-                result = []
-                for c in self.blockingTiles:
-                    if c == t:
-                        block = True
-                        break
-                if block:
-                    if x+w > i:
-                        pass
-
-                j += 1
-            i += 1
-        return result
+        pass
 
     def renderThread(self, line, surface, x):
         y = 0
@@ -243,7 +271,7 @@ class Carte:
         x = 0
 
         threads = []
-        for l in self.grid:
+        for l in self.sgrid:
 
             t = threading.Thread(
                 target=self.renderThread, args=(l, surface, x))
