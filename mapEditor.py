@@ -9,11 +9,41 @@ pygame.init()
 
 """
 Map editor : edit map
-usage : python mapEditor.py <new-edit> <path> <width> <height>
+usage : python mapEditor.py
 """
+carte = 0
+valide = 0
+path = os.path.join("assets", "levels")
+mode = ""
+setNum = -1
+tileset = []
+dimensions = [1, 1]
+
+print("Éditeur de cartes, entrez le nom de la carte.")
+valide = 0
+while valide != 1:
+    choix = input("nom : ")
+    valide = 1
+path = os.path.join(path, choix)
+valide = 0
+
+print("Entrez le mode : \n  load : charger une carte existante et modifier la grille \n  edit : modifier les propriétés de la carte (textures) et modifier la grille\n  new: créer une nouvelle carte vide")
+while valide != 1:
+
+    mode = input("mode : ")
+    if mode == "load" or mode == "edit" or mode == "load":
+        valide = 1
+if mode == "load":
+    carte = engine.Carte(path)
+
+
+"""
+old code
 
 wall = 1
 size = (1, 1)
+tileset = []
+setNum = -1
 
 
 def edit(argv):
@@ -34,7 +64,16 @@ def new(argv):
     wall = engine.Carte(path, mode="new", dimensions=size)
 
 
-mode = {"edit": edit, "new": new}
+def load(argv):
+    global wall
+    global size
+    path = argv[2]
+    print("editing {} ".format(sys.argv[2]))
+    wall = engine.Carte(path, mode="edit")
+    size = (wall.width, wall.height)
+
+
+mode = {"edit": edit, "new": new, "load": load}
 mode[sys.argv[1]](sys.argv)
 e = engine.Engine(
     (size[0]*wall.tileSize + wall.tileSize+2, size[1]*wall.tileSize))
@@ -94,3 +133,4 @@ while e.state:
                 show()
 
     e.waitFramerate(showFps=False)
+"""
