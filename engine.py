@@ -104,10 +104,11 @@ class Carte:
     """
     Objet Carte : permet de charger une carte à partir d'un fichier, de l'afficher et d'en créer une.
     Méthodes :
-        - Carte(path, mode="load", dimensions=(10, 10), tileSize=64)  : création de l'objet carte
+        - Carte(path, mode="load", dimensions=(10, 10),setnum="-1", tileSize=32)  : création de l'objet carte
             path : chemin d'accès ,
             mode : [load / new / edit] charger / créer / éditer
             dimensions : taille en x et y
+            setNum : nom /numéro du set de textures (dossier) à charger -1 veut dire de prendre la valeur déjà existante
         - carte.save(): sauvegare de la carte à l'emplacement spécifié lors de la création
         - carte.edit(x,y,textureIndex) : self.sgrid[x][y] = textureIndex
             textureIndex : chaîne de caractères

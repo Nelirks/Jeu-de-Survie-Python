@@ -27,14 +27,16 @@ while valide != 1:
 path = os.path.join(path, choix)
 valide = 0
 
-print("Entrez le mode : \n  load : charger une carte existante et modifier la grille \n  edit : modifier les propriétés de la carte (textures) et modifier la grille\n  new: créer une nouvelle carte vide")
+print("Entrez le mode : \n  edit : charger une carte existante et la modifier \n  new: créer une nouvelle carte vide")
 while valide != 1:
 
     mode = input("mode : ")
-    if mode == "load" or mode == "edit" or mode == "load":
+    if mode == "new" or mode == "edit":
         valide = 1
-if mode == "load":
-    carte = engine.Carte(path)
+if mode == "new":
+
+    carte = engine.Carte(
+        path, mode="new", dimensions=dimensions, setNum=setNum)
 
 
 """
