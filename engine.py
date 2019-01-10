@@ -70,6 +70,7 @@ class Engine:
     """
 
     def waitFramerate(self, showFps=False):
+        pygame.display.flip()
 
         pygame.time.wait(int(1000/self.framerate -
                              (pygame.time.get_ticks() - self.last)))
@@ -218,13 +219,14 @@ class Carte:
         """
         charge les textures du set
         """
-        path = os.path.join(os.path.curdir, "assets", "sets", self.setNum)
+        path = os.path.join(os.path.curdir, "assets", "sets", str(self.setNum))
         # trouve tous les fichiers dans le dossier sans les dossiers
         textureList = [f for f in os.listdir(
             path) if os.path.isfile(os.path.join(path, f))]
         self.textures = dict()
         for f in textureList:
-            self.textures[f] = pygame.image.load(os.path.join(path, f))
+            self.textures[f.split(".")[0]] = pygame.image.load(
+                os.path.join(path, f))
 
     def save(self):
         """Sauvegarde de la carte à l'emplacement spécifié lors de la création"""
@@ -235,6 +237,8 @@ class Carte:
             un fichier solid contenant la grille de la carte (arrière plan)
             un fichier entities contenant la grille des entitées (premier plan , ex : arbres, monstres)
         """
+        if not os.path.exists(self.path):
+            os.makedirs(self.path)
         info = open(os.path.join(self.path, "info"),
                     "w")  # sauvagarder les infos
         info.write("{} {}\n".format(self.size[0], self.size[1]))
@@ -258,7 +262,7 @@ class Carte:
         entities.close()
 
     def edit(self, x, y, textureIndex):
-        self.grid[x][y] = textureIndex
+        self.sgrid[x][y] = textureIndex
 
     def collide(self, x, y, w):
         # cassé
@@ -280,23 +284,13 @@ class Carte:
                                         "arbre": SurfaceArbre}
         """
         x = 0
+        for line in self.sgrid:
 
-        threads = []
-        for l in self.sgrid:
-
-            t = threading.Thread(
-                target=self.renderThread, args=(l, surface, x))
-            threads.append(t)
-            t.start()
-            """
             y = 0
-            for p in l:
+            for p in line:
                 # ajoute la texture à l'index p aux coordonnées x et y
                 surface.blit(self.textures[p], (x, y))
                 y += self.tileSize
-            """
             x += self.tileSize
 
-        for t in threads:
-            t.join()
         return surface

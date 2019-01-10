@@ -11,6 +11,66 @@ pygame.init()
 Map editor : edit map
 usage : python mapEditor.py
 """
+
+
+def mapEditor(carte):
+    w = carte.tileSize
+    y = 0
+    for t in carte.textures:  # déterminer le nombre de colonnes
+        if y >= carte.height:
+            w += carte.tileSize
+            y = 0
+        y += carte.tileSize
+
+    e = engine.Engine((carte.width+w, carte.height))
+    textures = carte.textures
+    selected = 0
+    tindex = []
+    maxindex = len(textures)
+
+    for t in carte.textures:
+        tindex.append(t)
+    cs = pygame.surface.Surface((carte.width, carte.height))
+    carte.render(cs)
+    e.screen.blit(cs, (0, 0))
+
+    while e.state != 0:
+        events = e.runEvents()
+        for ev in events:
+            if ev.type == pygame.KEYDOWN:
+                if ev.key == pygame.K_s:
+                    carte.save()
+                    print("saved {}".format(carte.path))
+                if ev.key == pygame.K_TAB:
+                    selected += 1
+                    if selected >= maxindex:
+                        selected = 0
+            if ev.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                x = math.floor(pos[0] / carte.tileSize)
+                y = math.floor(pos[1] / carte.tileSize)
+                try:
+                    carte.edit(x, y, tindex[selected])
+                except:
+                    print("invalid location")
+                carte.render(cs)
+                e.screen.blit(cs, (0, 0))
+        y = 0
+        x = carte.width
+
+        for t in textures:
+            if y >= carte.height:
+                y = 0
+                x += carte.tileSize
+            e.screen.blit(textures[t], (x, y))
+            if tindex[selected] == t:
+                pygame.draw.rect(e.screen, (255, 255, 0), pygame.Rect(
+                    x, y, carte.tileSize, carte.tileSize), 1)
+
+            y += carte.tileSize
+        e.waitFramerate()
+
+
 carte = 0
 valide = 0
 path = os.path.join("assets", "levels")
@@ -35,8 +95,41 @@ while valide != 1:
         valide = 1
 if mode == "new":
 
+    valide = 0
+    while valide == 0:
+        try:
+            dimensions = input("dimensions (ex : 10 10) : ")
+            dimensions = dimensions.split()
+            dimensions = [int(dimensions[0]), int(dimensions[1])]
+            valide = 1
+        except:
+            print("entrée invalide")
+            valide = 0
+    valide = 0
+    while valide == 0:
+        setNum = input("nom du set : ")
+        if setNum == "-1":
+            print("ce numéro de set est interdit")
+        else:
+            valide = 1
+
     carte = engine.Carte(
         path, mode="new", dimensions=dimensions, setNum=setNum)
+    mapEditor(carte)
+elif mode == "edit":
+    setNum = input("nom du set (-1 pour garder l'ancien) : ")
+    carte = engine.Carte(
+        path, mode="edit", setNum=setNum)
+    mapEditor(carte)
+
+valide = 0
+choix = ""
+while valide == 0:
+    choix = input("Sauvegarder ? (o/n) : ")
+    if choix == "o" or choix == "n":
+        valide = 1
+        if choix == "o":
+            carte.save()
 
 
 """
