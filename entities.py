@@ -72,9 +72,7 @@ class Player(Entity):
 
 #Récupère ton code si je veux, moi je mets le mien
     """def findDirection(self, direction, last):
-        """
         #trouve la bonne direction après un touche relachée
-        """
         i = 0
         l = last
         for d in direction:
@@ -84,9 +82,7 @@ class Player(Entity):
         return l
 
     def update(self, events):
-        """
         #prend comme argument tous les évenements et prends les touches de mouvement
-        """
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == self.keyConfig["left"]:
@@ -133,16 +129,16 @@ def movement(self, wallrects) :
     for event in pygame.event.get() :
         for n in range(4) : #(pour chaque direction)
             if event.type == pygame.KEYDOWN :
-                if event.key == keys[n]
-                direction[n] = 1 #met la direction à 1 -> peut bouger
+                if event.key == keys[n] :
+                    direction[n] = 1 #met la direction à 1 -> peut bouger
             if event.type == pygame.KEYUP :
-                if event.key == keys[n]
-                direction[n] = 0 #met la direction à 0 -> ne veut pas bouger
+                if event.key == keys[n] :
+                    direction[n] = 0 #met la direction à 0 -> ne veut pas bouger
         for n in range(4) :
             if direction[n] !=0: #permet de dire si le personnage est bloqué s'il veut bouger (qu'il aie été bloqué ou pas précedemment)
                 nbCollisions = len(wallrects)
                 for m in range(len(wallrects)) :
-                    if self.chrrect.move(move[n]).colliderect(wallrects[m]:) #vérifie que le rectangle du personnage de va pas rentrer en collision avec un bloc
+                    if self.chrrect.move(move[n]).colliderect(wallrects[m]): #vérifie que le rectangle du personnage de va pas rentrer en collision avec un bloc
                         direction[n] = 2 #Si oui, met la direction à 2 -> veut bouger mais est bloqué
                     else : 
                         nbCollisions -= 1
