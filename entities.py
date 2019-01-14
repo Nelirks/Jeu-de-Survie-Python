@@ -18,15 +18,14 @@ class Entity:
         """
         création de l'entitée
         """
-        self.x = x
-        self.y = y
         self.texture = texture
+        self.rect = pygame.rect.Rect(x, y, texture.width, texture.height)
 
     def render(self, surface):
         """
         affichage de l'entitée avec la texture sur screen
         """
-        surface.blit(self.texture, (self.x, self.y))
+        surface.blit(self.texture, (self.rect.x, self.rect.y))
 
     def takeDamage(self, damage):
         self.life -= damage  # Todo : ajouter du random
@@ -70,7 +69,7 @@ class Player(Entity):
         """
         self.texture = self.textures[face]
 
-#Récupère ton code si je veux, moi je mets le mien
+# Récupère ton code si je veux, moi je mets le mien
     """def findDirection(self, direction, last):
         #trouve la bonne direction après un touche relachée
         i = 0
@@ -121,31 +120,38 @@ class Player(Entity):
             self.y -= self.speed
 """
 
-def movement(self, wallrects) :
-    #Création d'une liste de déplacements en pixels en fonction de la direction
-    move = [(-self.speed,0), (0,-self.speed), (self.speed,0), (0,self.speed)]
-    #Création d'une liste des touches
-    keys = [keyConfig[left],keyConfig[up],keyConfig[right],keyConfig[down]]
-    for event in pygame.event.get() :
-        for n in range(4) : #(pour chaque direction)
-            if event.type == pygame.KEYDOWN :
-                if event.key == keys[n] :
-                    direction[n] = 1 #met la direction à 1 -> peut bouger
-            if event.type == pygame.KEYUP :
-                if event.key == keys[n] :
-                    direction[n] = 0 #met la direction à 0 -> ne veut pas bouger
-        for n in range(4) :
-            if direction[n] !=0: #permet de dire si le personnage est bloqué s'il veut bouger (qu'il aie été bloqué ou pas précedemment)
+
+def movement(self, wallrects):
+    # Création d'une liste de déplacements en pixels en fonction de la direction
+    move = [(-self.speed, 0), (0, -self.speed),
+            (self.speed, 0), (0, self.speed)]
+    # Création d'une liste des touches
+    keys = [self.keyConfig["left"], self.keyConfig["up"],
+            self.keyConfig["right"], self.keyConfig["down"]]
+    for event in pygame.event.get():
+        for n in range(4):  # (pour chaque direction)
+            if event.type == pygame.KEYDOWN:
+                if event.key == keys[n]:
+                    # met la direction à 1 -> peut bouger
+                    self.direction[n] = 1
+            if event.type == pygame.KEYUP:
+                if event.key == keys[n]:
+                    # met la direction à 0 -> ne veut pas bouger
+                    self.direction[n] = 0
+        for n in range(4):
+            # permet de dire si le personnage est bloqué s'il veut bouger (qu'il aie été bloqué ou pas précedemment)
+            if self.direction[n] != 0:
                 nbCollisions = len(wallrects)
-                for m in range(len(wallrects)) :
-                    if self.chrrect.move(move[n]).colliderect(wallrects[m]): #vérifie que le rectangle du personnage de va pas rentrer en collision avec un bloc
-                        direction[n] = 2 #Si oui, met la direction à 2 -> veut bouger mais est bloqué
-                    else : 
+                for m in range(len(wallrects)):
+                    # vérifie que le rectangle du personnage de va pas rentrer en collision avec un bloc
+                    if self.chrrect.move(move[n]).colliderect(wallrects[m]):
+                        # Si oui, met la direction à 2 -> veut bouger mais est bloqué
+                        self.direction[n] = 2
+                    else:
                         nbCollisions -= 1
                 if nbCollisions == 0:
-                    direction[n] = 1 #permet le déplacement si aucune collision n'est possible
-                if direction[n] == 1:
-                    self.chrrect = self.chrrect.move(move[n]) #déplace le personnage si il le veut et le peut
-        
-
-        
+                    # permet le déplacement si aucune collision n'est possible
+                    self.direction[n] = 1
+                if self.direction[n] == 1:
+                    # déplace le personnage si il le veut et le peut
+                    self.chrrect = self.chrrect.move(move[n])
