@@ -25,7 +25,7 @@ class Engine:
         self.screen = pygame.display.set_mode(resolution)
         self.state = 1
         self.fpsfont = pygame.font.SysFont("monospace", 15)
-        self.framerate = 50
+        self.framerate = framerate
         self.last = pygame.time.get_ticks()
 
     def runEvents(self):
@@ -70,7 +70,6 @@ class Engine:
     """
 
     def waitFramerate(self, showFps=False):
-        pygame.display.flip()
 
         pygame.time.wait(int(1000/self.framerate -
                              (pygame.time.get_ticks() - self.last)))
@@ -84,6 +83,8 @@ class Engine:
         if showFps:
             label = self.fpsfont.render(str(self.fps), 1, (0, 255, 0))
             self.screen.blit(label, (self.width-40, 0))
+
+        pygame.display.flip()
         return self.fps
 
 
@@ -214,6 +215,20 @@ class Carte:
 
         else:
             raise ValueError("invalid mode")
+
+    def get_rects(self):
+        x = 0
+        liste = []
+        for l in self.sgrid:
+            y = 0
+            for s in l:
+                for c in self.blockingTiles:
+                    if c == s:
+                        liste.append(pygame.rect.Rect(
+                            x, y, self.tileSize, self.tileSize))
+                y += self.tileSize
+            x += self.tileSize
+        return liste
 
     def loadTextures(self):
         """

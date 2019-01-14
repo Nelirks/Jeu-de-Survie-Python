@@ -1,10 +1,20 @@
-0 0 0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 
-0 0 0 0 Foliage_dark32 0 0 0 0 0 
-0 0 Foliage_dark32 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 
-0 0 0 0 0 Foliage_dark32 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 
+terre terre terre foret foret foret foret 0 0 0 0 0 0 0 0 0 0 0 0 0 
+terre terre terre terre foret foret foret 0 0 0 0 0 0 0 0 0 0 0 0 0 
+foret terre terre terre terre terre foret 0 foret 0 0 0 0 0 0 0 0 0 0 0 
+foret terre terre terre terre terre foret foret foret foret foret 0 0 0 0 0 0 0 0 0 
+foret terre terre terre terre foret foret foret foret foret foret 0 0 0 0 0 0 0 0 0 
+foret foret terre foret foret terre foret foret foret foret foret 0 0 0 0 0 0 0 0 0 
+foret foret foret foret foret terre foret foret foret foret 0 0 0 0 0 0 0 0 0 0 
+0 foret foret foret foret foret foret foret foret foret 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 foret foret 0 foret 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 foret foret foret foret foret 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 foret foret foret foret foret 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 foret 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 terre 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 terre terre terre 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 terre terre terre 
+0 0 0 0 0 0 0 0 0 0 terre 0 terre 0 0 terre terre terre terre terre 
+0 0 0 0 0 0 0 0 0 0 0 0 terre terre terre terre terre terre terre terre 
+0 0 0 0 0 0 0 0 0 0 terre 0 terre 0 terre terre terre terre terre terre 
