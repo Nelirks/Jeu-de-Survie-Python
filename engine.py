@@ -2,6 +2,7 @@ import pygame
 import threading
 import time
 import os
+import pickle
 
 
 class Engine:
@@ -122,7 +123,7 @@ class Carte:
                                         "arbre": SurfaceArbre}
     """
     sgrid = []  # fond "solide"
-    egrid = []  # entitées
+    entities = []  # entitées
     width = 0  # taille prise par la carte sur x
     height = 0  # taille prise par la carte sur y
     size = []  # caractéristiques de la grille (largeur, hauteur)
@@ -160,25 +161,23 @@ class Carte:
             info.close()
 
             solid = open(os.path.join(path, "solid"))  # grille "solide"
-            line = solid.readline()
-            while line != "":
-                self.sgrid.append(line.split())
-                line = solid.readline()
+            self.sgrid = pickle.load(solid)
             solid.close()
 
             # grille des entitées
             entities = open(os.path.join(path, "entities"))
-            line = entities.readline()
-            while line != "":
-                self.egrid.append(line.split())
-                line = entities.readline()
+            self.entities = pickle.load(entities)
             entities.close()
+
+            f = open(self.path)
+            self = pickle.load(f)
+            f.close()
 
             self.loadTextures()
 
         elif mode == "new":  # création d'une nouvelle carte
             self.sgrid = doubleArraygen(dimensions[0], dimensions[1])
-            self.egrid = doubleArraygen(dimensions[0], dimensions[1])
+            self.entities = []
             self.size = dimensions
             self.width = dimensions[0] * self.tileSize
             self.height = dimensions[1] * self.tileSize
@@ -195,22 +194,22 @@ class Carte:
             info.close()
 
             solid = open(os.path.join(path, "solid"))  # grille "solide"
-            line = solid.readline()
-            while line != "":
-                self.sgrid.append(line.split())
-                line = solid.readline()
+            self.sgrid = pickle.load(solid)
+
             solid.close()
 
             # grille des entitées
             entities = open(os.path.join(path, "entities"))
-            line = entities.readline()
-            while line != "":
-                self.egrid.append(line.split())
-                line = entities.readline()
+            self.entities = pickle.load(entities)
             entities.close()
+
+            f = open(self.path)
+            self = pickle.load(f)
+            f.close()
 
             if setNum != "-1":
                 self.setNum = setNum
+
             self.loadTextures()
 
         else:
@@ -255,6 +254,7 @@ class Carte:
             un fichier solid contenant la grille de la carte (arrière plan)
             un fichier entities contenant la grille des entitées (premier plan , ex : arbres, monstres)
         """
+
         if not os.path.exists(self.path):
             os.makedirs(self.path)
         info = open(os.path.join(self.path, "info"),
@@ -265,18 +265,12 @@ class Carte:
 
         solid = open(os.path.join(
             self.path, "solid"), "w")  # sauvegarder le fond d'écran
-        for line in self.sgrid:
-            for c in line:
-                solid.write("{} ".format(c))
-            solid.write("\n")
+        pickle.dump(self.sgrid, solid)
         solid.close()
 
         entities = open(os.path.join(
             self.path, "entities"), "w")  # sauvegarder les entitées
-        for line in self.egrid:
-            for c in line:
-                entities.write("{} ".format(c))
-            entities.write("\n")
+        pickle.dump(self.entities, entities)
         entities.close()
 
     def edit(self, x, y, textureIndex):
