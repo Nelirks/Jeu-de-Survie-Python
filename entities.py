@@ -75,16 +75,16 @@ class Player(Entity):
         self.texture = self.textures[face]
 
     # Récupère ton code si je veux, moi je mets le mien
-    """def findDirection(self, direction, last):
+    def findDirection(self, direction, last):
         # trouve la bonne direction après un touche relachée
         i = 0
         l = last
         for d in direction:
-            if d == 1:
+            if d >= 1:
                 l = i
             i += 1
-        return l
-
+        self.texture = self.textures[l]
+    """
     def update(self, events):
         # prend comme argument tous les évenements et prends les touches de mouvement
         for event in events:
@@ -127,11 +127,11 @@ class Player(Entity):
 
     def movement(self, wallrects, events):
         # Création d'une liste de déplacements en pixels en fonction de la direction
-        move = [(-self.speed, 0), (0, -self.speed),
-                (self.speed, 0), (0, self.speed)]
+        move = [(self.speed, 0),
+                (0, self.speed), (-self.speed, 0), (0, -self.speed)]
         # Création d'une liste des touches
-        keys = [self.keyConfig["left"], self.keyConfig["up"],
-                self.keyConfig["right"], self.keyConfig["down"]]
+        keys = [self.keyConfig["right"],
+                self.keyConfig["down"], self.keyConfig["left"], self.keyConfig["up"]]
         for event in events:
             if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:  # optimisation
                 for n in range(4):  # (pour chaque direction)
@@ -139,10 +139,12 @@ class Player(Entity):
                         if event.key == keys[n]:
                             # met la direction à 1 -> peut bouger
                             self.direction[n] = 1
+                            self.texture = self.textures[n]
                     if event.type == pygame.KEYUP:
                         if event.key == keys[n]:
                             # met la direction à 0 -> ne veut pas bouger
                             self.direction[n] = 0
+                            self.findDirection(self.direction, n)
         for n in range(4):
             # permet de dire si le personnage est bloqué s'il veut bouger (qu'il aie été bloqué ou pas précedemment)
             if self.direction[n] != 0:
