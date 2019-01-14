@@ -103,7 +103,7 @@ def doubleArraygen(x, y):
 
 class Carte:
     """
-    Objet Carte : permet de charger une carte à partir d'un fichier, de l'afficher et d'en créer une.
+    Objet Carte : permet de charger une carte à partir d'un fichier, de l'afficher et d'en créer une. À faire avant tout le reste (la taille reste modifiable).
     Méthodes :
         - Carte(path, mode="load", dimensions=(10, 10),setnum="-1", tileSize=32)  : création de l'objet carte
             path : chemin d'accès ,
@@ -218,6 +218,8 @@ class Carte:
     def loadTextures(self):
         """
         charge les textures du set
+        note : il ne doit pas avoir d'autres points que le .png dans le nom de chaque image
+        il doit obligatoirement avoir une texture par défaut «0.png»
         """
         path = os.path.join(os.path.curdir, "assets", "sets", str(self.setNum))
         # trouve tous les fichiers dans le dossier sans les dossiers
@@ -225,8 +227,9 @@ class Carte:
             path) if os.path.isfile(os.path.join(path, f))]
         self.textures = dict()
         for f in textureList:
+            # charger les textures en les optimisant
             self.textures[f.split(".")[0]] = pygame.image.load(
-                os.path.join(path, f))
+                os.path.join(path, f)).convert()
 
     def save(self):
         """Sauvegarde de la carte à l'emplacement spécifié lors de la création"""
@@ -276,13 +279,29 @@ class Carte:
             y += self.tileSize
 
     def render(self, surface):
-        """carte.render(textures) : renvoi un objet surface de la librairie Pygame avec le rendu de la carte
+        """carte.render(surface) : renvoi un objet surface de la librairie Pygame avec le rendu de la carte
+        """
+        x = 0
+        for line in self.sgrid:
+
+            y = 0
+            for p in line:
+                # ajoute la texture à l'index p aux coordonnées x et y
+                surface.blit(self.textures[p], (x, y))
+                y += self.tileSize
+            x += self.tileSize
+
+        return surface
+
+    def renderSurface(self):
+        """carte.renderSurface() : renvoi un objet surface de la librairie Pygame avec le rendu de la carte
             textures : dictionnaire des différentes textures référencés dans le fichier carte,
                 il doit contenir au moins une surface pour l'index "0"
                 exemple : textures =   {"0": SurfaceEau,
                                         "1": SurfaceTerre,
                                         "arbre": SurfaceArbre}
         """
+        surface = pygame.surface.Surface((self.width, self.height))
         x = 0
         for line in self.sgrid:
 

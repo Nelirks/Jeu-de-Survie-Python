@@ -18,8 +18,9 @@ class Entity:
         """
         création de l'entitée
         """
-        self.texture = texture
-        self.rect = pygame.rect.Rect(x, y, texture.width, texture.height)
+        self.texture = texture.convert_alpha()
+        self.rect = pygame.rect.Rect(
+            x, y, texture.get_rect().width, texture.get_rect().height)
 
     def render(self, surface):
         """
@@ -60,6 +61,10 @@ class Player(Entity):
         création de l'entitée
         """
         self.speed = speed
+        ts = []
+        for t in textures:
+            # optimisations de pygame, besoin de transparence
+            ts.append(t.convert_alpha())
         self.textures = textures
         super().__init__(x, y, textures[0])
 

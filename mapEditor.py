@@ -4,13 +4,13 @@ import pygame
 import os
 import sys
 import math
-pygame.init()
 
 
 """
 Map editor : edit map
 usage : python mapEditor.py
 """
+e = engine.Engine((10, 10))
 
 
 def mapEditor(carte):
