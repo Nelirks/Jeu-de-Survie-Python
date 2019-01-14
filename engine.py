@@ -160,18 +160,14 @@ class Carte:
             self.setNum = info.readline()
             info.close()
 
-            solid = open(os.path.join(path, "solid"))  # grille "solide"
+            solid = open(os.path.join(path, "solid"), "rb")  # grille "solide"
             self.sgrid = pickle.load(solid)
             solid.close()
 
             # grille des entitées
-            entities = open(os.path.join(path, "entities"))
+            entities = open(os.path.join(path, "entities"), "rb")
             self.entities = pickle.load(entities)
             entities.close()
-
-            f = open(self.path)
-            self = pickle.load(f)
-            f.close()
 
             self.loadTextures()
 
@@ -193,13 +189,13 @@ class Carte:
             self.setNum = info.readline()
             info.close()
 
-            solid = open(os.path.join(path, "solid"))  # grille "solide"
+            solid = open(os.path.join(path, "solid"), "rb")  # grille "solide"
             self.sgrid = pickle.load(solid)
 
             solid.close()
 
             # grille des entitées
-            entities = open(os.path.join(path, "entities"))
+            entities = open(os.path.join(path, "entities"), "rb")
             self.entities = pickle.load(entities)
             entities.close()
 
@@ -264,12 +260,12 @@ class Carte:
         info.close()
 
         solid = open(os.path.join(
-            self.path, "solid"), "w")  # sauvegarder le fond d'écran
+            self.path, "solid"), "wb")  # sauvegarder le fond d'écran
         pickle.dump(self.sgrid, solid)
         solid.close()
 
         entities = open(os.path.join(
-            self.path, "entities"), "w")  # sauvegarder les entitées
+            self.path, "entities"), "wb")  # sauvegarder les entitées
         pickle.dump(self.entities, entities)
         entities.close()
 

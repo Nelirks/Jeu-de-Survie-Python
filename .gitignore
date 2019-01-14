@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+#nautilus
+.directory
+
+
 # C extensions
 *.so
 #vscode folder
