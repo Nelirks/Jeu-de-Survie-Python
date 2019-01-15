@@ -17,11 +17,11 @@ pygame.key.set_repeat(50, 1)
 wall = engine.Carte(os.path.join("assets", "levels", "test"), mode="load")
 
 
-game = engine.Engine((wall.width, wall.height), framerate=100)
+game = engine.Engine((wall.width, wall.height), framerate=50)
 
 back = wall.renderSurface()
 
-p1 = entities.Player(0, 0, ptextures)
+p1 = entities.Player(0, 0, "1")
 
 while game.state != 0:
     events = game.runEvents()
