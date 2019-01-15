@@ -18,7 +18,7 @@ class Item:
         """
         self.nom = nom
         self.description = description
-        self.texture = texture
+        self.texture = texture.convert_alpha()
 
     def render(self):
         """

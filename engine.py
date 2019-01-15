@@ -23,7 +23,9 @@ class Engine:
         """
         self.width, self.height = resolution
         pygame.init()
-        self.screen = pygame.display.set_mode(resolution)
+        self.realScreen = pygame.display.set_mode(
+            (resolution[0]*2, resolution[1]*2))
+        self.screen = pygame.surface.Surface(resolution)
         self.state = 1
         self.fpsfont = pygame.font.SysFont("monospace", 15)
         self.framerate = framerate
@@ -84,6 +86,8 @@ class Engine:
         if showFps:
             label = self.fpsfont.render(str(self.fps), 1, (0, 255, 0))
             self.screen.blit(label, (self.width-40, 0))
+
+        pygame.transform.scale2x(self.screen, self.realScreen)
 
         pygame.display.flip()
         return self.fps
