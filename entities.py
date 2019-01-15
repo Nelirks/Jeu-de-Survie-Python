@@ -56,7 +56,7 @@ class Player(Entity):
         "up": pygame.K_UP
     }
 
-    def __init__(self, x, y, setNum, speed=1):
+    def __init__(self, x, y, setNum, speed=2):
         """
         création de l'entitée joueur :
         le nom du set (setNum) correspond à un dossier dans les assets avec le nom du set et à l'intérieur les textures

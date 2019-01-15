@@ -64,7 +64,7 @@ def mapEditor(carte):
                 x += carte.tileSize
             e.screen.blit(textures[t], (x, y))
             if tindex[selected] == t:
-                pygame.draw.rect(e.screen, (255, 255, 0), pygame.Rect(
+                pygame.draw.rect(e.screen, (255, 0, 0), pygame.Rect(
                     x, y, carte.tileSize, carte.tileSize), 1)
 
             y += carte.tileSize
