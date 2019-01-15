@@ -78,7 +78,7 @@ class ItemContainer :
             self.itemquantity.append(0)
 
     def sizeincrease(self ,sizeup): #Augmentation de la longueur des listes en cas d'augmentation de l'inventaire
-        for n in range (sizeup-len(self.itemtype)):
+        for n in range (sizeup):
             self.itemtype.append("0")
             self.itemquantity.append(0)
 
@@ -86,13 +86,13 @@ class ItemContainer :
         if self.itemquantity[place] != 0 :
             if self.itemtype == name :
                 self.itemquantity[place] += quantity
-                return "It worked !"
+                return (1,"It worked !")
         else : 
             oldname = self.itemtype[place]
             oldquantity = self.itemquantity[place]
             self.itemtype[n] = name
             self.itemquantity = quantity
-            return oldname, oldquantity
+            return (oldname, oldquantity)
 
 
     def removeitem(self, place, mode) : #Permet le retrait d'item, avec trois modes, half, one et all, et renvoie le type et a quantité d'item retirés
