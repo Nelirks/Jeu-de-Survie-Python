@@ -7,11 +7,14 @@ import sys
 import math
 
 
+
 """
 Map editor : edit map
 usage : python mapEditor.py
 """
 e = engine.Engine((10, 10))
+
+
 
 
 def mapEditor(carte):
