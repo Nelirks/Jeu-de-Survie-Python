@@ -32,6 +32,14 @@ class Item:
         surface.blit(self.texture, (0, 0))
         return surface
 
+class Consommable(Item) :
+    #Classe consommmable : Item avec des effets quand il est consommé
+    def __init__(self, nom, texture, lifegain = 0, hungergain = 0, thirstgain = 0, buff = "", description = "") :
+        self.lifegain = lifegain
+        self.hungergain = hungergain
+        self.thirstgain = thirstgain
+        self.buff = buff
+        super().__init__(nom, texture, description)
 
 class Weapon(Item):
     """
@@ -93,6 +101,7 @@ class ItemContainer :
                 return (olditem)
         else :
             self.items[place] = itemadded
+            return ("It worked !")
 
 
     def removeitem(self, place, mode) : #Permet le retrait d'item, avec trois modes, half, one et all, et renvoie le type et a quantité d'item retirés
