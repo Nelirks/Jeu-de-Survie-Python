@@ -73,7 +73,7 @@ class ItemContainer :
     itemtype = []
     itemquantity = []
     
-    def _init_(self, size) : #Création de deux listes liste ayant une longueur size
+    def __init__(self, size) : #Création de deux listes liste ayant une longueur size
         for n in range(size) :
             self.itemtype.append("0")
             self.itemquantity.append(0)
@@ -116,6 +116,7 @@ class ItemContainer :
                 self.itemtype[place] = "0"
         return name, quantity
 
-
-        
-
+    def render(self, largeur) :
+        itemsperline = largeur//32
+        itempercolumn = ceil(len(self.itemquantity)/itemperline)
+        surfacefinale = pygame.display.set_mode((itemperline,itempercolumn))

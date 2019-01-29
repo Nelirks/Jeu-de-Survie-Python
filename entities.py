@@ -1,6 +1,7 @@
 # coding: utf-8
 import pygame
 import os
+import items
 
 PlayerFaces = {"right": 0, "down": 1, "left": 2, "up": 3}
 
@@ -48,6 +49,7 @@ class Player(Entity):
     direction = [0, 0, 0, 0]
     # vitesse de déplacement
     speed = 1
+    
 
     # assign key to directions
     keyConfig = {
@@ -72,6 +74,9 @@ class Player(Entity):
         for a in txname:
             self.textures[a] = pygame.image.load(
                 os.path.join(path, a+".png")).convert_alpha()
+        self.inventory = items.ItemContainer(1)
+
+
 
         super().__init__(x, y, self.textures["front"])
 
