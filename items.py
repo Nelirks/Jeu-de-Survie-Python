@@ -83,7 +83,7 @@ class ItemContainer :
             self.items.append("0")
 
     def additem(self, itemadded, place): #Ajout d'un item en vérifiant que la case n'est pas vide, si elle est vide, renvoie l'item précedent et sa quantité
-        if self.items[place].quantity != 0 :
+        if self.items[place].quantity != 0 and self.items[place] != "0":
             if self.items[place].nom == itemadded.nom :
                 self.items[place].quantity += itemadded.quantity
                 return ("It worked !")
@@ -96,21 +96,24 @@ class ItemContainer :
 
 
     def removeitem(self, place, mode) : #Permet le retrait d'item, avec trois modes, half, one et all, et renvoie le type et a quantité d'item retirés
-        if mode == "all" :
-            itemremoved = self.items[place]
-            self.items[place] ="0"
-        if mode == "half" :
-            itemremoved = self.items[place]
-            itemremoved.quantity = ceil(itemremoved.quantity /2)
-            self.items[place].quantity -= itemremoved.quantity
-            if self.items[place].quantity == 0:
-                self.items[place] = "0"
-        if mode == "one" :
-            itemremoved = self.items[place]
-            itemremoved.quantity = 1
-            self.items[place].quantity -= itemremoved.quantity
-            if self.items[place].quantity == 0:
-                self.items[place] = "0"
+        if self.items[place] != "0" :
+            itemremoved = "0"
+        else :    
+            if mode == "all" :
+                itemremoved = self.items[place]
+                self.items[place] ="0"
+            if mode == "half" :
+                itemremoved = self.items[place]
+                itemremoved.quantity = ceil(itemremoved.quantity /2)
+                self.items[place].quantity -= itemremoved.quantity
+                if self.items[place].quantity == 0:
+                    self.items[place] = "0"
+            if mode == "one" :
+                itemremoved = self.items[place]
+                itemremoved.quantity = 1
+                self.items[place].quantity -= itemremoved.quantity
+                if self.items[place].quantity == 0:
+                    self.items[place] = "0"
         return itemremoved
 
 
