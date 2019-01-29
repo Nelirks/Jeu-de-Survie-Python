@@ -50,7 +50,6 @@ class Player(Entity):
     direction = [0, 0, 0, 0]
     # vitesse de déplacement
     speed = 1
-    
 
     # assign key to directions
     keyConfig = {
@@ -76,8 +75,6 @@ class Player(Entity):
             self.textures[a] = pygame.image.load(
                 os.path.join(path, a+".png")).convert_alpha()
         self.inventory = items.ItemContainer(1)
-
-
 
         super().__init__(x, y, self.textures["front"])
 
@@ -213,3 +210,14 @@ class Collectable(Entity):
             if l[1] < random.random():
                 r.append(l[0])
         return l
+
+
+class Tree(Collectable):
+    def __init__(self, x, y, life=0, loot=[], name="tree"):
+        texture = pygame.image.load(
+            os.path.join("assets", "entities", "tree.png"))
+        super().__init__(x, y, texture, life=life, loot=loot, name=name)
+
+
+# liste des entitées disponibles
+elist = {"tree": Tree}
