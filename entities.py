@@ -1,7 +1,7 @@
 # coding: utf-8
 import pygame
 import os
-
+import random
 PlayerFaces = {"right": 0, "down": 1, "left": 2, "up": 3}
 
 
@@ -187,3 +187,23 @@ class Player(Entity):
         if self.direction[3] == 1:
             self.y -= self.speed
     """
+
+
+class Collectable(Entity):
+    loot = []
+    name = ""
+
+    def __init__(self, x, y, texture, life=0, loot=[], name=""):
+        """
+        loot : liste [[item,p],[item,p]]
+        """
+        self.loot = loot
+        self.name = name
+        super().__init__(x, y, texture, life=life)
+
+    def Loot(self):
+        r = []
+        for l in self.loot:
+            if l[1] < random.random():
+                r.append(l[0])
+        return l
