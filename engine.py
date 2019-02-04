@@ -301,6 +301,8 @@ class Carte:
                 surface.blit(self.textures[p], (x, y))
                 y += self.tileSize
             x += self.tileSize
+        for en in self.entities:
+            en.render(surface)
 
         return surface
 

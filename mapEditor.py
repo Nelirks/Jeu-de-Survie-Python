@@ -11,10 +11,11 @@ import math
 Map editor : edit map
 usage : python mapEditor.py
 """
-e = engine.Engine((10, 10))
 
 
 def mapEditor(carte):
+    e = engine.Engine((10, 10))
+
     ws = carte.tileSize
     we = carte.tileSize
     y = 0
@@ -45,13 +46,15 @@ def mapEditor(carte):
 
     for t in carte.textures:
         tindex.append(t)
+    for en in entities.elist:
+        eindex.append(en)
     cs = pygame.surface.Surface((carte.width, carte.height))
     carte.render(cs)
     e.screen.blit(cs, (0, 0))
     etextures = dict()
-    for e in entites:
-        etextures[e] = pygame.image.load(
-            os.path.join("assets", "entities", e+".png"))
+    for en in entites:
+        etextures[en] = pygame.image.load(
+            os.path.join("assets", "entities", en+".png"))
 
     while e.state != 0:
         events = e.runEvents()
@@ -73,15 +76,16 @@ def mapEditor(carte):
 
                 p = pygame.mouse.get_pressed()
                 if p[0]:
-                    y = math.floor(pos[1] / carte.tileSize)
-                    x = math.floor(pos[0] / carte.tileSize)
+                    y = math.floor(pos[1] / (carte.tileSize*2))
+                    x = math.floor(pos[0] / (carte.tileSize*2))
                     try:
                         carte.edit(x, y, tindex[Selected])
                     except:
                         print("invalid location")
-                if p[1]:
+                if p[2]:
+                    print(eindex)
                     carte.entities.append(
-                        entities.elist[eindex](pos[0], pos[1]))
+                        entities.elist[eindex[Eelected]](pos[0], pos[1]))
                 carte.render(cs)
                 e.screen.blit(cs, (0, 0))
         y = 0
@@ -98,11 +102,12 @@ def mapEditor(carte):
 
             y += carte.tileSize
         y = 0
-        for e in entites:
+        x += carte.tileSize
+        for en in entites:
             if y >= height:
                 y = 0
                 x += carte.tileSize
-            e.screen.blit(etextures[e], (x, y))
+            e.screen.blit(etextures[en], (x, y))
         e.waitFramerate()
 
 
@@ -147,12 +152,13 @@ if mode == "new":
             print("ce numéro de set est interdit")
         else:
             valide = 1
-
+    e = engine.Engine((10, 10))
     carte = engine.Carte(
         path, mode="new", dimensions=dimensions, setNum=setNum)
     mapEditor(carte)
 elif mode == "edit":
     setNum = input("nom du set (-1 pour garder l'ancien) : ")
+    e = engine.Engine((10, 10))
     carte = engine.Carte(
         path, mode="edit", setNum=setNum)
     mapEditor(carte)

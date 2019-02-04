@@ -219,5 +219,15 @@ class Tree(Collectable):
         super().__init__(x, y, texture, life=life, loot=loot, name=name)
 
 
+class SavableEntity:
+    def __init__(self, name, x, y):
+        self.x = x
+        self.y = y
+        self.name = name
+
+    def transform(self):
+        return entitiesList[self.name](self.x, self.y)
+
+
 # liste des entitées disponibles
-elist = {"tree": Tree}
+entitiesList = {"tree": Tree}
