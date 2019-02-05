@@ -12,8 +12,7 @@ class Entity:
     Système d'entités pouvant être sauvegardé
 
     """
-    x = 0
-    y = 0
+
     life = 0
     effects = []
 

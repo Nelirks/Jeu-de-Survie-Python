@@ -5,6 +5,7 @@ import threading
 import time
 import os
 import pickle
+import entities
 
 
 class Engine:
@@ -173,6 +174,7 @@ class Carte:
             # grille des entitées
             entities = open(os.path.join(path, "entities"), "rb")
             self.entities = pickle.load(entities)
+
             entities.close()
 
             self.loadTextures()
@@ -197,17 +199,12 @@ class Carte:
 
             solid = open(os.path.join(path, "solid"), "rb")  # grille "solide"
             self.sgrid = pickle.load(solid)
-
             solid.close()
 
             # grille des entitées
             entities = open(os.path.join(path, "entities"), "rb")
             self.entities = pickle.load(entities)
             entities.close()
-
-            f = open(self.path)
-            self = pickle.load(f)
-            f.close()
 
             if setNum != "-1":
                 self.setNum = setNum
@@ -229,6 +226,8 @@ class Carte:
                             x, y, self.tileSize, self.tileSize))
                 y += self.tileSize
             x += self.tileSize
+        for en in self.entities:
+            liste.append(en.rect)
         return liste
 
     def loadTextures(self):
@@ -246,6 +245,10 @@ class Carte:
             # charger les textures en les optimisant
             self.textures[f.split(".")[0]] = pygame.image.load(
                 os.path.join(path, f)).convert()
+        savedEntities = self.entities
+        self.entities = []
+        for entity in savedEntities:
+            self.entities.append(entity.transform())
 
     def save(self):
         """Sauvegarde de la carte à l'emplacement spécifié lors de la création"""
@@ -270,17 +273,18 @@ class Carte:
         pickle.dump(self.sgrid, solid)
         solid.close()
 
-        entities = open(os.path.join(
+        entitiesFile = open(os.path.join(
             self.path, "entities"), "wb")  # sauvegarder les entitées
-        pickle.dump(self.entities, entities)
-        entities.close()
+        saveEntities = []
+        for entity in self.entities:
+            saveEntities.append(entities.SavableEntity(
+                entity.name, entity.rect.x, entity.rect.y))
+
+        pickle.dump(saveEntities, entitiesFile)
+        entitiesFile.close()
 
     def edit(self, x, y, textureIndex):
         self.sgrid[x][y] = textureIndex
-
-    def collide(self, x, y, w):
-        # cassé
-        pass
 
     def renderThread(self, line, surface, x):
         y = 0
@@ -315,14 +319,6 @@ class Carte:
                                         "arbre": SurfaceArbre}
         """
         surface = pygame.surface.Surface((self.width, self.height))
-        x = 0
-        for line in self.sgrid:
-
-            y = 0
-            for p in line:
-                # ajoute la texture à l'index p aux coordonnées x et y
-                surface.blit(self.textures[p], (x, y))
-                y += self.tileSize
-            x += self.tileSize
+        self.render(surface)
 
         return surface

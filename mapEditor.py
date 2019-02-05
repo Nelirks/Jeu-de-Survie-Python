@@ -29,25 +29,25 @@ def mapEditor(carte):
             y = 0
         y += carte.tileSize
 
-    for t in entities.elist:  # déterminer le nombre de colonnes
+    for t in entities.entitiesList:  # déterminer le nombre de colonnes
         if y >= height:
             we += carte.tileSize
             y = 0
         y += carte.tileSize
     e = engine.Engine((carte.width+ws + we, carte.height))
     textures = carte.textures
-    entites = entities.elist
+    entites = entities.entitiesList
     Selected = 0
-    Eelected = 0
+    entitySelected = 0
     tindex = []
-    eindex = []
+    entityIndex = []
     maxSindex = len(textures)
-    maxEindex = len(entities.elist)
+    maxEindex = len(entities.entitiesList)
 
     for t in carte.textures:
         tindex.append(t)
-    for en in entities.elist:
-        eindex.append(en)
+    for en in entities.entitiesList:
+        entityIndex.append(en)
     cs = pygame.surface.Surface((carte.width, carte.height))
     carte.render(cs)
     e.screen.blit(cs, (0, 0))
@@ -68,9 +68,9 @@ def mapEditor(carte):
                     if Selected >= maxSindex:
                         Selected = 0
                 if ev.key == pygame.K_CAPSLOCK:
-                    Eelected += 1
-                    if Eelected >= maxEindex:
-                        Eelected = 0
+                    entitySelected += 1
+                    if entitySelected >= maxEindex:
+                        entitySelected = 0
             if ev.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
 
@@ -82,11 +82,23 @@ def mapEditor(carte):
                         carte.edit(x, y, tindex[Selected])
                     except:
                         print("invalid location")
+                    carte.render(cs)
+                if p[1]:
+                    y = pos[1] // 2
+                    x = pos[0] // 2
+                    listeEntites = carte.entities
+                    rectSouris = pygame.rect.Rect(x, y, 1, 1)
+                    i = 0
+                    for entity in listeEntites:
+                        if rectSouris.colliderect(entity.rect):
+                            del carte.entities[i]
+                        i += 1
+                    carte.render(cs)
+
                 if p[2]:
-                    print(eindex)
                     carte.entities.append(
-                        entities.elist[eindex[Eelected]](pos[0], pos[1]))
-                carte.render(cs)
+                        entities.entitiesList[entityIndex[entitySelected]](pos[0]//2, pos[1]//2))
+                    carte.render(cs)
                 e.screen.blit(cs, (0, 0))
         y = 0
         x = carte.width
@@ -108,6 +120,10 @@ def mapEditor(carte):
                 y = 0
                 x += carte.tileSize
             e.screen.blit(etextures[en], (x, y))
+            if entityIndex[entitySelected] == en:
+                pygame.draw.rect(e.screen, (255, 225, 0), pygame.Rect(
+                    x, y, carte.tileSize, carte.tileSize), 1)
+
         e.waitFramerate()
 
 
@@ -164,12 +180,13 @@ elif mode == "edit":
     mapEditor(carte)
 
 valide = 0
+pygame.quit()
 choix = ""
 while valide == 0:
-    choix = input("Sauvegarder ? (o/n) : ")
-    if choix == "o" or choix == "n":
+    choix = input("Sauvegarder ? (o/n) : ").capitalize()
+    if choix == "O" or choix == "N":
         valide = 1
-        if choix == "o":
+        if choix == "O":
             carte.save()
 
 
