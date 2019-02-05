@@ -11,7 +11,7 @@ pygame.key.set_repeat(50, 1)
 wall = engine.Carte(os.path.join("assets", "levels", "test"),
                     mode="load")  # objet carte
 
-game = engine.Engine((wall.width, wall.height), framerate=50)  # fenêtre
+game = engine.Engine((wall.width, wall.height+68), framerate=50)  # fenêtre
 
 back = wall.renderSurface()  # surface carte
 

@@ -1,6 +1,7 @@
 # coding: utf-8
 import pygame
 from math import ceil
+import os
 
 CONST_TileItemSize = 16
 
@@ -80,9 +81,9 @@ class MagicWeapon(Weapon):
         super().applyDamage(entity)
 '''
 class ItemContainer :
-    items = []
     
     def __init__(self, size) : #Création de deux listes liste ayant une longueur size
+        self.items = []
         for n in range(size) :
             self.items.append("0")
 
@@ -128,13 +129,15 @@ class ItemContainer :
 
 
     def render(self, largeur) : #Crée une surface avec tous les items dans un rectangle de largeur donnée en pixel
-        itemperline = largeur//32
-        itempercolumn = ceil(len(len(self.items))/itemperline)
-        surfacefinale = pygame.Surface((itemperline*32, itemperline*32))
+        InventoryGrid = pygame.image.load(os.path.join("assets","hud","InventoryGrid.png")).convert()
+        itemperline = (largeur)//34
+        itempercolumn = ceil(len(self.items)/itemperline)
+        surfacefinale = pygame.Surface((itemperline*34, itempercolumn*34))
         for y in range (itempercolumn) :
             for x in range (itemperline) :
+                surfacefinale.blit(InventoryGrid,(x*34,y*34))
                 if self.items[x+y*itemperline] != "0" :
-                    surfacefinale.blit(self.items[x+y*itemperline].texture,(x*32,y*32))
+                    surfacefinale.blit(self.items[x+y*itemperline].texture,(x*34+1,y*34+1))
         return surfacefinale
 
 

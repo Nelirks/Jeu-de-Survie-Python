@@ -47,8 +47,7 @@ class Player(Entity):
     Entité joueur avec textures une liste contenant des textures [droite,bas,gauche,haut]
     """
     direction = [0, 0, 0, 0]
-    # vitesse de déplacement
-    speed = 1
+
 
     # assign key to directions
     keyConfig = {
@@ -58,7 +57,7 @@ class Player(Entity):
         "up": pygame.K_UP
     }
 
-    def __init__(self, x, y, setNum, speed=2):
+    def __init__(self, x, y, setNum, speed=2, inventoryweight = 204, inventorysize = 12):
         """
         création de l'entitée joueur :
         le nom du set (setNum) correspond à un dossier dans les assets avec le nom du set et à l'intérieur les textures
@@ -68,13 +67,14 @@ class Player(Entity):
         self.speed = speed
         txname = ["front", "back", "backRight",
                   "backLeft", "right", "left"]
+        self.inventory = items.ItemContainer(inventorysize)
+        self.inventoryweight = inventoryweight
 
         self.textures = dict()
         for a in txname:
             self.textures[a] = pygame.image.load(
                 os.path.join(path, a+".png")).convert_alpha()
-        self.inventory = items.ItemContainer(1)
-
+        
         super().__init__(x, y, self.textures["front"])
 
     def setFace(self, face):
@@ -109,6 +109,17 @@ class Player(Entity):
                 self.texture = self.textures["left"]
             else:
                 self.texture = self.textures["front"]
+
+
+    def render(self, surface):
+        """
+        affichage de l'entité avec la texture sur screen
+        """
+        surface.blit(self.texture, (self.rect.x, self.rect.y))
+        inventorysurface = self.inventory.render(self.inventoryweight)
+        surface.blit(inventorysurface,(0,288))
+
+
 
     def movement(self, wallrects, events):
         # Création d'une liste de déplacements en pixels en fonction de la direction
@@ -189,6 +200,7 @@ class Player(Entity):
         if self.direction[3] == 1:
             self.y -= self.speed
     """
+
 
 
 class Collectable(Entity):
