@@ -16,8 +16,8 @@ usage : python mapEditor.py
 def mapEditor(carte):
     e = engine.Engine((10, 10))
 
-    ws = carte.tileSize
-    we = carte.tileSize
+    ws = carte.tileSize  # réserve solide
+    we = carte.tileSize*2  # réserve entités
     y = 0
     height = carte.height
     if carte.height < carte.tileSize * 10:
@@ -29,11 +29,12 @@ def mapEditor(carte):
             y = 0
         y += carte.tileSize
 
-    for t in entities.entitiesList:  # déterminer le nombre de colonnes
+    # déterminer le nombre de colonnes (entités)
+    for t in entities.entitiesList:
         if y >= height:
-            we += carte.tileSize
+            we += carte.tileSize*2
             y = 0
-        y += carte.tileSize
+        y += carte.tileSize*2
     e = engine.Engine((carte.width+ws + we, carte.height))
     textures = carte.textures
     entites = entities.entitiesList
@@ -118,11 +119,11 @@ def mapEditor(carte):
         for en in entites:
             if y >= height:
                 y = 0
-                x += carte.tileSize
+                x += carte.tileSize*2
             e.screen.blit(etextures[en], (x, y))
             if entityIndex[entitySelected] == en:
                 pygame.draw.rect(e.screen, (255, 225, 0), pygame.Rect(
-                    x, y, carte.tileSize, carte.tileSize), 1)
+                    x, y, carte.tileSize*2, carte.tileSize*2), 1)
 
         e.waitFramerate()
 
