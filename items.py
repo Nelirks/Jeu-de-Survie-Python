@@ -133,11 +133,12 @@ class ItemContainer :
         itemperline = (largeur)//34
         itempercolumn = ceil(len(self.items)/itemperline)
         surfacefinale = pygame.Surface((itemperline*34, itempercolumn*34))
-        for y in range (itempercolumn) :
-            for x in range (itemperline) :
-                surfacefinale.blit(InventoryGrid,(x*34,y*34))
-                if self.items[x+y*itemperline] != "0" :
-                    surfacefinale.blit(self.items[x+y*itemperline].texture,(x*34+1,y*34+1))
+        for n in range (len(self.items)) :
+            x = n%itemperline
+            y = n//itemperline
+            surfacefinale.blit(InventoryGrid, (x*34, y*34))
+            if self.items[n] != "0" :
+                surfacefinale.blit(self.items[n].texture,(x*34+1,y*34+1))
         return surfacefinale
 
 
