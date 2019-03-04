@@ -10,11 +10,10 @@ pygame.key.set_repeat(50, 1)
 wall = engine.Carte(os.path.join("assets", "levels", "test"),
                     mode="load")  # objet carte
 
-                     (wall.width*2, wall.height*2), framerate=50)  # fenêtre
+game = engine.Engine((wall.width, wall.height+68),
+                     (wall.width*2, (wall.height+68)*2), framerate=50)  # fenêtre
 game.initialMonitorresolution = monitorResolution
-game = engine.Engine((wall.width, wall.height),
 back = wall.renderSurface()  # surface carte
-
 p1 = entities.Player(0, 0, "1")  # joueur
 events = []
 while game.state != 0:
