@@ -35,7 +35,8 @@ def mapEditor(carte):
             we += carte.tileSize*2
             y = 0
         y += carte.tileSize*2
-    e = engine.Engine((carte.width+ws + we, carte.height))
+    e = engine.Engine((carte.width+ws + we, carte.height),
+                      ((carte.width+ws + we)*2, carte.height*2))
     textures = carte.textures
     entites = entities.entitiesList
     Selected = 0

@@ -145,18 +145,12 @@ class Player(Entity):
         for n in range(4):
             # permet de dire si le personnage est bloqué s'il veut bouger (qu'il aie été bloqué ou pas précedemment)
             if self.direction[n] != 0:
-                nbCollisions = len(wallrects)
-                for m in range(len(wallrects)):
-                            # vérifie que le rectangle du personnage de va pas rentrer en collision avec un bloc
-                    if self.rect.move(move[n]).colliderect(wallrects[m]):
-                            # Si oui, met la direction à 2 -> veut bouger mais est bloqué
-                        self.direction[n] = 2
-                    else:
-                        nbCollisions -= 1
-                if nbCollisions == 0:
+                # vérifie que le rectangle du personnage de va pas rentrer en collision avec les blocs
+                if self.rect.move(move[n]).collidelist(wallrects) != -1:
+                    # Si oui, met la direction à 2 -> veut bouger mais est bloqué
+                    self.direction[n] = 2
+                else:
                     # permet le déplacement si aucune collision n'est possible
-                    self.direction[n] = 1
-                if self.direction[n] == 1:
                     # déplace le personnage si il le veut et le peut
                     self.rect = self.rect.move(move[n])
 

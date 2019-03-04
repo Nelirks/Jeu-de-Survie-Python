@@ -20,12 +20,19 @@ class Engine:
     framerate = 50
     last = 0
 
-    def __init__(self, resolution, framerate=50):
+    def __init__(self, resolution, targetResolution=(800, 600), framerate=50):
         """
         création de la fenêtre du jeu
+        resolution : résolution de l'écran virtuel de rendu «Engine.screen» qui sera adapté à la résoltion cible : targetResolution
         """
+        self.menuState = 0
         self.width, self.height = resolution
+        self.fullscreenResolution = (1280, 720)
+        self.resolution = (self.width*2, self.height*2)
+        self.fullscreen = 0
         pygame.init()
+        self.initialMonitorresolution = (
+            pygame.display.Info().current_w, pygame.display.Info().current_h)
         self.realScreen = pygame.display.set_mode(
             (resolution[0]*2, resolution[1]*2))
         self.screen = pygame.surface.Surface(resolution)
@@ -33,47 +40,55 @@ class Engine:
         self.fpsfont = pygame.font.SysFont("monospace", 15)
         self.framerate = framerate
         self.last = pygame.time.get_ticks()
+        self.initMenu()
+
+    def initMenu(self):
+        self.fullscreenEvent = pygame.USEREVENT + 1
+        self.fullscreenButton = Button(
+            (100, 20), (0, 0), "fullscreen", self.fullscreenEvent)
 
     def runEvents(self):
         events = pygame.event.get()
+        self.fullscreenButton.update(events)
         for event in events:
+            if event.type == self.fullscreenEvent:
+                if self.fullscreen == 0:
+                    pygame.display.set_mode(
+                        self.fullscreenResolution, pygame.FULLSCREEN)
+                    self.fullscreen = 1
+                else:
+                    pygame.display.set_mode(
+                        (self.screen.get_size()[0]*2, self.screen.get_size()[1]*2))
+                    self.fullscreen = 0
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_F11:
+                    if self.fullscreen == 0:
+                        pygame.display.set_mode(
+                            self.fullscreenResolution, pygame.FULLSCREEN)
+                        self.fullscreen = 1
+                    else:
+                        pygame.display.set_mode(
+                            (self.screen.get_size()[0]*2, self.screen.get_size()[1]*2))
+                        self.fullscreen = 0
+
+                if event.key == pygame.K_ESCAPE:
+                    if self.state == 1:
+                        self.state = 2  # pause
+                        self.menuState = 1
+                    elif self.state == 2:
+                        if self.menuState == 1:
+                            self.state = 1
+                            self.menuState = 0
+                        else:
+                            self.menuState -= 1
+                if event.key == pygame.K_F12:
+                    self.state = 0
             if event.type == pygame.QUIT:
                 self.state = 0
-        return events
-
-    """
-    test de trucs
-    def removeOfRender(self, objet):
-        '''
-        enlève l'objet de la liste de rendu
-        '''
-        i = 0
-        for ob in self.renderList:
-            if ob == objet:
-                self.renderList.pop(i)
-                break
-
-            i += 1
-
-    def addToRender(self, objet, priority):
-        i = 0
-        max = 0
-        for o in self.renderList:
-            if o[0] > priority:
-                break
-            i += 1
-
-        self.renderList.insert(i, [priority, objet])
-
-    def render(self, showFps=False, waitFrame=True):
-        for o in self.renderList:
-            o[1].render()
-        if showFps:
-            label = self.fpsfont.render(str(self.fps), 1, (0, 255, 0))
-            self.screen.blit(label, (self.width-40, 0))
-        if waitFrame:
-            self.waitFramerate()
-    """
+        if self.state == 2:  # si le jeu est en pause
+            return []
+        else:
+            return events
 
     def waitFramerate(self, showFps=False):
 
@@ -83,14 +98,18 @@ class Engine:
         while(pygame.time.get_ticks() - self.last < 1000/self.framerate):
             pass
             """
+        # if self.menuState == 1:
+
         self.fps = round(1000/(pygame.time.get_ticks() - self.last))
 
         self.last = pygame.time.get_ticks()
         if showFps:
             label = self.fpsfont.render(str(self.fps), 1, (0, 255, 0))
             self.screen.blit(label, (self.width-40, 0))
-
-        pygame.transform.scale2x(self.screen, self.realScreen)
+        pygame.transform.scale(
+            self.screen, self.realScreen.get_size(), self.realScreen)
+        if self.state == 2 and self.menuState == 1:
+            self.realScreen.blit(self.fullscreenButton.render(), (0, 0))
 
         pygame.display.flip()
         return self.fps
@@ -108,6 +127,72 @@ def doubleArraygen(x, y):
             line.append("0")
         array.append(line)
     return array
+
+
+class Menu:
+    def __init__(self):
+        pass
+
+
+class GUIElement:
+    """classe de base pour les éléments interactifs (boutons et compagnie)
+    """
+
+    def __init__(self, size, position, text, background=(0, 0, 0), focusedBackground=(100, 100, 100), font=None, fontSize=10, fontColor=(255, 255, 255)):  # position is for mouse hitbox
+        self.size = size
+        self.focused = 0
+        self.position = position
+        self.text = text
+        self.background = background
+        self.focusedBackground = focusedBackground
+
+        self.surface = pygame.surface.Surface(size)
+        self.font = pygame.font.Font(font, fontSize)
+        self.fontColor = fontColor
+        self.rect = pygame.rect.Rect(position, size)
+
+    def update(self, events):
+        for event in events:
+            if event.type == pygame.MOUSEMOTION:
+                mouse = pygame.rect.Rect(pygame.mouse.get_pos(), (1, 1))
+
+                if mouse.colliderect(self.rect):
+                    self.focused = 1
+                else:
+                    self.focused = 0
+
+    def render(self):
+        background = self.background
+        if self.focused == 1:
+            background = self.focusedBackground
+        self.surface.fill(background)
+
+        # TO DO : center text
+        # self.surface.blit(self.font.render(
+        #    self.text, 0, self.fontColor, background=None), (0, 0))
+        return self.surface
+
+
+class Button(GUIElement):
+    def __init__(self, size, position, text, eventOnClicked, background=(0, 0, 0), focusedBackground=(100, 100, 100), font=None, fontSize=10, fontColor=(...)):
+        self.eventOnClicked = pygame.event.Event(eventOnClicked)
+
+        super().__init__(size, position, text, background=background,
+                         focusedBackground=focusedBackground, font=font, fontSize=fontSize, fontColor=fontColor)
+
+    def update(self, events):
+        for event in events:
+            if event.type == pygame.MOUSEMOTION:
+                mouse = pygame.rect.Rect(pygame.mouse.get_pos(), (1, 1))
+
+                if mouse.colliderect(self.rect):
+                    self.focused = 1
+                else:
+                    self.focused = 0
+            if event.type == pygame.MOUSEBUTTONDOWN:
+
+                if self.focused == 1:
+                    pygame.event.post(self.eventOnClicked)
 
 
 class Carte:
