@@ -18,8 +18,6 @@ back = wall.renderSurface()  # surface carte
 p1 = entities.Player(0, 0, "1")  # joueur
 events = []
 
-mainLoop()
-
 
 def mainLoop():
     while game.state != 0:
@@ -33,3 +31,6 @@ def mainLoop():
         game.waitFramerate(showFps=True)
 
         events = game.runEvents()  # en fin de boucle pour éviter les conflicts
+
+
+mainLoop()
