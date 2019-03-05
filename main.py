@@ -1,8 +1,9 @@
 # coding: utf-8
+import os
+import entities
 import pygame
 import engine
-import entities
-import os
+engine.doubleArraygen()
 game = engine.Engine((1280, 800), framerate=100)
 monitorResolution = game.initialMonitorresolution
 pygame.key.set_repeat(50, 1)
