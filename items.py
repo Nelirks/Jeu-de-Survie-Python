@@ -15,14 +15,14 @@ class Item:
     description = ""
     quantity = 0
 
-    def __init__(self, nom, quantity, texture, description=""):
+    def __init__(self, nom, quantity, texturedir, description=""):
         """
         crée un objet Item pour être utilisé dans l'inventaire,
         il est préférable d'utiliser un objet enfant du type adapté (ex: potion, arme)
         """
         self.nom = nom
         self.description = description
-        self.texture = texture.convert_alpha()
+        self.texture = pygame.image.load(texturedir).convert_alpha()
         self.quantity = quantity
 
     def render(self):
@@ -92,14 +92,15 @@ class ItemContainer :
             self.items.append("0")
 
     def additem(self, itemadded, place): #Ajout d'un item en vérifiant que la case n'est pas vide, si elle est vide, renvoie l'item précedent et sa quantité
-        if self.items[place].quantity != 0 and self.items[place] != "0":
-            if self.items[place].nom == itemadded.nom :
-                self.items[place].quantity += itemadded.quantity
-                return ("It worked !")
-            else : 
-                olditem = self.items[place]
-                self.items[place] = itemadded
-                return (olditem)
+        if self.items[place] != "0":
+            if self.items[place].quantity != 0 :
+                if self.items[place].nom == itemadded.nom :
+                    self.items[place].quantity += itemadded.quantity
+                    return ("It worked !")
+                else : 
+                    olditem = self.items[place]
+                    self.items[place] = itemadded
+                    return (olditem)
         else :
             self.items[place] = itemadded
             return ("It worked !")
@@ -138,4 +139,3 @@ class ItemContainer :
             if self.items[n] != "0" :
                 surfacefinale.blit(self.items[n].texture,(x*34+1,y*34+1))
         return surfacefinale
-

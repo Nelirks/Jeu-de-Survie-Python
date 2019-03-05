@@ -66,10 +66,14 @@ class Player(Entity):
         self.speed = speed
         txname = ["front", "back", "backRight",
                   "backLeft", "right", "left"]
+
         self.inventory = items.ItemContainer(inventorysize)
         self.inventoryweight = inventoryweight
 
-        self.hud = pygame.image.load(os.path.join("assets", "hud", "hud.png")).convert_alpha()
+        self.lefthand = items.ItemContainer(1)
+        self.righthand = items.ItemContainer(1)
+
+        self.hud = pygame.image.load(os.path.join("assets", "hud", "Hud.png")).convert_alpha()
 
         self.textures = dict()
         for a in txname:
@@ -117,8 +121,14 @@ class Player(Entity):
         """
         surface.blit(self.texture, (self.rect.x, self.rect.y))
         surface.blit(self.hud, (0, 192))
+
         inventorysurface = self.inventory.render(self.inventoryweight)
-        surface.blit(inventorysurface, (0, 220))
+        surface.blit(inventorysurface, (154, 206))
+
+        righthandsurface = self.righthand.render(34)
+        lefthandsurface = self.lefthand.render(34)
+        surface.blit(righthandsurface, (362,223))
+        surface.blit(lefthandsurface, (116,223))
 
     def movement(self, wallrects, events):
         # Création d'une liste de déplacements en pixels en fonction de la direction

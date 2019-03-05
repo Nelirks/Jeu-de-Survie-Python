@@ -3,6 +3,7 @@ import pygame
 import engine
 import entities
 import os
+
 game = engine.Engine((1280, 800), framerate=100)
 monitorResolution = game.initialMonitorresolution
 pygame.key.set_repeat(50, 1)
@@ -16,7 +17,6 @@ game = engine.Engine((512, 288),
 game.initialMonitorresolution = monitorResolution
 back = wall.renderSurface()  # surface carte
 p1 = entities.Player(0, 0, "1")  # joueur
-
 
 
 def mainLoop():
