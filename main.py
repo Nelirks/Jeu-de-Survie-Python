@@ -17,14 +17,19 @@ game.initialMonitorresolution = monitorResolution
 back = wall.renderSurface()  # surface carte
 p1 = entities.Player(0, 0, "1")  # joueur
 events = []
-while game.state != 0:
 
-    p1.movement(wall.get_rects(), events)
+mainLoop()
 
-    game.screen.blit(back, (0, 0))
 
-    p1.render(game.screen)
+def mainLoop():
+    while game.state != 0:
 
-    game.waitFramerate(showFps=True)
+        p1.movement(wall.get_rects(), events)
 
-    events = game.runEvents()  # en fin de boucle pour éviter les conflicts
+        game.screen.blit(back, (0, 0))
+
+        p1.render(game.screen)
+
+        game.waitFramerate(showFps=True)
+
+        events = game.runEvents()  # en fin de boucle pour éviter les conflicts
