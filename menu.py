@@ -2,7 +2,7 @@ import pygame
 import main
 import engine
 game = engine.Engine((1280, 720),
-                     (1280, 720), framerate=50)  # fenêtre 1:1 pour les boutons
+                     (1280, 720), framerate=65)  # fenêtre 1:1 pour les boutons
 game.state = 0
 
 playEvent = pygame.USEREVENT + 2
@@ -44,7 +44,7 @@ def mainMenu():
                 game.changeMode((1280, 720), (1280, 720))
                 game.state = 0
 
-        game.waitFramerate(showFps=True)
+        game.waitFramerate()
         events = game.runEvents()
 
 

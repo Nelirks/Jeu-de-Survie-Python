@@ -26,6 +26,6 @@ def mainLoop(game):
 
         p1.render(game.screen)
 
-        game.waitFramerate(showFps=True)
+        game.waitFramerate()
 
         events = game.runEvents()  # en fin de boucle pour éviter les conflicts

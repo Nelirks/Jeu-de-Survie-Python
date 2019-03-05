@@ -125,12 +125,11 @@ class Engine:
         self.last = pygame.time.get_ticks()
         if showFps:
             label = self.fpsfont.render(str(self.fps), 1, (0, 255, 0))
-            self.screen.blit(label, (self.width-40, 0))
+            self.screen.blit(label, (0,0))
         pygame.transform.scale(
             self.screen, self.targetResolution, self.realScreen)
         if self.state == 2 and self.menuState == 1:
             self.menu.render(self.realScreen)
-
         pygame.display.flip()
         return self.fps
 
