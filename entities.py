@@ -69,6 +69,8 @@ class Player(Entity):
         self.inventory = items.ItemContainer(inventorysize)
         self.inventoryweight = inventoryweight
 
+        self.hud = pygame.image.load(os.path.join("assets", "hud", "hud.png")).convert_alpha()
+
         self.textures = dict()
         for a in txname:
             self.textures[a] = pygame.image.load(
@@ -114,8 +116,9 @@ class Player(Entity):
         affichage de l'entité avec la texture sur screen
         """
         surface.blit(self.texture, (self.rect.x, self.rect.y))
+        surface.blit(self.hud, (0, 192))
         inventorysurface = self.inventory.render(self.inventoryweight)
-        surface.blit(inventorysurface, (0, 288-68))
+        surface.blit(inventorysurface, (0, 220))
 
     def movement(self, wallrects, events):
         # Création d'une liste de déplacements en pixels en fonction de la direction

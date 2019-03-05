@@ -16,12 +16,10 @@ game = engine.Engine((512, 288),
 game.initialMonitorresolution = monitorResolution
 back = wall.renderSurface()  # surface carte
 p1 = entities.Player(0, 0, "1")  # joueur
-events = []
-
-mainLoop()
 
 
 def mainLoop():
+    events = []
     while game.state != 0:
 
         p1.movement(wall.get_rects(), events)
@@ -33,3 +31,5 @@ def mainLoop():
         game.waitFramerate(showFps=True)
 
         events = game.runEvents()  # en fin de boucle pour éviter les conflicts
+
+mainLoop()
