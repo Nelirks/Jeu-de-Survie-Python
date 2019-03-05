@@ -10,11 +10,11 @@ creditsEvent = pygame.USEREVENT + 3
 
 
 playButton = engine.Button(
-    (200, 50), (10, 10), "Jouer", playEvent, fontSize=60)
+    (10, 10), (200, 50),  "Jouer", playEvent, fontSize=60)
 creditsButton = engine.Button(
-    (110, 40), (10, 70), "Crédits", creditsEvent, fontSize=40)
+    (10, 70), (110, 40),  "Crédits", creditsEvent, fontSize=40)
 closeButton = engine.Button(
-    (250, 40), (10, 120), "Retour au bureau", pygame.QUIT, fontSize=40)
+    (10, 120), (250, 40),  "Retour au bureau", pygame.QUIT, fontSize=40)
 
 
 def mainMenu():
@@ -54,11 +54,19 @@ def credits():
     font40 = pygame.font.Font(None, 40)
     credit = 1
     game.screen.blit(font40.render("Developpeurs :",
-                                   1, (255, 255, 255)), (500, 10))
+                                   1, (255, 255, 255)), (480, 10))
     game.screen.blit(font40.render(
         "Nils PONSARD", 1, (255, 255, 255)), (510, 40))
     game.screen.blit(font40.render("Raphaël LESBROS",
                                    1, (255, 255, 255)), (510, 70))
+    game.screen.blit(font40.render("Design Visuel :",
+                                   1, (255, 255, 255)), (480, 120))
+    game.screen.blit(font40.render("Raphaël LESBROS",
+                                   1, (255, 255, 255)), (510, 150))
+    game.screen.blit(font40.render("Nils PONSARD",
+                                   1, (255, 255, 255)), (510, 180))
+    game.screen.blit(font40.render("Léo MOUGIN",
+                                   1, (255, 255, 255)), (510, 210))
 
     while credit == 1:
         events = game.runEvents()

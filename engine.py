@@ -48,10 +48,10 @@ class Engine:
         self.fullscreenEvent = pygame.USEREVENT + 1
         self.mainMenuEvent = pygame.USEREVENT + 4  # voir menu.py pour le +4
         self.fullscreenButton = Button(
-            (300, 40), (490, 20), "Plein Écran", self.fullscreenEvent, fontSize=30)
+            (490, 20),(300, 40),  "Plein Écran", self.fullscreenEvent, fontSize=30, background=(44, 62, 80,255),focusedBackground=(84,102,80,255))
         self.quitButton = Button(
-            (300, 40), (490, 70), "Retour au menu principal", self.mainMenuEvent, fontSize=30)
-
+            (490, 70), (300, 40),  "Retour au menu principal", self.mainMenuEvent, fontSize=30, background=(44, 62, 80,255),focusedBackground=(84,102,80,255))
+        self.menu = Menu((480,10),(320,110),(self.fullscreenButton,self.quitButton))
     def changeMode(self, renderResolution, targetResolution):
         if self.fullscreen == 1:
             self.realScreen = pygame.display.set_mode(
@@ -65,8 +65,7 @@ class Engine:
 
     def runEvents(self):
         events = pygame.event.get()
-        self.fullscreenButton.update(events)
-        self.quitButton.update(events)
+        self.menu.update(events)
         for event in events:
             if event.type == self.mainMenuEvent:
                 self.state = 0
@@ -130,10 +129,7 @@ class Engine:
         pygame.transform.scale(
             self.screen, self.targetResolution, self.realScreen)
         if self.state == 2 and self.menuState == 1:
-            self.realScreen.blit(self.fullscreenButton.render(),
-                                 self.fullscreenButton.position)
-            self.realScreen.blit(self.quitButton.render(),
-                                 self.quitButton.position)
+            self.menu.render(self.realScreen)
 
         pygame.display.flip()
         return self.fps
@@ -154,15 +150,27 @@ def doubleArraygen(x, y):
 
 
 class Menu:
-    def __init__(self):
-        pass
+    def __init__(self,position,size,elements = [],background = (0,0,0,255)):
+        self.elements = elements
+        self.size = size
+        self.position = position
+        self.background = background
+        self.rect = pygame.rect.Rect(position,size)
+    def update (self,events):
+        for element in self.elements :
+            element.update(events)
+    def render(self,surface):
+        pygame.draw.rect(surface,self.background,self.rect)
+        for element in self.elements:
+            surface.blit(element.render(),element.position)
+
 
 
 class GUIElement:
     """classe de base pour les éléments interactifs (boutons et compagnie)
     """
 
-    def __init__(self, size, position, text, background=(0, 0, 0, 0), focusedBackground=(100, 100, 100, 50), font=None, fontSize=10, fontColor=(255, 255, 255, 255)):  # position is for mouse hitbox
+    def __init__(self, position, size, text, background=(0, 0, 0, 0), focusedBackground=(100, 100, 100, 50), font=None, fontSize=10, fontColor=(255, 255, 255, 255)):  # position is for mouse hitbox
         self.size = size
         self.focused = 0
         self.position = position
@@ -170,7 +178,8 @@ class GUIElement:
         self.background = background
         self.focusedBackground = focusedBackground
 
-        self.surface = pygame.surface.Surface(size)
+        self.surface = pygame.surface.Surface(
+            size, pygame.SRCALPHA, 32).convert_alpha()
         self.font = pygame.font.Font(font, fontSize)
         self.fontColor = fontColor
         self.rect = pygame.rect.Rect(position, size)
@@ -194,16 +203,16 @@ class GUIElement:
         # TO DO : center text
         color = pygame.color.Color(
             self.fontColor[0], self.fontColor[1], self.fontColor[2], self.fontColor[3])
-        font = self.font.render(self.text, 1, color)
+        font = self.font.render(self.text, 1, color).convert_alpha()
         self.surface.blit(font, (2, 2))
         return self.surface
 
 
 class Button(GUIElement):
-    def __init__(self, size, position, text, eventOnClicked, background=(0, 0, 0, 0), focusedBackground=(100, 100, 100, 50), font=None, fontSize=20, fontColor=(255, 255, 255, 255)):
+    def __init__(self, position, size, text, eventOnClicked, background=(0, 0, 0, 0), focusedBackground=(100, 100, 100, 50), font=None, fontSize=20, fontColor=(255, 255, 255, 255)):
         self.eventOnClicked = pygame.event.Event(eventOnClicked)
 
-        super().__init__(size, position, text, background=background,
+        super().__init__(position, size, text, background=background,
                          focusedBackground=focusedBackground, font=font, fontSize=fontSize, fontColor=fontColor)
 
     def update(self, events):
