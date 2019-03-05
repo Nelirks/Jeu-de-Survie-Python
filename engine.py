@@ -27,14 +27,15 @@ class Engine:
         """
         self.menuState = 0
         self.width, self.height = resolution
-        self.fullscreenResolution = (1280, 720)
+        self.fullscreenResolution = targetResolution
         self.resolution = (self.width*2, self.height*2)
+        self.targetResolution = targetResolution
         self.fullscreen = 0
         pygame.init()
         self.initialMonitorresolution = (
             pygame.display.Info().current_w, pygame.display.Info().current_h)
         self.realScreen = pygame.display.set_mode(
-            (resolution[0]*2, resolution[1]*2))
+            (resolution[0]*2, resolution[1]*2), pygame.NOFRAME)
         self.screen = pygame.surface.Surface(resolution)
         self.state = 1
         self.fpsfont = pygame.font.SysFont("monospace", 15)
@@ -45,11 +46,14 @@ class Engine:
     def initMenu(self):
         self.fullscreenEvent = pygame.USEREVENT + 1
         self.fullscreenButton = Button(
-            (100, 20), (0, 0), "fullscreen", self.fullscreenEvent, fontSize=30)
+            (150, 40), (437, 20), "fullscreen", self.fullscreenEvent, fontSize=30)
+        self.quitButton = Button(
+            (150, 40), (437, 70), "QUIT", pygame.QUIT, fontSize=30)
 
     def runEvents(self):
         events = pygame.event.get()
         self.fullscreenButton.update(events)
+        self.quitButton.update(events)
         for event in events:
             if event.type == self.fullscreenEvent:
                 if self.fullscreen == 0:
@@ -58,7 +62,7 @@ class Engine:
                     self.fullscreen = 1
                 else:
                     pygame.display.set_mode(
-                        (self.screen.get_size()[0]*2, self.screen.get_size()[1]*2))
+                        self.targetResolution, pygame.NOFRAME)
                     self.fullscreen = 0
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_F11:
@@ -68,13 +72,15 @@ class Engine:
                         self.fullscreen = 1
                     else:
                         pygame.display.set_mode(
-                            (self.screen.get_size()[0]*2, self.screen.get_size()[1]*2))
+                            self.targetResolution, pygame.NOFRAME)
                         self.fullscreen = 0
 
                 if event.key == pygame.K_ESCAPE:
                     if self.state == 1:
                         self.state = 2  # pause
                         self.menuState = 1
+                    elif self.state == 0:
+                        pygame.event.post(pygame.QUIT)
                     elif self.state == 2:
                         if self.menuState == 1:
                             self.state = 1
@@ -82,9 +88,9 @@ class Engine:
                         else:
                             self.menuState -= 1
                 if event.key == pygame.K_F12:
-                    self.state = 0
+                    self.state = -1
             if event.type == pygame.QUIT:
-                self.state = 0
+                self.state = -1
         if self.state == 2:  # si le jeu est en pause
             return []
         else:
@@ -109,7 +115,10 @@ class Engine:
         pygame.transform.scale(
             self.screen, self.realScreen.get_size(), self.realScreen)
         if self.state == 2 and self.menuState == 1:
-            self.realScreen.blit(self.fullscreenButton.render(), (0, 0))
+            self.realScreen.blit(self.fullscreenButton.render(),
+                                 self.fullscreenButton.position)
+            self.realScreen.blit(self.quitButton.render(),
+                                 self.quitButton.position)
 
         pygame.display.flip()
         return self.fps
@@ -171,7 +180,7 @@ class GUIElement:
         color = pygame.color.Color(
             self.fontColor[0], self.fontColor[1], self.fontColor[2], self.fontColor[3])
         font = self.font.render(self.text, 0, color)
-        self.surface.blit(font, (0, 0))
+        self.surface.blit(font, (2, 2))
         return self.surface
 
 
