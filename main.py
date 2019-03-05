@@ -18,6 +18,7 @@ back = wall.renderSurface()  # surface carte
 p1 = entities.Player(0, 0, "1")  # joueur
 
 
+
 def mainLoop():
     events = []
     while game.state != 0:
