@@ -2,6 +2,7 @@
 import os
 import entities
 import pygame
+import menu
 import engine
 pygame.init()
 pygame.key.set_repeat(50, 1)
@@ -18,8 +19,7 @@ def mainLoop(game):
     p1 = entities.Player(0, 0, "1")  # joueur
 
     events = []
-    while game.state != -1:
-
+    while game.state == 1 or game.state == 2:  # en jeu ou dans le menu pause
         p1.movement(wall.get_rects(), events)
 
         game.screen.blit(back, (0, 0))

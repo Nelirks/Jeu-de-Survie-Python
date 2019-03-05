@@ -6,6 +6,7 @@ import time
 import os
 import pickle
 import entities
+import menu
 
 
 class Engine:
@@ -28,7 +29,7 @@ class Engine:
         self.menuState = 0
         self.width, self.height = resolution
         self.fullscreenResolution = targetResolution
-        self.resolution = (self.width*2, self.height*2)
+        self.resolution = resolution
         self.targetResolution = targetResolution
         self.fullscreen = 0
         pygame.init()
@@ -45,17 +46,31 @@ class Engine:
 
     def initMenu(self):
         self.fullscreenEvent = pygame.USEREVENT + 1
+        self.mainMenuEvent = pygame.USEREVENT + 4  # voir menu.py pour le +4
         self.fullscreenButton = Button(
-            (150, 40), (437, 20), "fullscreen", self.fullscreenEvent, fontSize=30)
+            (300, 40), (490, 20), "Plein Écran", self.fullscreenEvent, fontSize=30)
         self.quitButton = Button(
-            (150, 40), (437, 70), "QUIT", pygame.QUIT, fontSize=30)
+            (300, 40), (490, 70), "Retour au menu principal", self.mainMenuEvent, fontSize=30)
+
+    def changeMode(self, renderResolution, targetResolution):
+        if self.fullscreen == 1:
+            self.realScreen = pygame.display.set_mode(
+                targetResolution, pygame.FULLSCREEN)
+        else:
+            self.realScreen = pygame.display.set_mode(
+                targetResolution, pygame.NOFRAME)
+        self.resolution = renderResolution
+        self.targetResolution = targetResolution
+        self.screen = pygame.surface.Surface(renderResolution)
 
     def runEvents(self):
         events = pygame.event.get()
         self.fullscreenButton.update(events)
         self.quitButton.update(events)
         for event in events:
-            if event.type == self.fullscreenEvent:
+            if event.type == self.mainMenuEvent:
+                self.state = 0
+            elif event.type == self.fullscreenEvent:
                 if self.fullscreen == 0:
                     pygame.display.set_mode(
                         self.fullscreenResolution, pygame.FULLSCREEN)
@@ -64,7 +79,7 @@ class Engine:
                     pygame.display.set_mode(
                         self.targetResolution, pygame.NOFRAME)
                     self.fullscreen = 0
-            if event.type == pygame.KEYUP:
+            elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_F11:
                     if self.fullscreen == 0:
                         pygame.display.set_mode(
@@ -89,7 +104,7 @@ class Engine:
                             self.menuState -= 1
                 if event.key == pygame.K_F12:
                     self.state = -1
-            if event.type == pygame.QUIT:
+            elif event.type == pygame.QUIT:
                 self.state = -1
         if self.state == 2:  # si le jeu est en pause
             return []
@@ -113,7 +128,7 @@ class Engine:
             label = self.fpsfont.render(str(self.fps), 1, (0, 255, 0))
             self.screen.blit(label, (self.width-40, 0))
         pygame.transform.scale(
-            self.screen, self.realScreen.get_size(), self.realScreen)
+            self.screen, self.targetResolution, self.realScreen)
         if self.state == 2 and self.menuState == 1:
             self.realScreen.blit(self.fullscreenButton.render(),
                                  self.fullscreenButton.position)
@@ -179,7 +194,7 @@ class GUIElement:
         # TO DO : center text
         color = pygame.color.Color(
             self.fontColor[0], self.fontColor[1], self.fontColor[2], self.fontColor[3])
-        font = self.font.render(self.text, 0, color)
+        font = self.font.render(self.text, 1, color)
         self.surface.blit(font, (2, 2))
         return self.surface
 
@@ -235,13 +250,14 @@ class Carte:
     blockingTiles = ["0"]
     textures = dict()
 
-    def __init__(self, path, mode="load", dimensions=(10, 10), tileSize=32, setNum="-1"):
+    def __init__(self, path, mode="load", dimensions=(10, 10), tileSize=32, setNum="-1", blockingTiles=["0"]):
         """
         __init__(path, mode="load", dimensions=(10, 10), tileSize=64)  : création de l'objet carte
             path : chemin d'accès ,
             mode : ["load" / "new" / "edit" ] charger / créer / éditer , charger (load) par défaut
             dimensions : taille en x et y
         """
+        self.blockingTiles = blockingTiles
         self.grid = []
         self.tileSize = tileSize
         self.path = path
