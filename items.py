@@ -139,5 +139,3 @@ class ItemContainer :
                 surfacefinale.blit(self.items[n].texture,(x*34+1,y*34+1))
         return surfacefinale
 
-
-
