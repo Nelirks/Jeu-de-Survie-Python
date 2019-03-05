@@ -20,8 +20,8 @@ def mapEditor(carte):
     we = carte.tileSize*2  # réserve entités
     y = 0
     height = carte.height
-    if carte.height < carte.tileSize * 10:
-        height = carte.tileSize * 10
+    if carte.height < carte.tileSize * 5:
+        height = carte.tileSize * 5
 
     for t in carte.textures:  # déterminer le nombre de colonnes
         if y >= height:
@@ -35,8 +35,8 @@ def mapEditor(carte):
             we += carte.tileSize*2
             y = 0
         y += carte.tileSize*2
-    e = engine.Engine((carte.width+ws + we, carte.height),
-                      ((carte.width+ws + we)*2, carte.height*2))
+    e = engine.Engine((carte.width+ws + we, height),
+                      ((carte.width+ws + we)*2, height*2))
     textures = carte.textures
     entites = entities.entitiesList
     Selected = 0

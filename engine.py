@@ -45,7 +45,7 @@ class Engine:
     def initMenu(self):
         self.fullscreenEvent = pygame.USEREVENT + 1
         self.fullscreenButton = Button(
-            (100, 20), (0, 0), "fullscreen", self.fullscreenEvent)
+            (100, 20), (0, 0), "fullscreen", self.fullscreenEvent, fontSize=30)
 
     def runEvents(self):
         events = pygame.event.get()
@@ -138,7 +138,7 @@ class GUIElement:
     """classe de base pour les éléments interactifs (boutons et compagnie)
     """
 
-    def __init__(self, size, position, text, background=(0, 0, 0), focusedBackground=(100, 100, 100), font=None, fontSize=10, fontColor=(255, 255, 255)):  # position is for mouse hitbox
+    def __init__(self, size, position, text, background=(0, 0, 0), focusedBackground=(100, 100, 100), font=None, fontSize=10, fontColor=(255, 255, 255, 255)):  # position is for mouse hitbox
         self.size = size
         self.focused = 0
         self.position = position
@@ -168,13 +168,15 @@ class GUIElement:
         self.surface.fill(background)
 
         # TO DO : center text
-        # self.surface.blit(self.font.render(
-        #    self.text, 0, self.fontColor, background=None), (0, 0))
+        color = pygame.color.Color(
+            self.fontColor[0], self.fontColor[1], self.fontColor[2], self.fontColor[3])
+        font = self.font.render(self.text, 0, color)
+        self.surface.blit(font, (0, 0))
         return self.surface
 
 
 class Button(GUIElement):
-    def __init__(self, size, position, text, eventOnClicked, background=(0, 0, 0), focusedBackground=(100, 100, 100), font=None, fontSize=10, fontColor=(...)):
+    def __init__(self, size, position, text, eventOnClicked, background=(0, 0, 0), focusedBackground=(100, 100, 100), font=None, fontSize=20, fontColor=(255, 255, 255, 255)):
         self.eventOnClicked = pygame.event.Event(eventOnClicked)
 
         super().__init__(size, position, text, background=background,

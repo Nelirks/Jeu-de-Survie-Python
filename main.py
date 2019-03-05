@@ -9,9 +9,10 @@ pygame.key.set_repeat(50, 1)
 
 wall = engine.Carte(os.path.join("assets", "levels", "test"),
                     mode="load")  # objet carte
-
-game = engine.Engine((wall.width, wall.height+68),
-                     (wall.width*2, (wall.height+68)*2), framerate=50)  # fenêtre
+# résolution du rendu :512*288
+# résolution cible : 1024*576
+game = engine.Engine((512, 288),
+                     (1024, 576), framerate=50)  # fenêtre
 game.initialMonitorresolution = monitorResolution
 back = wall.renderSurface()  # surface carte
 p1 = entities.Player(0, 0, "1")  # joueur
