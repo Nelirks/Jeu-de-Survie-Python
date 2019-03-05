@@ -35,7 +35,7 @@ class Engine:
         self.initialMonitorresolution = (
             pygame.display.Info().current_w, pygame.display.Info().current_h)
         self.realScreen = pygame.display.set_mode(
-            (resolution[0]*2, resolution[1]*2), pygame.NOFRAME)
+            targetResolution, pygame.NOFRAME)
         self.screen = pygame.surface.Surface(resolution)
         self.state = 1
         self.fpsfont = pygame.font.SysFont("monospace", 15)
@@ -80,7 +80,7 @@ class Engine:
                         self.state = 2  # pause
                         self.menuState = 1
                     elif self.state == 0:
-                        pygame.event.post(pygame.QUIT)
+                        pygame.event.post(pygame.event.Event(pygame.QUIT))
                     elif self.state == 2:
                         if self.menuState == 1:
                             self.state = 1
@@ -147,7 +147,7 @@ class GUIElement:
     """classe de base pour les éléments interactifs (boutons et compagnie)
     """
 
-    def __init__(self, size, position, text, background=(0, 0, 0), focusedBackground=(100, 100, 100), font=None, fontSize=10, fontColor=(255, 255, 255, 255)):  # position is for mouse hitbox
+    def __init__(self, size, position, text, background=(0, 0, 0, 0), focusedBackground=(100, 100, 100, 50), font=None, fontSize=10, fontColor=(255, 255, 255, 255)):  # position is for mouse hitbox
         self.size = size
         self.focused = 0
         self.position = position
@@ -185,7 +185,7 @@ class GUIElement:
 
 
 class Button(GUIElement):
-    def __init__(self, size, position, text, eventOnClicked, background=(0, 0, 0), focusedBackground=(100, 100, 100), font=None, fontSize=20, fontColor=(255, 255, 255, 255)):
+    def __init__(self, size, position, text, eventOnClicked, background=(0, 0, 0, 0), focusedBackground=(100, 100, 100, 50), font=None, fontSize=20, fontColor=(255, 255, 255, 255)):
         self.eventOnClicked = pygame.event.Event(eventOnClicked)
 
         super().__init__(size, position, text, background=background,
