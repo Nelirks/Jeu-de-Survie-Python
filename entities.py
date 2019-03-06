@@ -23,6 +23,8 @@ class Entity:
         self.texture = texture.convert_alpha()
         self.rect = pygame.rect.Rect(
             x, y, texture.get_rect().width, texture.get_rect().height)
+        self.life = life
+        self.maxlife = life
 
     def render(self, surface):
         """
@@ -56,7 +58,7 @@ class Player(Entity):
         "up": pygame.K_UP
     }
 
-    def __init__(self, x, y, setNum, speed=2, inventoryweight=204, inventorysize=12):
+    def __init__(self, x, y, setNum, hunger = 100, thirst = 100, life = 100, speed=2, inventoryweight=204, inventorysize=12):
         """
         création de l'entitée joueur :
         le nom du set (setNum) correspond à un dossier dans les assets avec le nom du set et à l'intérieur les textures
@@ -74,19 +76,25 @@ class Player(Entity):
         self.lefthand = items.ItemContainer(1)
         self.righthand = items.ItemContainer(1)
 
-        self.hud = pygame.image.load(os.path.join(
-            "assets", "hud", "Hud.png")).convert_alpha()
+        self.hunger = hunger
+        self.thirst = thirst
+        self.maxhunger = hunger
+        self.maxthirst = thirst
 
         self.levelColor = (100, 100, 100)
         self.hud = pygame.image.load(os.path.join(
-            "assets", "hud", "Hud.png")).convert_alpha()
+            "assets", "hud", "HudBorders.png")).convert_alpha()
+        self.hudbackground = pygame.image.load(os.path.join("assets", "hud", "Fond Hud.png")).convert_alpha()
+        self.lifebar = pygame.image.load(os.path.join("assets", "hud", "PV.png")).convert_alpha()
+        self.hungerbar = pygame.image.load(os.path.join("assets", "hud", "hunger.png")).convert_alpha()
+        self.thirstbar = pygame.image.load(os.path.join("assets", "hud", "thirst.png")).convert_alpha()
 
         self.textures = dict()
         for a in txname:
             self.textures[a] = pygame.image.load(
                 os.path.join(path, a+".png")).convert_alpha()
 
-        super().__init__(x, y, self.textures["front"])
+        super().__init__(x, y, self.textures["front"],life)
 
     def setFace(self, face):
         """
@@ -125,12 +133,20 @@ class Player(Entity):
         """
         affichage de l'entité avec la texture sur screen
         """
-        surface.blit(self.texture, (self.rect.x, self.rect.y))
-        surface.blit(self.hud, (0, 192))
+        surface.blit(self.hudbackground,(0,192)) #Affichage de background du hud
 
-        inventorysurface = self.inventory.render(self.inventoryweight)
-        surface.blit(inventorysurface, (154, 206))
+        surface.blit(self.texture, (self.rect.x, self.rect.y)) #Affichage du personnage
+        surface.blit(self.hud, (0, 192)) #affichage du hud vide
 
+        #Affichage des barres de vie, faim et soif en fonction de leurs valeurs
+        surface.blit(self.lifebar.subsurface(pygame.rect.Rect((111-111*self.life//self.maxlife,0),(111*self.life//self.maxlife,67))),(111-111*self.life//self.maxlife, 207))
+        surface.blit(self.hungerbar.subsurface(pygame.rect.Rect((0,0),(111*self.hunger//self.maxhunger,57))),(401, 207))
+        surface.blit(self.thirstbar.subsurface(pygame.rect.Rect((0,0),(111*self.thirst//self.maxthirst,34))),(401, 240))
+
+        inventorysurface = self.inventory.render(self.inventoryweight) #Création de l'image du contenu de l'inventaire
+        surface.blit(inventorysurface, (154, 206)) #Affichage de cette surface
+
+        #Meme chose pour les contenus de chaque main
         righthandsurface = self.righthand.render(34)
         lefthandsurface = self.lefthand.render(34)
         surface.blit(righthandsurface, (362, 223))
