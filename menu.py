@@ -1,5 +1,6 @@
 import pygame
 import main
+import os
 import engine
 game = engine.Engine((1280, 720),
                      (1280, 720), framerate=65)  # fenêtre 1:1 pour les boutons
@@ -22,6 +23,8 @@ def mainMenu():
     game.state = 0
     game.changeMode((1280, 720), (1280, 720))
     events = []
+    pygame.mixer_music.load(os.path.join("assets", "music", "main_Menu.mp3"))
+    pygame.mixer_music.play(-1)
     while game.state == 0:
         playButton.update(events)
         creditsButton.update(events)
@@ -37,11 +40,15 @@ def mainMenu():
                 game.changeMode((1280, 720), (1280, 720))
                 game.state = 0
             if event.type == playEvent:
+                pygame.mixer_music.fadeout(1000)
                 game.state = 1
                 # fenêtre pour le jeu
                 game.changeMode((512, 288), (1280, 720))
                 main.mainLoop(game)
                 game.changeMode((1280, 720), (1280, 720))
+                pygame.mixer_music.load(os.path.join(
+                    "assets", "music", "main_Menu.mp3"))
+                pygame.mixer_music.play(-1)
                 game.state = 0
 
         game.waitFramerate()

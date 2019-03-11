@@ -258,7 +258,7 @@ class Carte:
     blockingTiles = ["0"]
     textures = dict()
 
-    def __init__(self, path, mode="load", dimensions=(10, 10), tileSize=32, setNum="-1", blockingTiles=["0"]):
+    def __init__(self, path, mode="load", dimensions=(10, 10), tileSize=32, setNum="-1", blockingTiles=["0"],playerPosition=(0,0)):
         """
         __init__(path, mode="load", dimensions=(10, 10), tileSize=64)  : création de l'objet carte
             path : chemin d'accès ,
@@ -284,7 +284,11 @@ class Carte:
             self.size = [int(self.size[0]), int(self.size[1])]
             self.width = self.size[0]*self.tileSize
             self.height = self.size[1]*self.tileSize
-            self.setNum = info.readline()
+            self.setNum = int(info.readline().split(" ")[0])
+            pPosStr = info.readline()
+            px = int( pPosStr.split(" ")[0])
+            py = int(pPosStr.split(" ")[1])
+            self.playerPosition = (px,py)
             info.close()
 
             solid = open(os.path.join(path, "solid"), "rb")  # grille "solide"
@@ -306,6 +310,7 @@ class Carte:
             self.width = dimensions[0] * self.tileSize
             self.height = dimensions[1] * self.tileSize
             self.setNum = setNum
+            self.playerPosition= playerPosition
             self.loadTextures()
         elif mode == "edit":
             info = open(os.path.join(path, "info"),
@@ -314,7 +319,11 @@ class Carte:
             self.size = [int(self.size[0]), int(self.size[1])]
             self.width = self.size[0]*self.tileSize
             self.height = self.size[1]*self.tileSize
-            self.setNum = info.readline()
+            self.setNum = int(info.readline().split(" ")[0])
+            pPosStr = info.readline()
+            px = int(pPosStr.split(" ")[0])
+            py = int(pPosStr.split(" ")[1])
+            self.playerPosition = (px,py)
             info.close()
 
             solid = open(os.path.join(path, "solid"), "rb")  # grille "solide"
@@ -385,7 +394,8 @@ class Carte:
         info = open(os.path.join(self.path, "info"),
                     "w")  # sauvagarder les infos
         info.write("{} {}\n".format(self.size[0], self.size[1]))
-        info.write(self.setNum)
+        info.write("{} \n".format(self.setNum))
+        info.write("{} {} ".format(self.playerPosition[0],self.playerPosition[1]))
         info.close()
 
         solid = open(os.path.join(
