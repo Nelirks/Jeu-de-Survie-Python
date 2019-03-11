@@ -86,8 +86,8 @@ class Player(Entity):
             "assets", "hud", "HudBorders.png")).convert_alpha()
         self.hudbackground = pygame.image.load(os.path.join("assets", "hud", "Fond Hud.png")).convert_alpha()
         self.lifebar = pygame.image.load(os.path.join("assets", "hud", "PV.png")).convert_alpha()
-        self.hungerbar = pygame.image.load(os.path.join("assets", "hud", "hunger.png")).convert_alpha()
-        self.thirstbar = pygame.image.load(os.path.join("assets", "hud", "thirst.png")).convert_alpha()
+        self.hungerbar = pygame.image.load(os.path.join("assets", "hud", "Hunger.png")).convert_alpha()
+        self.thirstbar = pygame.image.load(os.path.join("assets", "hud", "Thirst.png")).convert_alpha()
 
         self.textures = dict()
         for a in txname:
