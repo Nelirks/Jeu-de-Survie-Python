@@ -84,7 +84,7 @@ class Player(Entity):
         self.levelColor = (100, 100, 100)
         self.hud = pygame.image.load(os.path.join(
             "assets", "hud", "HudBorders.png")).convert_alpha()
-        self.hudbackground = pygame.image.load(os.path.join("assets", "hud", "Fond Hud.png")).convert_alpha()
+        self.hudbackground = pygame.image.load(os.path.join("assets", "hud", "HudBackground.png")).convert_alpha()
         self.lifebar = pygame.image.load(os.path.join("assets", "hud", "PV.png")).convert_alpha()
         self.hungerbar = pygame.image.load(os.path.join("assets", "hud", "hunger.png")).convert_alpha()
         self.thirstbar = pygame.image.load(os.path.join("assets", "hud", "thirst.png")).convert_alpha()
