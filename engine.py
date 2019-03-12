@@ -65,7 +65,8 @@ class Engine:
 
     def runEvents(self):
         events = pygame.event.get()
-        self.menu.update(events)
+        if self.state == 2:
+            self.menu.update(events)
         for event in events:
             if event.type == self.mainMenuEvent:
                 self.state = 0
@@ -105,10 +106,10 @@ class Engine:
                     self.state = -1
             elif event.type == pygame.QUIT:
                 self.state = -1
-        if self.state == 2:  # si le jeu est en pause
-            return []
-        else:
-            return events
+        #if self.state == 2:  # si le jeu est en pause
+        #    return []
+        #else:
+        return events
 
     def waitFramerate(self, showFps=False):
 

@@ -4,6 +4,7 @@ import os
 import items
 import random
 
+
 PlayerFaces = {"right": 0, "down": 1, "left": 2, "up": 3}
 
 
@@ -34,6 +35,11 @@ class Entity:
 
     def takeDamage(self, damage):
         self.life -= damage  # Todo : ajouter du random
+        if self.life >= self.maxlife :
+            self.life = self.maxlife
+        elif self.life <=0:
+            self.life = 0
+                        
 
     def takeMagicDamage(self, magicDamage, mDamageType):
         # à faire : résistance / faiblesse éléments
@@ -152,7 +158,23 @@ class Player(Entity):
         surface.blit(righthandsurface, (362, 223))
         surface.blit(lefthandsurface, (116, 223))
 
-    def movement(self, wallrects, events):
+    def changehunger(self, change) :
+        self.hunger += change
+        if self.hunger >= self.maxhunger :
+            self.hunger = self.maxhunger
+        elif self.hunger <=0:
+            self.hunger = 0
+            self.life -= 0.1
+
+    def changethirst(self, change) :
+        self.thirst += change
+        if self.thirst >= self.maxthirst :
+            self.thirst = self.maxthirst
+        elif self.thirst <=0:
+            self.thirst = 0
+            self.life -= 0.1
+
+    def update(self, wallrects, events):
         # Création d'une liste de déplacements en pixels en fonction de la direction
         move = [(self.speed, 0),
                 (0, self.speed), (-self.speed, 0), (0, -self.speed)]
@@ -184,47 +206,10 @@ class Player(Entity):
                     # permet le déplacement si aucune collision n'est possible
                     # déplace le personnage si il le veut et le peut
                     self.rect = self.rect.move(move[n])
-
-    """ 
-    def update(self, events):
-        # prend comme argument tous les évenements et prends les touches de mouvement
-        for event in events:
-            if event.type == pygame.KEYDOWN:
-                if event.key == self.keyConfig["left"]:
-                    self.setFace(PlayerFaces["left"])
-                    self.direction[2] = 1
-                if event.key == self.keyConfig["up"]:
-                    self.setFace(PlayerFaces["up"])
-                    self.direction[3] = 1
-                if event.key == self.keyConfig["down"]:
-                    self.setFace(PlayerFaces["down"])
-                    self.direction[1] = 1
-                if event.key == self.keyConfig["right"]:
-                    self.setFace(PlayerFaces["right"])
-                    self.direction[0] = 1
-            if event.type == pygame.KEYUP:
-                if event.key == self.keyConfig["left"]:
-                    self.direction[2] = 0
-                    self.setFace(self.findDirection(self.direction, 2))
-                if event.key == self.keyConfig["up"]:
-                    self.direction[3] = 0
-                    self.setFace(self.findDirection(self.direction, 3))
-                if event.key == self.keyConfig["down"]:
-                    self.direction[1] = 0
-                    self.setFace(self.findDirection(self.direction, 1))
-                if event.key == self.keyConfig["right"]:
-                    self.direction[0] = 0
-                    self.setFace(self.findDirection(self.direction, 0))
-        # applique les mouvements
-        if self.direction[0] == 1:
-            self.x += self.speed
-        if self.direction[2] == 1:
-            self.x -= self.speed
-        if self.direction[1] == 1:
-            self.y += self.speed
-        if self.direction[3] == 1:
-            self.y -= self.speed
-    """
+        
+        #Diminution de la nourriture et de la soif
+        self.changehunger(-0.1)
+        self.changethirst(-0.2)
 
 
 class Collectable(Entity):

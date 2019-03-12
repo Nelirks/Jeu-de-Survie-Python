@@ -42,6 +42,10 @@ class Consommable(Item) :
         self.buff = buff
         super().__init__(nom, texture, description)
 
+class Pomme(Consommable):
+    def __init__(self):
+        super().__init__("Pomme", os.path.join("assets", "items", "Apple.png"), 10, 25, 10)
+
 class Weapon(Item):
     """
     Classe arme : un item avec une caratéristique de dégats
@@ -139,3 +143,4 @@ class ItemContainer :
             if self.items[n] != "0" :
                 surfacefinale.blit(self.items[n].texture,(x*34+1,y*34+1))
         return surfacefinale
+
