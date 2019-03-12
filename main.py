@@ -15,8 +15,12 @@ def mainLoop(game):
     wall = engine.Carte(os.path.join("assets", "levels", "test"),
                         mode="load")  # objet carte
     back = wall.renderSurface()  # surface carte
-
-    p1 = entities.Player(0, 0, "1")  # joueur
+    print(wall.playerPosition)
+    px = wall.playerPosition[0] * wall.tileSize
+    py = wall.playerPosition[1] * wall.tileSize
+    print(px, py)
+    p1 = entities.Player(
+        px, py, "1")  # joueur
 
     events = []
     while game.state == 1 or game.state == 2:  # en jeu ou dans le menu pause
