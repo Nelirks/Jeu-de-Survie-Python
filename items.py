@@ -35,16 +35,16 @@ class Item:
 
 class Consommable(Item) :
     #Classe consommmable : Item avec des effets quand il est consommé
-    def __init__(self, nom, texture, lifegain = 0, hungergain = 0, thirstgain = 0, buff = "", description = "") :
+    def __init__(self, nom, quantity, texture, lifegain = 0, hungergain = 0, thirstgain = 0, buff = "", description = "") :
         self.lifegain = lifegain
         self.hungergain = hungergain
         self.thirstgain = thirstgain
         self.buff = buff
-        super().__init__(nom, texture, description)
+        super().__init__(nom, quantity, texture, description)
 
 class Pomme(Consommable):
-    def __init__(self):
-        super().__init__("Pomme", os.path.join("assets", "items", "Apple.png"), 10, 25, 10)
+    def __init__(self, quantity):
+        super().__init__("Pomme", quantity, os.path.join("assets", "items", "Apple.png"), 10, 25, 10)
 
 class Weapon(Item):
     """
@@ -95,16 +95,25 @@ class ItemContainer :
         for n in range (sizeup):
             self.items.append("0")
 
-    def additem(self, itemadded, place): #Ajout d'un item en vérifiant que la case n'est pas vide, si elle est vide, renvoie l'item précedent et sa quantité
-        if self.items[place] != "0":
-            if self.items[place].quantity != 0 :
-                if self.items[place].nom == itemadded.nom :
-                    self.items[place].quantity += itemadded.quantity
-                    return ("It worked !")
-                else : 
-                    olditem = self.items[place]
-                    self.items[place] = itemadded
-                    return (olditem)
+#Fonction permettant : l'ajout d'un item en donnant l'item et sa position, ou l'ajout d'un item dans la première case libre en donnant -1 comme position.
+    def additem(self, itemadded, place): 
+        if place == -1 : 
+            for n in range (len(self.items)) :
+                if self.items[n] == "0":
+                    self.items[n] = itemadded
+                    break
+                if self.items[n].nom == itemadded.nom :
+                    self.items[n].quantity += itemadded.quantity
+                    break
+
+        elif self.items[place] != "0":
+            if self.items[place].nom == itemadded.nom :
+                self.items[place].quantity += itemadded.quantity
+                return ("It worked !")
+            else : 
+                olditem = self.items[place]
+                self.items[place] = itemadded
+                return (olditem)
         else :
             self.items[place] = itemadded
             return ("It worked !")
