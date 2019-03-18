@@ -2,6 +2,7 @@
 import pygame
 from math import ceil
 import os
+import copy
 
 CONST_TileItemSize = 16
 
@@ -96,49 +97,51 @@ class ItemContainer :
             self.items.append("0")
 
 #Fonction permettant : l'ajout d'un item en donnant l'item et sa position, ou l'ajout d'un item dans la première case libre en donnant -1 comme position.
-    def additem(self, itemadded, place): 
-        if place == -1 : 
-            for n in range (len(self.items)) :
-                if self.items[n] == "0":
-                    self.items[n] = itemadded
-                    break
-                if self.items[n].nom == itemadded.nom :
-                    self.items[n].quantity += itemadded.quantity
-                    break
-
-        elif self.items[place] != "0":
-            if self.items[place].nom == itemadded.nom :
-                self.items[place].quantity += itemadded.quantity
-                return ("It worked !")
-            else : 
-                olditem = self.items[place]
-                self.items[place] = itemadded
-                return (olditem)
-        else :
-            self.items[place] = itemadded
-            return ("It worked !")
-
-
-    def removeitem(self, place, mode) : #Permet le retrait d'item, avec trois modes, half, one et all, et renvoie le type et a quantité d'item retirés
-        if self.items[place] != "0" :
-            itemremoved = "0"
-        else :    
+#Permet également de retirer des objets de l'inventaire en rajoutant un objet "0", avec 3 modes : all, half et one
+    def additem(self, itemadded, place, mode = "all"):
+        if itemadded == "0" :
             if mode == "all" :
-                itemremoved = self.items[place]
-                self.items[place] ="0"
+                olditem = self.items[place]
+                self.items[place] = "0"
+                return(olditem)
+
             if mode == "half" :
-                itemremoved = self.items[place]
-                itemremoved.quantity = ceil(itemremoved.quantity /2)
-                self.items[place].quantity -= itemremoved.quantity
+                olditem = copy.copy(self.items[place])
+                olditem.quantity = ceil(olditem.quantity/2)
+                self.items[place].quantity -= olditem.quantity
                 if self.items[place].quantity == 0:
                     self.items[place] = "0"
+                    return(olditem)
+
             if mode == "one" :
-                itemremoved = self.items[place]
-                itemremoved.quantity = 1
-                self.items[place].quantity -= itemremoved.quantity
+                olditem = copy.copy(self.items[place])
+                olditem.quantity = 1
+                self.items[place].quantity -= 1
                 if self.items[place].quantity == 0:
                     self.items[place] = "0"
-        return itemremoved
+
+        else :    
+            if place == -1 : 
+                for n in range (len(self.items)) :
+                    if self.items[n] == "0":
+                        self.items[n] = itemadded
+                        break
+                    if self.items[n].nom == itemadded.nom :
+                        self.items[n].quantity += itemadded.quantity
+                        break
+
+            elif self.items[place] != "0":
+                if self.items[place].nom == itemadded.nom :
+                    self.items[place].quantity += itemadded.quantity
+                    return ("It worked !")
+                else : 
+                    olditem = self.items[place]
+                    self.items[place] = itemadded
+                    return (olditem)
+            else :
+                self.items[place] = itemadded
+                return ("It worked !")
+
 
 
 
