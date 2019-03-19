@@ -3,6 +3,7 @@ import os
 import entities
 import pygame
 import menu
+import items
 import engine
 pygame.init()
 pygame.key.set_repeat(50, 1)
@@ -23,6 +24,7 @@ def mainLoop(game):
         px, py, "1")  # joueur
     p1.direction = [0,0,0,0]
     events = []
+    p1.cursorinventory.additem(items.Apple(5), 0)
     while game.state == 1 or game.state == 2:  # en jeu ou dans le menu pause
         if game.state == 1 :
             p1.update(wall.get_rects(), events)

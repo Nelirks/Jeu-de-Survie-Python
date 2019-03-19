@@ -43,7 +43,7 @@ class Consommable(Item) :
         self.buff = buff
         super().__init__(nom, quantity, texture, description)
 
-class Pomme(Consommable):
+class Apple(Consommable):
     def __init__(self, quantity):
         super().__init__("Pomme", quantity, os.path.join("assets", "items", "Apple.png"), 10, 25, 10)
 

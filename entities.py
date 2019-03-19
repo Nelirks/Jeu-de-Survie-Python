@@ -64,7 +64,7 @@ class Player(Entity):
         "up": pygame.K_UP
     }
 
-    def __init__(self, x, y, setNum, hunger = 100, thirst = 100, life = 100, speed=2, inventoryweight=204, inventorysize=12):
+    def __init__(self, x, y, setNum, scaleratio = 1, hunger = 100, thirst = 100, life = 100, speed=2, inventoryweight=204, inventorysize=12):
         """
         création de l'entitée joueur :
         le nom du set (setNum) correspond à un dossier dans les assets avec le nom du set et à l'intérieur les textures
@@ -81,6 +81,8 @@ class Player(Entity):
 
         self.lefthand = items.ItemContainer(1)
         self.righthand = items.ItemContainer(1)
+
+        self.cursorinventory = items.ItemContainer(1)
 
         self.hunger = hunger
         self.thirst = thirst
@@ -157,6 +159,9 @@ class Player(Entity):
         lefthandsurface = self.lefthand.render(34)
         surface.blit(righthandsurface, (362, 223))
         surface.blit(lefthandsurface, (116, 223))
+
+        cursorinventorysurface = self.cursorinventory.render(34)
+        surface.blit(cursorinventorysurface, pygame.mouse.get_pos())
 
     def changehunger(self, change) :
         self.hunger += change
