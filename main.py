@@ -37,9 +37,9 @@ def mainLoop(game):
 
     px = wall.playerPosition[0] * wall.tileSize
     py = wall.playerPosition[1] * wall.tileSize
-
+    ratio = game.resolution[0]/game.targetResolution[0]
     p1 = entities.Player(
-        px, py, "1")  # joueur
+        px, py, "1", ratio=ratio)  # joueur
     p1.direction = [0, 0, 0, 0]
     events = []
     p1.cursorinventory.additem(items.Apple(5), 0)
