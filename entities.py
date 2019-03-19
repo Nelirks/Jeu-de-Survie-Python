@@ -63,6 +63,7 @@ class Player(Entity):
         "down": pygame.K_DOWN,
         "up": pygame.K_UP
     }
+    mousepos = [0,0]
 
     def __init__(self, x, y, setNum, scaleratio = 1, hunger = 100, thirst = 100, life = 100, speed=2, inventoryweight=204, inventorysize=12):
         """
@@ -74,6 +75,8 @@ class Player(Entity):
         self.speed = speed
         txname = ["front", "back", "backRight",
                   "backLeft", "right", "left"]
+
+        self.scaleratio = scaleratio
 
         self.inventory = items.ItemContainer(inventorysize)
         self.inventoryweight = inventoryweight
@@ -161,8 +164,7 @@ class Player(Entity):
         surface.blit(lefthandsurface, (116, 223))
 
         cursorinventorysurface = self.cursorinventory.render(34)
-        mousepos = pygame.mouse.get_pos()
-        surface.blit(cursorinventorysurface, (mousepos[0]*scaleratio ,mousepos[1]*scaleratio))
+        surface.blit(cursorinventorysurface, (self.mousepos[0] -16,self.mousepos[1]-16))
 
     def changehunger(self, change) :
         self.hunger += change
@@ -180,6 +182,17 @@ class Player(Entity):
             self.thirst = 0
             self.life -= 0.1
 
+    def clickinventory(self, events) :
+        for event in events :
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if self.mousepos[0] >= 154 and self.mousepos[1] >= 206 and self.mousepos[0]<=357 and self.mousepos[1] <=273:
+                        invtile = int((self.mousepos[0]-154)//34 + (self.mousepos[1]-206)//34 *6)
+                        self.cursorinventory.items[0] = self.inventory.additem(self.cursorinventory.items[0], invtile)
+                    elif self.mousepos[0] >= 116 and self.mousepos[1] >= 223 and self.mousepos[0]<=150 and self.mousepos[1] <=257:
+                        self.cursorinventory.items[0] = self.lefthand.additem(self.cursorinventory.items[0], 0)
+                    elif self.mousepos[0] >= 362 and self.mousepos[1] >= 223 and self.mousepos[0]<=396 and self.mousepos[1] <=257:
+                        self.cursorinventory.items[0] = self.righthand.additem(self.cursorinventory.items[0], 0)
     def update(self, wallrects, events):
         # Création d'une liste de déplacements en pixels en fonction de la direction
         move = [(self.speed, 0),
@@ -188,6 +201,8 @@ class Player(Entity):
         keys = [self.keyConfig["right"],
                 self.keyConfig["down"], self.keyConfig["left"], self.keyConfig["up"]]
         for event in events:
+            if event.type == pygame.MOUSEMOTION :
+                self.mousepos = [pygame.mouse.get_pos()[0]*self.scaleratio, pygame.mouse.get_pos()[1]*self.scaleratio]
             if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:  # optimisation
                 for n in range(4):  # (pour chaque direction)
                     if event.type == pygame.KEYDOWN:
@@ -200,6 +215,8 @@ class Player(Entity):
                             # met la direction à 0 -> ne veut pas bouger
                             self.direction[n] = 0
                 self.findDirection()
+
+        self.clickinventory(events)
 
         for n in range(4):
             # permet de dire si le personnage est bloqué s'il veut bouger (qu'il aie été bloqué ou pas précedemment)
@@ -216,6 +233,7 @@ class Player(Entity):
         #Diminution de la nourriture et de la soif
         self.changehunger(-0.01)
         self.changethirst(-0.02)
+
 
 
 class Collectable(Entity):

@@ -39,10 +39,9 @@ def mainLoop(game):
     py = wall.playerPosition[1] * wall.tileSize
     ratio = game.resolution[0]/game.targetResolution[0]
     p1 = entities.Player(
-        px, py, "1", ratio=ratio)  # joueur
+        px, py, "1", ratio)  # joueur
     p1.direction = [0, 0, 0, 0]
     events = []
-    p1.cursorinventory.additem(items.Apple(5), 0)
     while game.state == 1 or game.state == 2:  # en jeu ou dans le menu pause
         if game.state == 1:
             p1.update(wall.get_rects(), events)

@@ -34,6 +34,10 @@ class Item:
         surface.blit(self.texture, (0, 0))
         return surface
 
+class Wood(Item) :
+    def __init__(self, quantity) :
+        super().__init__("Bois", quantity, os.path.join("assets", "items", "Wood.png"))
+
 class Consommable(Item) :
     #Classe consommmable : Item avec des effets quand il est consommé
     def __init__(self, nom, quantity, texture, lifegain = 0, hungergain = 0, thirstgain = 0, buff = "", description = "") :
@@ -133,14 +137,14 @@ class ItemContainer :
             elif self.items[place] != "0":
                 if self.items[place].nom == itemadded.nom :
                     self.items[place].quantity += itemadded.quantity
-                    return ("It worked !")
+                    return ("0")
                 else : 
                     olditem = self.items[place]
                     self.items[place] = itemadded
                     return (olditem)
             else :
                 self.items[place] = itemadded
-                return ("It worked !")
+                return ("0")
 
 
 
