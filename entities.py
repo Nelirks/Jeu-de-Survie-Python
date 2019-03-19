@@ -161,7 +161,8 @@ class Player(Entity):
         surface.blit(lefthandsurface, (116, 223))
 
         cursorinventorysurface = self.cursorinventory.render(34)
-        surface.blit(cursorinventorysurface, pygame.mouse.get_pos())
+        mousepos = pygame.mouse.get_pos()
+        surface.blit(cursorinventorysurface, (mousepos[0]*scaleratio ,mousepos[1]*scaleratio))
 
     def changehunger(self, change) :
         self.hunger += change
