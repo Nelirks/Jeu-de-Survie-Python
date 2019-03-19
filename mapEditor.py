@@ -35,7 +35,7 @@ def mapEditor(carte):
             we += carte.tileSize*2
             y = 0
         y += carte.tileSize*2
-    e = engine.Engine((carte.width+ws + we, height),
+    e = engine.Engine((carte.width+ws + we+2, height),
                       ((carte.width+ws + we)*2, height*2))
     textures = carte.textures
     entites = entities.entitiesList
@@ -57,8 +57,8 @@ def mapEditor(carte):
     for en in entites:
         etextures[en] = pygame.image.load(
             os.path.join("assets", "entities", en+".png"))
-
-    while e.state != 0:
+    print(e.menuState)
+    while e.state != 0 and e.menuState == 0:
         events = e.runEvents()
         for ev in events:
             if ev.type == pygame.KEYDOWN:
@@ -103,7 +103,7 @@ def mapEditor(carte):
                     carte.render(cs)
                 e.screen.blit(cs, (0, 0))
         y = 0
-        x = carte.width
+        x = carte.width + 2
 
         for t in textures:
             if y >= height:

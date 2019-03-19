@@ -141,9 +141,9 @@ class Player(Entity):
         """
         affichage de l'entité avec la texture sur screen
         """
-        surface.blit(self.hudbackground,(0,192)) #Affichage de background du hud
-
         surface.blit(self.texture, (self.rect.x, self.rect.y)) #Affichage du personnage
+
+        surface.blit(self.hudbackground,(0,192)) #Affichage de background du hud
         surface.blit(self.hud, (0, 192)) #affichage du hud vide
 
         #Affichage des barres de vie, faim et soif en fonction de leurs valeurs
@@ -213,8 +213,8 @@ class Player(Entity):
                     self.rect = self.rect.move(move[n])
         
         #Diminution de la nourriture et de la soif
-        self.changehunger(-0.1)
-        self.changethirst(-0.2)
+        self.changehunger(-0.01)
+        self.changethirst(-0.02)
 
 
 class Collectable(Entity):
