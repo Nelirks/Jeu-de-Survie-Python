@@ -163,6 +163,7 @@ class Player(Entity):
         surface.blit(righthandsurface, (362, 223))
         surface.blit(lefthandsurface, (116, 223))
 
+        #Affichage de l'item tenu avec le curseur
         cursorinventorysurface = self.cursorinventory.render(34)
         surface.blit(cursorinventorysurface, (self.mousepos[0] -16,self.mousepos[1]-16))
 

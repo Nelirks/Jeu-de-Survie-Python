@@ -127,12 +127,15 @@ class ItemContainer :
         else :    
             if place == -1 : 
                 for n in range (len(self.items)) :
-                    if self.items[n] == "0":
-                        self.items[n] = itemadded
-                        break
-                    if self.items[n].nom == itemadded.nom :
-                        self.items[n].quantity += itemadded.quantity
-                        break
+                    if self.items[len(self.items)-n-1] != "0":
+                        if self.items[len(self.items)-n-1].nom == itemadded.nom :
+                            self.items[len(self.items)-n-1].quantity += itemadded.quantity
+                            return("0")
+                    else :
+                        itemplace = len(self.items)-n-1
+                self.items[itemplace] = itemadded
+                return("0")
+                    
 
             elif self.items[place] != "0":
                 if self.items[place].nom == itemadded.nom :
@@ -150,6 +153,7 @@ class ItemContainer :
 
 
     def render(self, largeur) : #Crée une surface avec tous les items dans un rectangle de largeur donnée en pixel
+        basicfont = pygame.font.SysFont("Source Code Pro", 12)        
         itemperline = (largeur)//34
         itempercolumn = ceil(len(self.items)/itemperline)
         surfacefinale = pygame.Surface((itemperline*34, itempercolumn*34),pygame.SRCALPHA, 32).convert_alpha()
@@ -157,6 +161,8 @@ class ItemContainer :
             x = n%itemperline
             y = n//itemperline
             if self.items[n] != "0" :
+                itemquantity = basicfont.render(str(self.items[n].quantity), False, (255, 255, 255))
                 surfacefinale.blit(self.items[n].texture,(x*34+1,y*34+1))
+                surfacefinale.blit(itemquantity,(x*34+18,y*34+21))
         return surfacefinale
 
