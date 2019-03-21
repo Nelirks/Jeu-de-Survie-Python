@@ -204,20 +204,21 @@ class Player(Entity):
             if event.type == pygame.MOUSEMOTION :
                 self.mousepos = [pygame.mouse.get_pos()[0]*self.scaleratio, pygame.mouse.get_pos()[1]*self.scaleratio]
             if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:  # optimisation
-                for n in range(4):  # (pour chaque direction)
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == keys[n]:
-                            # met la direction à 1 -> peut bouger
-                            self.direction[n] = 1
+                    for n in range(4):  # (pour chaque direction)
+                       if event.type == pygame.KEYDOWN:
+                           if event.key == keys[n]:
+                               # met la direction à 1 -> peut bouger
+                               self.direction[n] = 1
 
-                    if event.type == pygame.KEYUP:
-                        if event.key == keys[n]:
-                            # met la direction à 0 -> ne veut pas bouger
-                            self.direction[n] = 0
-                self.findDirection()
+                       if event.type == pygame.KEYUP:
+                           if event.key == keys[n]:
+                               # met la direction à 0 -> ne veut pas bouger
+                               self.direction[n] = 0
+                    self.findDirection()
 
         self.clickinventory(events)
 
+        
         for n in range(4):
             # permet de dire si le personnage est bloqué s'il veut bouger (qu'il aie été bloqué ou pas précedemment)
             if self.direction[n] != 0:

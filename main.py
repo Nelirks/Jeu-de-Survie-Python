@@ -17,6 +17,7 @@ def changeMap(mapPosition, player, modX, modY):
     mapPosition[1] += modY
     wall = engine.Carte(os.path.join("assets", "levels", str(mapPosition)),
                         mode="load")
+    player.direction = [0, 0, 0, 0]
     if modY == -1:
         player.rect.y = wall.height - wall.tileSize
     if modY == +1:

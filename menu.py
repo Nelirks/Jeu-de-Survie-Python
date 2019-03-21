@@ -70,6 +70,8 @@ closeButton = engine.Button(
 def mainMenu():
     global game
     game.state = 0
+    spaceShip = pygame.image.load(os.path.join("assets", "spaceship2.png"))
+    spaceShip = pygame.transform.scale2x(spaceShip)
     game.changeMode((1280, 720), (1280, 720))
     events = []
     stars = Stars()
@@ -81,6 +83,7 @@ def mainMenu():
         closeButton.update(events)
         game.screen.fill((0, 0, 0))
         stars.render(game.screen)
+        game.screen.blit(spaceShip, (300, 300))
         game.screen.blit(playButton.render(), playButton.position)
         game.screen.blit(creditsButton.render(), creditsButton.position)
         game.screen.blit(closeButton.render(), closeButton.position)
