@@ -55,7 +55,8 @@ class Player(Entity):
     Entité joueur avec textures une liste contenant des textures [droite,bas,gauche,haut]
     """
     direction = [0, 0, 0, 0]
-
+    useleftitem = 0
+    userightitem = 0
     # assign key to directions
     keyConfig = {
         "left": pygame.K_LEFT,
@@ -149,6 +150,12 @@ class Player(Entity):
         surface.blit(self.hudbackground,(0,192)) #Affichage de background du hud
         surface.blit(self.hud, (0, 192)) #affichage du hud vide
 
+        if self.life > self.maxlife :
+            self.life = self.maxlife
+        if self.hunger > self.maxhunger :
+            self.hunger = self.maxhunger
+        if self.thirst > self.maxthirst :
+            self.thirst = self.maxthirst
         #Affichage des barres de vie, faim et soif en fonction de leurs valeurs
         surface.blit(self.lifebar.subsurface(pygame.rect.Rect((111-111*self.life//self.maxlife,0),(111*self.life//self.maxlife,67))),(111-111*self.life//self.maxlife, 207))
         surface.blit(self.hungerbar.subsurface(pygame.rect.Rect((0,0),(111*self.hunger//self.maxhunger,57))),(401, 207))
@@ -207,6 +214,7 @@ class Player(Entity):
     
     
     def update(self, wallrects, events):
+
         # Création d'une liste de déplacements en pixels en fonction de la direction
         move = [(self.speed, 0),
                 (0, self.speed), (-self.speed, 0), (0, -self.speed)]
@@ -228,6 +236,30 @@ class Player(Entity):
                                # met la direction à 0 -> ne veut pas bouger
                                self.direction[n] = 0
                     self.findDirection()
+
+                    #Utilisation de l'item de la main gauche
+                    if event.type == pygame.KEYDOWN :
+                        if event.key == pygame.K_q :
+                            if self.useleftitem == 0 :
+                                if self.lefthand.items[0] != "0" :
+                                    self.lefthand.items[0] = self.lefthand.items[0].use(self)
+                            self.useleftitem = 1
+                    if event.type == pygame.KEYUP :
+                        if event.key == pygame.K_q :
+                            self.useleftitem = 0
+
+
+                    #Utilisation de l'item de la main droite
+                    if event.type == pygame.KEYDOWN :
+                        if event.key == pygame.K_r :
+                            if self.userightitem == 0 :
+                                if self.righthand.items[0] != "0" :
+                                    self.righthand.items[0] = self.righthand.items[0].use(self)
+                            self.userightitem = 1
+                    if event.type == pygame.KEYUP :
+                        if event.key == pygame.K_r :
+                            self.userightitem = 0
+                    
 
         self.clickinventory(events)
 
