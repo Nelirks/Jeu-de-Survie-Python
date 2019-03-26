@@ -202,15 +202,16 @@ class Player(Entity):
                     mode = "half"
 
                 #Modification de l'inventaire principal
-                if self.mousepos[0] >= 154 and self.mousepos[1] >= 206 and self.mousepos[0]<=357 and self.mousepos[1] <=273:
-                    invtile = int((self.mousepos[0]-154)//34 + (self.mousepos[1]-206)//34 *6)
-                    self.cursorinventory.items[0] = self.inventory.additem(self.cursorinventory.items[0], invtile, mode)
-                #Modification de la main gauche
-                elif self.mousepos[0] >= 116 and self.mousepos[1] >= 223 and self.mousepos[0]<=150 and self.mousepos[1] <=257:
-                    self.cursorinventory.items[0] = self.lefthand.additem(self.cursorinventory.items[0], 0, mode)
-                #Modification de la main droite
-                elif self.mousepos[0] >= 362 and self.mousepos[1] >= 223 and self.mousepos[0]<=396 and self.mousepos[1] <=257:
-                    self.cursorinventory.items[0] = self.righthand.additem(self.cursorinventory.items[0], 0, mode)
+                if event.button == 1 or event.button == 2 or event.button == 3:
+                    if self.mousepos[0] >= 154 and self.mousepos[1] >= 206 and self.mousepos[0]<=357 and self.mousepos[1] <=273:
+                        invtile = int((self.mousepos[0]-154)//34 + (self.mousepos[1]-206)//34 *6)
+                        self.cursorinventory.items[0] = self.inventory.additem(self.cursorinventory.items[0], invtile, mode)
+                    #Modification de la main gauche
+                    elif self.mousepos[0] >= 116 and self.mousepos[1] >= 223 and self.mousepos[0]<=150 and self.mousepos[1] <=257:
+                        self.cursorinventory.items[0] = self.lefthand.additem(self.cursorinventory.items[0], 0, mode)
+                    #Modification de la main droite
+                    elif self.mousepos[0] >= 362 and self.mousepos[1] >= 223 and self.mousepos[0]<=396 and self.mousepos[1] <=257:
+                        self.cursorinventory.items[0] = self.righthand.additem(self.cursorinventory.items[0], 0, mode)
     
     
     def update(self, wallrects, events):

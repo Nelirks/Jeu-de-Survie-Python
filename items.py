@@ -167,7 +167,7 @@ class ItemContainer:
                 self.items[place] = itemadded
                 olditem = "0"
         if self.items[place] != "0" :
-            if self.items[place].quantity >= 99 :
+            if self.items[place].quantity > 99 :
                 olditem = copy.copy(self.items[place])
                 olditem.quantity -= 99
                 self.items[place].quantity = 99
