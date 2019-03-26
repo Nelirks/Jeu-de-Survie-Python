@@ -17,7 +17,7 @@ def changeMap(mapPosition, player, modX, modY):
     mapPosition[1] += modY
     wall = engine.Carte(os.path.join("assets", "levels", str(mapPosition)),
                         mode="load")
-    player.direction = [0, 0, 0, 0]
+    #player.direction = [0, 0, 0, 0]
     if modY == -1:
         player.rect.y = wall.height - wall.tileSize
     if modY == +1:
@@ -35,7 +35,7 @@ def mainLoop(game):
     wall = engine.Carte(os.path.join("assets", "levels", str(mapPosition)),
                         mode="load")  # objet carte
     back = wall.renderSurface()  # surface carte
-
+    coolframe = 0
     px = wall.playerPosition[0] * wall.tileSize
     py = wall.playerPosition[1] * wall.tileSize
     ratio = game.resolution[0]/game.targetResolution[0]
@@ -50,7 +50,12 @@ def mainLoop(game):
     p1.inventory.additem(items.Apple(90), 4)
     while game.state == 1 or game.state == 2:  # en jeu ou dans le menu pause
         if game.state == 1:
-            p1.update(wall.get_rects(), events)
+            pevents = events
+            if p1.rect.x < 0 and p1.rect.y < 0 and p1.rect.x > wall.width and p1.rect.y > wall.height or coolframe > 0:
+                coolframe -= 1
+                pevents = []
+            p1.update(wall.get_rects(), pevents)
+
         elif game.state == 2:
             p1.direction = [0, 0, 0, 0]
 
@@ -59,6 +64,23 @@ def mainLoop(game):
         p1.render(game.screen)
 
         game.waitFramerate()
+
+        if p1.rect.x < -wall.tileSize/2:
+            p1.direction = [0, 0, 1, 0]
+            coolframe = 3
+
+        if p1.rect.y < -wall.tileSize/2:
+            p1.direction = [0, 0, 0, 1]
+            coolframe = 3
+
+        if p1.rect.x > wall.width - (wall.tileSize/2):
+            p1.direction = [1, 0, 0, 0]
+            coolframe = 3
+
+        if p1.rect.y > wall.height - (wall.tileSize/2):
+            p1.direction = [0, 1, 0, 0]
+            coolframe = 3
+
         if p1.rect.x < -wall.tileSize:
             wall = changeMap(mapPosition, p1, -1, 0)
             back = wall.renderSurface()
