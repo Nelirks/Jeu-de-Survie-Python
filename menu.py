@@ -2,6 +2,7 @@ import pygame
 import main
 import os
 import random
+import math
 import engine
 
 
@@ -60,11 +61,13 @@ creditsEvent = pygame.USEREVENT + 3
 
 
 playButton = engine.Button(
-    (10, 10), (200, 50),  "Jouer", playEvent, fontSize=60, focusedBackground=(100, 100, 100))
+    (10, 10), (130, 50),  "Jouer", playEvent, fontSize=60, focusedBackground=(100, 100, 100))
 creditsButton = engine.Button(
     (10, 70), (110, 40),  "Crédits", creditsEvent, fontSize=40, focusedBackground=(100, 100, 100))
+fullScreenButton = engine.Button((10, 120), (170, 40), "Plein Écran",
+                                 game.fullscreenEvent, fontSize=40, focusedBackground=(100, 100, 100))
 closeButton = engine.Button(
-    (10, 120), (250, 40),  "Retour au bureau", pygame.QUIT, fontSize=40, focusedBackground=(100, 100, 100))
+    (10, 170), (240, 40),  "Retour au bureau", pygame.QUIT, fontSize=40, focusedBackground=(100, 100, 100))
 
 
 def mainMenu():
@@ -77,16 +80,23 @@ def mainMenu():
     stars = Stars()
     pygame.mixer_music.load(os.path.join("assets", "music", "main_Menu.mp3"))
     pygame.mixer_music.play(-1)
+    frame = 0
     while game.state == 0:
         playButton.update(events)
         creditsButton.update(events)
+        fullScreenButton.update(events)
         closeButton.update(events)
         game.screen.fill((0, 0, 0))
         stars.render(game.screen)
-        game.screen.blit(spaceShip, (300, 300))
+        frame += 1  # frame +1 pour le vaisseau
+        # affichage du vaisseau
+        game.screen.blit(spaceShip, (300, 260 + math.sin(frame/80)*20))
+        # affichage des boutons
         game.screen.blit(playButton.render(), playButton.position)
         game.screen.blit(creditsButton.render(), creditsButton.position)
+        game.screen.blit(fullScreenButton.render(), fullScreenButton.position)
         game.screen.blit(closeButton.render(), closeButton.position)
+        # gestion des événements
         for event in events:
             if event.type == creditsEvent:
                 game.state = 3
@@ -94,6 +104,7 @@ def mainMenu():
                 game.changeMode((1280, 720), (1280, 720))
                 game.state = 0
             if event.type == playEvent:
+                # lancement du jeu
                 pygame.mixer_music.fadeout(1000)
                 game.state = 1
                 # fenêtre pour le jeu
