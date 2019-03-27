@@ -186,14 +186,26 @@ class Player(Entity):
     def clickinventory(self, events) :
         for event in events :
             if event.type == pygame.MOUSEBUTTONDOWN:
+                #Verification du bouton pour prendre tout ou une partie des items
                 if event.button == 1:
-                    if self.mousepos[0] >= 154 and self.mousepos[1] >= 206 and self.mousepos[0]<=357 and self.mousepos[1] <=273:
-                        invtile = int((self.mousepos[0]-154)//34 + (self.mousepos[1]-206)//34 *6)
-                        self.cursorinventory.items[0] = self.inventory.additem(self.cursorinventory.items[0], invtile)
-                    elif self.mousepos[0] >= 116 and self.mousepos[1] >= 223 and self.mousepos[0]<=150 and self.mousepos[1] <=257:
-                        self.cursorinventory.items[0] = self.lefthand.additem(self.cursorinventory.items[0], 0)
-                    elif self.mousepos[0] >= 362 and self.mousepos[1] >= 223 and self.mousepos[0]<=396 and self.mousepos[1] <=257:
-                        self.cursorinventory.items[0] = self.righthand.additem(self.cursorinventory.items[0], 0)
+                    mode = "all"
+                if event.button == 2 :
+                    mode = "one"
+                if event.button == 3 :
+                    mode = "half"
+
+                #Modification de l'inventaire principal
+                if self.mousepos[0] >= 154 and self.mousepos[1] >= 206 and self.mousepos[0]<=357 and self.mousepos[1] <=273:
+                    invtile = int((self.mousepos[0]-154)//34 + (self.mousepos[1]-206)//34 *6)
+                    self.cursorinventory.items[0] = self.inventory.additem(self.cursorinventory.items[0], invtile, mode)
+                #Modification de la main gauche
+                elif self.mousepos[0] >= 116 and self.mousepos[1] >= 223 and self.mousepos[0]<=150 and self.mousepos[1] <=257:
+                    self.cursorinventory.items[0] = self.lefthand.additem(self.cursorinventory.items[0], 0, mode)
+                #Modification de la main droite
+                elif self.mousepos[0] >= 362 and self.mousepos[1] >= 223 and self.mousepos[0]<=396 and self.mousepos[1] <=257:
+                    self.cursorinventory.items[0] = self.righthand.additem(self.cursorinventory.items[0], 0, mode)
+    
+    
     def update(self, wallrects, events):
         # Création d'une liste de déplacements en pixels en fonction de la direction
         move = [(self.speed, 0),

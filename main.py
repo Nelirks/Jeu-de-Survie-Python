@@ -43,6 +43,11 @@ def mainLoop(game):
         px, py, "1", ratio)  # joueur
     p1.direction = [0, 0, 0, 0]
     events = []
+    p1.inventory.additem(items.Apple(12), 0)
+    p1.inventory.additem(items.Apple(34), 1)
+    p1.inventory.additem(items.Apple(56), 2)
+    p1.inventory.additem(items.Apple(78), 3)
+    p1.inventory.additem(items.Apple(90), 4)
     while game.state == 1 or game.state == 2:  # en jeu ou dans le menu pause
         if game.state == 1:
             pevents = events

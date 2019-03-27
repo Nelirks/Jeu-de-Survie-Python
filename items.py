@@ -46,6 +46,7 @@ class Consommable(Item) :
         self.thirstgain = thirstgain
         self.buff = buff
         super().__init__(nom, quantity, texture, description)
+        
 
 class Apple(Consommable):
     def __init__(self, quantity):
@@ -115,7 +116,7 @@ class ItemContainer :
                 self.items[place].quantity -= olditem.quantity
                 if self.items[place].quantity == 0:
                     self.items[place] = "0"
-                    return(olditem)
+                return(olditem)
 
             if mode == "one" :
                 olditem = copy.copy(self.items[place])
@@ -123,6 +124,7 @@ class ItemContainer :
                 self.items[place].quantity -= 1
                 if self.items[place].quantity == 0:
                     self.items[place] = "0"
+                return(olditem)
 
         else :    
             if place == -1 : 
