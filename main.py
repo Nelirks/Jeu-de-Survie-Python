@@ -52,9 +52,11 @@ def mainLoop(game):
     while game.state == 1 or game.state == 2:  # en jeu ou dans le menu pause
         if game.state == 1:
             pevents = events
+            """
             if p1.rect.x < 0 and p1.rect.y < 0 and p1.rect.x > wall.width and p1.rect.y > wall.height or coolframe > 0:
                 coolframe -= 1
                 pevents = []
+            """
             p1.update(wall.get_rects(), pevents)
 
         elif game.state == 2:
@@ -65,36 +67,37 @@ def mainLoop(game):
         p1.render(game.screen)
 
         game.waitFramerate()
-
-        if p1.rect.x < -wall.tileSize/2:
+        """
+        if p1.rect.x < -wall.tileSize*(4/8):
             p1.direction = [0, 0, 1, 0]
-            coolframe = 3
+            coolframe = 1
 
-        if p1.rect.y < -wall.tileSize/2:
+        if p1.rect.y < -wall.tileSize*(4/8):
             p1.direction = [0, 0, 0, 1]
-            coolframe = 3
+            coolframe = 1
 
         if p1.rect.x > wall.width - (wall.tileSize/2):
             p1.direction = [1, 0, 0, 0]
-            coolframe = 3
+            coolframe = 1
 
         if p1.rect.y > wall.height - (wall.tileSize/2):
             p1.direction = [0, 1, 0, 0]
-            coolframe = 3
+            coolframe = 1
+        """
 
-        if p1.rect.x < -wall.tileSize:
+        if p1.rect.x < -wall.tileSize*(4/8):
             wall = changeMap(mapPosition, p1, -1, 0)
             back = wall.renderSurface()
 
-        if p1.rect.y < -wall.tileSize:
+        if p1.rect.y < -wall.tileSize*(4/8):
             wall = changeMap(mapPosition, p1, 0, -1)
             back = wall.renderSurface()
 
-        if p1.rect.x > wall.width:
+        if p1.rect.x > wall.width - wall.tileSize * (4/8):
             wall = changeMap(mapPosition, p1, +1, 0)
             back = wall.renderSurface()
 
-        if p1.rect.y > wall.height:
+        if p1.rect.y > wall.height - wall.tileSize * (4/8):
             wall = changeMap(mapPosition, p1, 0, +1)
             back = wall.renderSurface()
 
