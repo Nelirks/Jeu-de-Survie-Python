@@ -120,6 +120,12 @@ def mainMenu():
         events = game.runEvents()
 
 
+def settings():
+    global game
+    game.screen.fill((0, 0, 0))
+    font40 = pygame.font.Font(None, 40)
+
+
 def credits():
     global game
     game.screen.fill((162, 155, 254))
