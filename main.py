@@ -35,7 +35,7 @@ def mainLoop(game):
     wall = engine.Carte(os.path.join("assets", "levels", str(mapPosition)),
                         mode="load")  # objet carte
     back = wall.renderSurface()  # surface carte
-    coolframe = 0
+    # coolframe = 0
     px = wall.playerPosition[0] * wall.tileSize
     py = wall.playerPosition[1] * wall.tileSize
     ratio = game.resolution[0]/game.targetResolution[0]
@@ -43,6 +43,7 @@ def mainLoop(game):
         px, py, "1", ratio)  # joueur
     p1.direction = [0, 0, 0, 0]
     events = []
+
     p1.inventory.additem(items.Apple(12), 0)
     p1.inventory.additem(items.Apple(34), 1)
     p1.inventory.additem(items.Apple(56), 2)
