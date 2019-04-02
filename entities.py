@@ -304,7 +304,7 @@ class Collectable(Entity):
 
 
 class Tree(Collectable):
-    def __init__(self, x, y, life=0, loot=[], name="tree"):
+    def __init__(self, x, y, life=10, loot=[], name="tree"):
         texture = pygame.image.load(
             os.path.join("assets", "entities", "tree.png"))
         super().__init__(x, y, texture, life=life, loot=loot, name=name)

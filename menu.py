@@ -56,8 +56,22 @@ game = engine.Engine((1280, 720),
                      (1280, 720), framerate=100)  # fenêtre 1:1 pour les boutons
 game.state = 0
 
-playEvent = pygame.USEREVENT + 2
+playerKeyConfig = {
+    "left": pygame.K_LEFT,
+    "right": pygame.K_RIGHT,
+    "down": pygame.K_DOWN,
+    "up": pygame.K_UP
+}
+playerKeyConfigUnicode = {
+    "left": "d",
+    "right": "a",
+    "down": "s",
+    "up": "z"
+}
+
+playEvent = pygame.USEREVENT + 4
 creditsEvent = pygame.USEREVENT + 3
+settingsEvent = pygame.USEREVENT + 2
 
 
 playButton = engine.Button(
@@ -66,8 +80,10 @@ creditsButton = engine.Button(
     (10, 70), (110, 40),  "Crédits", creditsEvent, fontSize=40, focusedBackground=(100, 100, 100))
 fullScreenButton = engine.Button((10, 120), (170, 40), "Plein Écran",
                                  game.fullscreenEvent, fontSize=40, focusedBackground=(100, 100, 100))
+settingsButton = engine.Button((10, 170), (170, 40), "Paramètres",
+                               settingsEvent, fontSize=40, focusedBackground=(100, 100, 100))
 closeButton = engine.Button(
-    (10, 170), (240, 40),  "Retour au bureau", pygame.QUIT, fontSize=40, focusedBackground=(100, 100, 100))
+    (10, 220), (240, 40),  "Retour au bureau", pygame.QUIT, fontSize=40, focusedBackground=(100, 100, 100))
 
 
 def mainMenu():
@@ -84,6 +100,7 @@ def mainMenu():
     while game.state == 0:
         playButton.update(events)
         creditsButton.update(events)
+        settingsButton.update(events)
         fullScreenButton.update(events)
         closeButton.update(events)
         game.screen.fill((0, 0, 0))
@@ -95,6 +112,7 @@ def mainMenu():
         game.screen.blit(playButton.render(), playButton.position)
         game.screen.blit(creditsButton.render(), creditsButton.position)
         game.screen.blit(fullScreenButton.render(), fullScreenButton.position)
+        game.screen.blit(settingsButton.render(), settingsButton.position)
         game.screen.blit(closeButton.render(), closeButton.position)
         # gestion des événements
         for event in events:
@@ -103,6 +121,11 @@ def mainMenu():
                 credits()
                 game.changeMode((1280, 720), (1280, 720))
                 game.state = 0
+            if event.type == settingsEvent:
+                game.state = 3
+                settings()
+                game.state = 0
+
             if event.type == playEvent:
                 # lancement du jeu
                 pygame.mixer_music.fadeout(1000)
@@ -122,8 +145,87 @@ def mainMenu():
 
 def settings():
     global game
-    game.screen.fill((0, 0, 0))
+
     font40 = pygame.font.Font(None, 40)
+    game.screen.fill((0, 0, 0))
+    font30 = pygame.font.Font(None, 30)
+    setting = 1
+    editUpEvent = pygame.USEREVENT + 5
+    editLeftEvent = pygame.USEREVENT + 6
+    editRightEvent = pygame.USEREVENT + 7
+    editDownEvent = pygame.USEREVENT + 8
+    editUpButton = engine.Button(
+        (490, 40), (70, 50), playerKeyConfigUnicode["up"], editUpEvent, fontSize=50, background=(100, 100, 100))
+    editDownButton = engine.Button(
+        (490, 100), (70, 50), playerKeyConfigUnicode["down"], editDownEvent, fontSize=50, background=(100, 100, 100))
+    editLeftButton = engine.Button(
+        (490, 160), (70, 50), playerKeyConfigUnicode["left"], editLeftEvent, fontSize=50, background=(100, 100, 100))
+    editRightButton = engine.Button(
+        (490, 220), (70, 50), playerKeyConfigUnicode["right"], editRightEvent, fontSize=50, background=(100, 100, 100))
+    editUp = 0
+    editDown = 0
+    editLeft = 0
+    editRight = 0
+    while setting == 1:
+        events = game.runEvents()
+        game.screen.fill((0, 0, 0))  # effacer l'écran
+        game.screen.blit(font40.render(
+            "Touches :", 1, (255, 255, 255)), (480, 10))
+        game.screen.blit(font30.render(
+            "Haut :", 1, (255, 255, 255)), (400, 50))
+        game.screen.blit(font30.render(
+            "Bas :", 1, (255, 255, 255)), (400, 110))
+        game.screen.blit(font30.render(
+            "Gauche :", 1, (255, 255, 255)), (400, 170))
+        game.screen.blit(font30.render(
+            "Droite :", 1, (255, 255, 255)), (400, 230))
+        game.screen.blit(font30.render(
+            "Echap quitter", 1, (255, 255, 255)), (0, 690))
+
+        game.screen.blit(editUpButton.render(), editUpButton.position)
+        game.screen.blit(editLeftButton.render(), editLeftButton.position)
+        game.screen.blit(editRightButton.render(), editRightButton.position)
+
+        game.screen.blit(editDownButton.render(), editDownButton.position)
+        editLeftButton.update(events)
+        editDownButton.update(events)
+        editRightButton.update(events)
+        editUpButton.update(events)
+        for event in events:
+            if event.type == editDownEvent:
+                editDown = 1
+            if event.type == editUpEvent:
+                editUp = 1
+            if event.type == editLeftEvent:
+                editLeft = 1
+            if event.type == editRightEvent:
+                editRight = 1
+
+            if event.type == pygame.KEYDOWN:
+                if editLeft:
+                    editLeft = 0
+                    playerKeyConfig["left"] = event.key
+                    playerKeyConfigUnicode["left"] = event.unicode
+                    editLeftButton.text = event.unicode
+                if editRight:
+                    editRight = 0
+                    playerKeyConfig["right"] = event.key
+                    playerKeyConfigUnicode["right"] = event.unicode
+                    editRightButton.text = event.unicode
+                if editUp:
+                    editUp = 0
+                    playerKeyConfig["up"] = event.key
+                    playerKeyConfigUnicode["up"] = event.unicode
+                    editUpButton.text = event.unicode
+                if editDown:
+                    editDown = 0
+                    playerKeyConfig["down"] = event.key
+                    playerKeyConfigUnicode["down"] = event.unicode
+                    editDownButton.text = event.unicode
+                if event.key == pygame.K_ESCAPE:
+                    setting = 0
+        events = []
+        game.waitFramerate()
 
 
 def credits():

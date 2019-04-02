@@ -58,7 +58,8 @@ def mainLoop(game):
                 coolframe -= 1
                 pevents = []
             """
-            p1.update(wall.get_rects(), pevents)
+            rects = wall.get_rects()
+            p1.update(rects, pevents)
 
         elif game.state == 2:
             p1.direction = [0, 0, 0, 0]
@@ -68,23 +69,6 @@ def mainLoop(game):
         p1.render(game.screen)
 
         game.waitFramerate()
-        """
-        if p1.rect.x < -wall.tileSize*(4/8):
-            p1.direction = [0, 0, 1, 0]
-            coolframe = 1
-
-        if p1.rect.y < -wall.tileSize*(4/8):
-            p1.direction = [0, 0, 0, 1]
-            coolframe = 1
-
-        if p1.rect.x > wall.width - (wall.tileSize/2):
-            p1.direction = [1, 0, 0, 0]
-            coolframe = 1
-
-        if p1.rect.y > wall.height - (wall.tileSize/2):
-            p1.direction = [0, 1, 0, 0]
-            coolframe = 1
-        """
 
         if p1.rect.x < -wall.tileSize*(4/8):
             wall = changeMap(mapPosition, p1, -1, 0)
@@ -111,4 +95,5 @@ def mainLoop(game):
         for entity in entitiesL:
             if entity.life <= 0:
                 del wall.entities[i]
+                back = wall.renderSurface()
             i += 1
