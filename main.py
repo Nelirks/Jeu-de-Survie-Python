@@ -43,6 +43,7 @@ def mainLoop(game):
         px, py, "1", ratio)  # joueur
     p1.direction = [0, 0, 0, 0]
     events = []
+
     p1.inventory.additem(items.Apple(12), 0)
     p1.inventory.additem(items.Apple(34), 1)
     p1.inventory.additem(items.Apple(56), 2)
