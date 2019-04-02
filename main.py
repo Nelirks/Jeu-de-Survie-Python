@@ -30,7 +30,7 @@ def changeMap(mapPosition, player, modX, modY):
     return wall
 
 
-def mainLoop(game):
+def mainLoop(game, playerControls):
     mapPosition = [0, 0]
     wall = engine.Carte(os.path.join("assets", "levels", str(mapPosition)),
                         mode="load")  # objet carte
@@ -42,6 +42,7 @@ def mainLoop(game):
     p1 = entities.Player(
         px, py, "1", ratio)  # joueur
     p1.direction = [0, 0, 0, 0]
+    p1.keyConfig = playerControls
     events = []
 
     p1.inventory.additem(items.Apple(12), 0)

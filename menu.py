@@ -132,7 +132,7 @@ def mainMenu():
                 game.state = 1
                 # fenêtre pour le jeu
                 game.changeMode((512, 288), (1280, 720))
-                main.mainLoop(game)
+                main.mainLoop(game, playerKeyConfig)
                 game.changeMode((1280, 720), (1280, 720))
                 pygame.mixer_music.load(os.path.join(
                     "assets", "music", "main_Menu.mp3"))
@@ -152,8 +152,8 @@ def settings():
     setting = 1
     editUpEvent = pygame.USEREVENT + 5
     editLeftEvent = pygame.USEREVENT + 6
-    editRightEvent = pygame.USEREVENT + 7
-    editDownEvent = pygame.USEREVENT + 8
+    editRightEvent = pygame.USEREVENT + 0
+    editDownEvent = pygame.USEREVENT + 7
     editUpButton = engine.Button(
         (490, 40), (70, 50), playerKeyConfigUnicode["up"], editUpEvent, fontSize=50, background=(100, 100, 100))
     editDownButton = engine.Button(
@@ -180,7 +180,7 @@ def settings():
         game.screen.blit(font30.render(
             "Droite :", 1, (255, 255, 255)), (400, 230))
         game.screen.blit(font30.render(
-            "Echap quitter", 1, (255, 255, 255)), (0, 690))
+            "Echap pour retour arrière", 1, (255, 255, 255)), (0, 690))
 
         game.screen.blit(editUpButton.render(), editUpButton.position)
         game.screen.blit(editLeftButton.render(), editLeftButton.position)
@@ -194,35 +194,43 @@ def settings():
         for event in events:
             if event.type == editDownEvent:
                 editDown = 1
+                editDownButton.text = "..."
             if event.type == editUpEvent:
                 editUp = 1
+                editUpButton.text = "..."
             if event.type == editLeftEvent:
                 editLeft = 1
+                editLeftButton.text = "..."
             if event.type == editRightEvent:
                 editRight = 1
+                editRightButton.text = "..."
 
             if event.type == pygame.KEYDOWN:
-                if editLeft:
-                    editLeft = 0
-                    playerKeyConfig["left"] = event.key
-                    playerKeyConfigUnicode["left"] = event.unicode
-                    editLeftButton.text = event.unicode
-                if editRight:
-                    editRight = 0
-                    playerKeyConfig["right"] = event.key
-                    playerKeyConfigUnicode["right"] = event.unicode
-                    editRightButton.text = event.unicode
-                if editUp:
-                    editUp = 0
-                    playerKeyConfig["up"] = event.key
-                    playerKeyConfigUnicode["up"] = event.unicode
-                    editUpButton.text = event.unicode
-                if editDown:
-                    editDown = 0
-                    playerKeyConfig["down"] = event.key
-                    playerKeyConfigUnicode["down"] = event.unicode
-                    editDownButton.text = event.unicode
+                if event.key != pygame.K_ESCAPE:
+                    if editLeft:
+                        editLeft = 0
+                        playerKeyConfig["left"] = event.key
+                        playerKeyConfigUnicode["left"] = event.unicode
+                        editLeftButton.text = event.unicode
+                    if editRight:
+                        editRight = 0
+                        playerKeyConfig["right"] = event.key
+                        playerKeyConfigUnicode["right"] = event.unicode
+                        editRightButton.text = event.unicode
+                    if editUp:
+                        editUp = 0
+                        playerKeyConfig["up"] = event.key
+                        playerKeyConfigUnicode["up"] = event.unicode
+                        editUpButton.text = event.unicode
+                    if editDown:
+                        editDown = 0
+                        playerKeyConfig["down"] = event.key
+                        playerKeyConfigUnicode["down"] = event.unicode
+                        editDownButton.text = event.unicode
+
+            if event.type == pygame.KEYUP:
                 if event.key == pygame.K_ESCAPE:
+                    events = []
                     setting = 0
         events = []
         game.waitFramerate()
