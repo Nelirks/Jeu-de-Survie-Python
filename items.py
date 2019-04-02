@@ -33,6 +33,9 @@ class Item:
         surface = pygame.Surface(CONST_TileItemSize, CONST_TileItemSize)
         surface.blit(self.texture, (0, 0))
         return surface
+    
+    def use(self, user) :
+        return(self)
 
 
 class Wood(Item):
@@ -151,6 +154,7 @@ class ItemContainer:
                             olditem = "0"
                             itemalreadyadded = 1
                             break
+                    else :
                         itemplace = len(self.items)-n-1
                 if itemalreadyadded == 0:
                     self.items[itemplace] = itemadded

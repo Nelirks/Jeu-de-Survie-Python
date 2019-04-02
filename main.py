@@ -50,6 +50,7 @@ def mainLoop(game):
     p1.inventory.additem(items.Apple(78), 3)
     p1.inventory.additem(items.Apple(90), 4)
     p1.inventory.additem(items.Apple(1), -1)
+    p1.inventory.additem(items.Wood(99), -1)
     while game.state == 1 or game.state == 2:  # en jeu ou dans le menu pause
         if game.state == 1:
             pevents = events
