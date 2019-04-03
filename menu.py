@@ -60,13 +60,17 @@ playerKeyConfig = {
     "left": pygame.K_d,
     "right": pygame.K_q,
     "down": pygame.K_s,
-    "up": pygame.K_z
+    "up": pygame.K_z,
+    "useRight": pygame.K_r,
+    "useLeft": pygame.K_a
 }
 playerKeyConfigUnicode = {
     "left": "d",
-    "right": "a",
+    "right": "q",
     "down": "s",
-    "up": "z"
+    "up": "z",
+    "useRight": "r",
+    "useLeft": "a"
 }
 
 playEvent = pygame.USEREVENT + 4
@@ -150,18 +154,26 @@ def settings():
     game.screen.fill((0, 0, 0))
     font30 = pygame.font.Font(None, 30)
     setting = 1
+    # configuration du bouton retour
+    backEvent = pygame.USEREVENT + 5
+    backButton = engine.Button(
+        (0, 690), (100, 30), "Retour", backEvent, fontSize=30)
+
+    # configuration des configurateurs de touches
+    # mouvements
     editUpButton = engine.KeyCustomizerButton(
-        (490, 40), (70, 50), playerKeyConfig["up"], playerKeyConfigUnicode["up"], fontSize=50, background=(100, 100, 100))
+        (490, 40), (100, 50), playerKeyConfig["up"], playerKeyConfigUnicode["up"], fontSize=50, background=(100, 100, 100))
     editDownButton = engine.KeyCustomizerButton(
-        (490, 100), (70, 50), playerKeyConfig["down"], playerKeyConfigUnicode["down"], fontSize=50, background=(100, 100, 100))
+        (490, 100), (100, 50), playerKeyConfig["down"], playerKeyConfigUnicode["down"], fontSize=50, background=(100, 100, 100))
     editLeftButton = engine.KeyCustomizerButton(
-        (490, 160), (70, 50), playerKeyConfig["left"], playerKeyConfigUnicode["left"], fontSize=50, background=(100, 100, 100))
+        (490, 160), (100, 50), playerKeyConfig["left"], playerKeyConfigUnicode["left"], fontSize=50, background=(100, 100, 100))
     editRightButton = engine.KeyCustomizerButton(
-        (490, 220), (70, 50), playerKeyConfig["right"], playerKeyConfigUnicode["right"], fontSize=50, background=(100, 100, 100))
-    editUp = 0
-    editDown = 0
-    editLeft = 0
-    editRight = 0
+        (490, 220), (100, 50), playerKeyConfig["right"], playerKeyConfigUnicode["right"], fontSize=50, background=(100, 100, 100))
+    # objets
+    editORightButton = engine.KeyCustomizerButton(
+        (490, 280), (100, 50), playerKeyConfig["useRight"], playerKeyConfigUnicode["useRight"], fontSize=50, background=(100, 100, 100))
+    editOLeftButton = engine.KeyCustomizerButton(
+        (490, 340), (100, 50), playerKeyConfig["useLeft"], playerKeyConfigUnicode["useLeft"], fontSize=50, background=(100, 100, 100))
     while setting == 1:
         events = game.runEvents()
         game.screen.fill((0, 0, 0))  # effacer l'écran
@@ -176,24 +188,43 @@ def settings():
         game.screen.blit(font30.render(
             "Droite :", 1, (255, 255, 255)), (400, 230))
         game.screen.blit(font30.render(
-            "Echap pour retour arrière", 1, (255, 255, 255)), (0, 690))
-
+            "Objet gauche :", 1, (255, 255, 255)), (350, 290))
+        game.screen.blit(font30.render(
+            "Objet droite :", 1, (255, 255, 255)), (350, 350))
+        # bouton retour
+        game.screen.blit(backButton.render(), backButton.position)
+        backButton.update(events)
+        # affichage des configurateurs des touches
         game.screen.blit(editUpButton.render(), editUpButton.position)
         game.screen.blit(editLeftButton.render(), editLeftButton.position)
         game.screen.blit(editRightButton.render(), editRightButton.position)
-
         game.screen.blit(editDownButton.render(), editDownButton.position)
+        game.screen.blit(editORightButton.render(), editORightButton.position)
+        game.screen.blit(editOLeftButton.render(), editOLeftButton.position)
+        # actualisation des configurateurs des touches
         playerKeyConfig["left"] = editLeftButton.update(events)
         playerKeyConfig["down"] = editDownButton.update(events)
         playerKeyConfig["right"] = editRightButton.update(events)
         playerKeyConfig["up"] = editUpButton.update(events)
+        playerKeyConfig["useRight"] = editORightButton.update(events)
+        playerKeyConfig["useLeft"] = editOLeftButton.update(events)
         for event in events:
+
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_ESCAPE:
                     events = []
                     setting = 0
+            if event.type == backEvent:
+                events = []
+                setting = 0
         events = []
         game.waitFramerate()
+    playerKeyConfigUnicode["left"] = editLeftButton.text
+    playerKeyConfigUnicode["right"] = editRightButton.text
+    playerKeyConfigUnicode["up"] = editUpButton.text
+    playerKeyConfigUnicode["down"] = editDownButton.text
+    playerKeyConfigUnicode["useLeft"] = editOLeftButton.text
+    playerKeyConfigUnicode["useRight"] = editORightButton.text
 
 
 def credits():
