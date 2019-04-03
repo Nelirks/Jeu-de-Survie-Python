@@ -57,10 +57,10 @@ game = engine.Engine((1280, 720),
 game.state = 0
 
 playerKeyConfig = {
-    "left": pygame.K_LEFT,
-    "right": pygame.K_RIGHT,
-    "down": pygame.K_DOWN,
-    "up": pygame.K_UP
+    "left": pygame.K_d,
+    "right": pygame.K_q,
+    "down": pygame.K_s,
+    "up": pygame.K_z
 }
 playerKeyConfigUnicode = {
     "left": "d",
@@ -150,18 +150,14 @@ def settings():
     game.screen.fill((0, 0, 0))
     font30 = pygame.font.Font(None, 30)
     setting = 1
-    editUpEvent = pygame.USEREVENT + 5
-    editLeftEvent = pygame.USEREVENT + 6
-    editRightEvent = pygame.USEREVENT + 0
-    editDownEvent = pygame.USEREVENT + 7
-    editUpButton = engine.Button(
-        (490, 40), (70, 50), playerKeyConfigUnicode["up"], editUpEvent, fontSize=50, background=(100, 100, 100))
-    editDownButton = engine.Button(
-        (490, 100), (70, 50), playerKeyConfigUnicode["down"], editDownEvent, fontSize=50, background=(100, 100, 100))
-    editLeftButton = engine.Button(
-        (490, 160), (70, 50), playerKeyConfigUnicode["left"], editLeftEvent, fontSize=50, background=(100, 100, 100))
-    editRightButton = engine.Button(
-        (490, 220), (70, 50), playerKeyConfigUnicode["right"], editRightEvent, fontSize=50, background=(100, 100, 100))
+    editUpButton = engine.KeyCustomizerButton(
+        (490, 40), (70, 50), playerKeyConfig["up"], playerKeyConfigUnicode["up"], fontSize=50, background=(100, 100, 100))
+    editDownButton = engine.KeyCustomizerButton(
+        (490, 100), (70, 50), playerKeyConfig["down"], playerKeyConfigUnicode["down"], fontSize=50, background=(100, 100, 100))
+    editLeftButton = engine.KeyCustomizerButton(
+        (490, 160), (70, 50), playerKeyConfig["left"], playerKeyConfigUnicode["left"], fontSize=50, background=(100, 100, 100))
+    editRightButton = engine.KeyCustomizerButton(
+        (490, 220), (70, 50), playerKeyConfig["right"], playerKeyConfigUnicode["right"], fontSize=50, background=(100, 100, 100))
     editUp = 0
     editDown = 0
     editLeft = 0
@@ -187,47 +183,11 @@ def settings():
         game.screen.blit(editRightButton.render(), editRightButton.position)
 
         game.screen.blit(editDownButton.render(), editDownButton.position)
-        editLeftButton.update(events)
-        editDownButton.update(events)
-        editRightButton.update(events)
-        editUpButton.update(events)
+        playerKeyConfig["left"] = editLeftButton.update(events)
+        playerKeyConfig["down"] = editDownButton.update(events)
+        playerKeyConfig["right"] = editRightButton.update(events)
+        playerKeyConfig["up"] = editUpButton.update(events)
         for event in events:
-            if event.type == editDownEvent:
-                editDown = 1
-                editDownButton.text = "..."
-            if event.type == editUpEvent:
-                editUp = 1
-                editUpButton.text = "..."
-            if event.type == editLeftEvent:
-                editLeft = 1
-                editLeftButton.text = "..."
-            if event.type == editRightEvent:
-                editRight = 1
-                editRightButton.text = "..."
-
-            if event.type == pygame.KEYDOWN:
-                if event.key != pygame.K_ESCAPE:
-                    if editLeft:
-                        editLeft = 0
-                        playerKeyConfig["left"] = event.key
-                        playerKeyConfigUnicode["left"] = event.unicode
-                        editLeftButton.text = event.unicode
-                    if editRight:
-                        editRight = 0
-                        playerKeyConfig["right"] = event.key
-                        playerKeyConfigUnicode["right"] = event.unicode
-                        editRightButton.text = event.unicode
-                    if editUp:
-                        editUp = 0
-                        playerKeyConfig["up"] = event.key
-                        playerKeyConfigUnicode["up"] = event.unicode
-                        editUpButton.text = event.unicode
-                    if editDown:
-                        editDown = 0
-                        playerKeyConfig["down"] = event.key
-                        playerKeyConfigUnicode["down"] = event.unicode
-                        editDownButton.text = event.unicode
-
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_ESCAPE:
                     events = []

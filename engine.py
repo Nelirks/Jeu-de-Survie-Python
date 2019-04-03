@@ -8,7 +8,6 @@ import pickle
 import entities
 
 
-
 class Engine:
     """
     classe de gestion de la fenêtre du jeu
@@ -48,10 +47,12 @@ class Engine:
         self.fullscreenEvent = pygame.USEREVENT + 1
         self.mainMenuEvent = pygame.USEREVENT + 4  # voir menu.py pour le +4
         self.fullscreenButton = Button(
-            (490, 20),(300, 40),  "Plein Écran", self.fullscreenEvent, fontSize=30, background=(44, 62, 80,255),focusedBackground=(84,102,80,255))
+            (490, 20), (300, 40),  "Plein Écran", self.fullscreenEvent, fontSize=30, background=(44, 62, 80, 255), focusedBackground=(84, 102, 80, 255))
         self.quitButton = Button(
-            (490, 70), (300, 40),  "Retour au menu principal", self.mainMenuEvent, fontSize=30, background=(44, 62, 80,255),focusedBackground=(84,102,80,255))
-        self.menu = Menu((480,10),(320,110),(self.fullscreenButton,self.quitButton))
+            (490, 70), (300, 40),  "Retour au menu principal", self.mainMenuEvent, fontSize=30, background=(44, 62, 80, 255), focusedBackground=(84, 102, 80, 255))
+        self.menu = Menu((480, 10), (320, 110),
+                         (self.fullscreenButton, self.quitButton))
+
     def changeMode(self, renderResolution, targetResolution):
         if self.fullscreen == 1:
             self.realScreen = pygame.display.set_mode(
@@ -106,9 +107,9 @@ class Engine:
                     self.state = -1
             elif event.type == pygame.QUIT:
                 self.state = -1
-        #if self.state == 2:  # si le jeu est en pause
+        # if self.state == 2:  # si le jeu est en pause
         #    return []
-        #else:
+        # else:
         return events
 
     def waitFramerate(self, showFps=False):
@@ -126,7 +127,7 @@ class Engine:
         self.last = pygame.time.get_ticks()
         if showFps:
             label = self.fpsfont.render(str(self.fps), 1, (0, 255, 0))
-            self.screen.blit(label, (0,0))
+            self.screen.blit(label, (0, 0))
         pygame.transform.scale(
             self.screen, self.targetResolution, self.realScreen)
         if self.state == 2 and self.menuState == 1:
@@ -150,20 +151,21 @@ def doubleArraygen(x, y):
 
 
 class Menu:
-    def __init__(self,position,size,elements = [],background = (0,0,0,255)):
+    def __init__(self, position, size, elements=[], background=(0, 0, 0, 255)):
         self.elements = elements
         self.size = size
         self.position = position
         self.background = background
-        self.rect = pygame.rect.Rect(position,size)
-    def update (self,events):
-        for element in self.elements :
-            element.update(events)
-    def render(self,surface):
-        pygame.draw.rect(surface,self.background,self.rect)
-        for element in self.elements:
-            surface.blit(element.render(),element.position)
+        self.rect = pygame.rect.Rect(position, size)
 
+    def update(self, events):
+        for element in self.elements:
+            element.update(events)
+
+    def render(self, surface):
+        pygame.draw.rect(surface, self.background, self.rect)
+        for element in self.elements:
+            surface.blit(element.render(), element.position)
 
 
 class GUIElement:
@@ -230,6 +232,45 @@ class Button(GUIElement):
                     pygame.event.post(self.eventOnClicked)
 
 
+class KeyCustomizerButton(Button):
+    def __init__(self, position, size, defaultKey, defaultKeyUnicode, background=(0, 0, 0, 0), focusedBackground=(100, 100, 100, 50), font=None, fontSize=20, fontColor=(255, 255, 255, 255)):
+        self.key = defaultKey
+        self.editMode = 0
+        super().__init__(position, size, defaultKeyUnicode, 0, background=background,
+                         focusedBackground=focusedBackground, font=font, fontSize=fontSize, fontColor=fontColor)
+
+    def update(self, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if self.editMode:
+                    self.key = event.key
+                    self.editMode = 0
+                    self.text = event.unicode
+                    if event.key == pygame.K_UP:
+                        self.text = "up"
+                    if event.key == pygame.K_DOWN:
+                        self.text = "down"
+                    if event.key == pygame.K_RIGHT:
+                        self.text = "right"
+                    if event.key == pygame.K_LEFT:
+                        self.text = "left"
+            if event.type == pygame.MOUSEMOTION:
+                mouse = pygame.rect.Rect(pygame.mouse.get_pos(), (1, 1))
+                if mouse.colliderect(self.rect):
+                    self.focused = 1
+                else:
+                    self.focused = 0
+            if event.type == pygame.MOUSEBUTTONDOWN:
+
+                if self.focused == 1:
+                    self.editMode = 1
+                    self.text = "..."
+                else:
+                    self.editMode = 0
+
+        return self.key
+
+
 class Carte:
     """
     Objet Carte : permet de charger une carte à partir d'un fichier, de l'afficher et d'en créer une. À faire avant tout le reste (la taille reste modifiable).
@@ -259,7 +300,7 @@ class Carte:
     blockingTiles = ["0"]
     textures = dict()
 
-    def __init__(self, path, mode="load", dimensions=(10, 10), tileSize=32, setNum="-1", blockingTiles=["0"],playerPosition=(0,0)):
+    def __init__(self, path, mode="load", dimensions=(10, 10), tileSize=32, setNum="-1", blockingTiles=["0"], playerPosition=(0, 0)):
         """
         __init__(path, mode="load", dimensions=(10, 10), tileSize=64)  : création de l'objet carte
             path : chemin d'accès ,
@@ -287,9 +328,9 @@ class Carte:
             self.height = self.size[1]*self.tileSize
             self.setNum = int(info.readline().split(" ")[0])
             pPosStr = info.readline()
-            px = int( pPosStr.split(" ")[0])
+            px = int(pPosStr.split(" ")[0])
             py = int(pPosStr.split(" ")[1])
-            self.playerPosition = (px,py)
+            self.playerPosition = (px, py)
             info.close()
 
             solid = open(os.path.join(path, "solid"), "rb")  # grille "solide"
@@ -311,7 +352,7 @@ class Carte:
             self.width = dimensions[0] * self.tileSize
             self.height = dimensions[1] * self.tileSize
             self.setNum = setNum
-            self.playerPosition= playerPosition
+            self.playerPosition = playerPosition
             self.loadTextures()
         elif mode == "edit":
             info = open(os.path.join(path, "info"),
@@ -324,7 +365,7 @@ class Carte:
             pPosStr = info.readline()
             px = int(pPosStr.split(" ")[0])
             py = int(pPosStr.split(" ")[1])
-            self.playerPosition = (px,py)
+            self.playerPosition = (px, py)
             info.close()
 
             solid = open(os.path.join(path, "solid"), "rb")  # grille "solide"
@@ -396,7 +437,8 @@ class Carte:
                     "w")  # sauvagarder les infos
         info.write("{} {}\n".format(self.size[0], self.size[1]))
         info.write("{} \n".format(self.setNum))
-        info.write("{} {} ".format(self.playerPosition[0],self.playerPosition[1]))
+        info.write("{} {} ".format(
+            self.playerPosition[0], self.playerPosition[1]))
         info.close()
 
         solid = open(os.path.join(
