@@ -66,6 +66,7 @@ class Entity:
             self.life = self.maxlife
         elif self.life <= 0:
             self.life = 0
+        return("0")
 
     def takeMagicDamage(self, magicDamage, mDamageType):
         # à faire : résistance / faiblesse éléments
@@ -298,7 +299,10 @@ class Player(Entity):
                                     destroyrect = pygame.Rect(destroypos[0], destroypos[1], 1, 1)
                                     entityhit = destroyrect.collidelist(entitylist)
                                     if entityhit != -1 :
-                                        entitylist[entityhit].life -= 5
+                                        loot = entitylist[entityhit].takeDamage(5)
+                                        if loot != "0" :
+                                            for n in range (len(loot)) :
+                                                self.inventory.additem(loot[n][0](loot[n][1]), -1)
                         self.useleftitem = 1
                 if event.type == pygame.KEYUP:
                     if event.key == self.keyConfig["useRight"]:
@@ -316,7 +320,7 @@ class Player(Entity):
                                     destroyrect = pygame.Rect(destroypos[0], destroypos[1], 1, 1)
                                     entityhit = destroyrect.collidelist(entitylist)
                                     if entityhit != -1 :
-                                        entitylist[entityhit].life -= 5
+                                        loot = entitylist[entityhit].takeDamage(5)
                         self.userightitem = 1
                 if event.type == pygame.KEYUP:
                     if event.key == self.keyConfig["useLeft"]:
@@ -354,16 +358,24 @@ class Collectable(Entity):
         self.name = name
         super().__init__(x, y, texture, life=life)
 
-    def Loot(self):
+    """def Loot(self):
         r = []
         for l in self.loot:
             if l[1] < random.random():
                 r.append(l[0])
-        return l
+        return l"""
 
+    def takeDamage(self, damage):
+        self.life -= damage  # Todo : ajouter du random
+        if self.life >= self.maxlife:
+            self.life = self.maxlife
+        elif self.life <= 0:
+            self.life = 0
+            return(self.loot)
+        return("0")
 
 class Tree(Collectable):
-    def __init__(self, x, y, life=10, loot=[], name="tree"):
+    def __init__(self, x, y, life=10, loot=[(items.Apple,2), (items.Wood,4)], name="tree"):
         texture = pygame.image.load(
             os.path.join("assets", "entities", "tree.png"))
         super().__init__(x, y, texture, life=life, loot=loot, name=name)
