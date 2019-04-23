@@ -58,7 +58,7 @@ class Consommable(Item):
         user.thirst += self.thirstgain
         self.quantity -= 1
         if self.quantity <= 0:
-            return("0")
+            return("0", "0")
         else :
             return(self,"0")
 

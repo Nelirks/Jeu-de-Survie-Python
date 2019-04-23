@@ -3,6 +3,7 @@ import pygame
 import os
 import items
 import random
+import copy
 
 
 PlayerFaces = {"right": 0, "down": 1, "left": 2, "up": 3}
@@ -84,6 +85,8 @@ class Player(Entity):
         self.inventoryweight = inventoryweight
         self.level = 0
 
+        self.facing = (0,1)
+
         self.lefthand = items.ItemContainer(1)
         self.righthand = items.ItemContainer(1)
 
@@ -142,13 +145,13 @@ class Player(Entity):
             else:  # vers le bas ou bas-gauche/bas-droit
                 if self.direction[0]:  # droite
                     self.texture = self.textures["right"]
-                    self.facing = (0,1)
+                    self.facing = (1,0)
                 elif self.direction[2]:  # gauche
                     self.texture = self.textures["left"]
-                    self.facing = (0,-1)
+                    self.facing = (-1,0)
                 else:
                     self.texture = self.textures["front"]
-                    self.facing = (1,0)
+                    self.facing = (0,1)
 
     def render(self, surface):
         """
@@ -234,7 +237,7 @@ class Player(Entity):
                         self.cursorinventory.items[0] = self.righthand.additem(
                             self.cursorinventory.items[0], 0, mode)
 
-    def update(self, wallrects, events):
+    def update(self, wallrects, entitylist, events):
 
         # Création d'une liste de déplacements en pixels en fonction de la direction
         move = [(self.speed, 0),
@@ -257,15 +260,19 @@ class Player(Entity):
                         if event.key == keys[n]:
                             # met la direction à 0 -> ne veut pas bouger
                             self.direction[n] = 0
-                self.findDirection()
-
                 # Utilisation de l'item de la main gauche
                 if event.type == pygame.KEYDOWN:
                     if event.key == self.keyConfig["useRight"]:
                         if self.useleftitem == 0:
                             if self.lefthand.items[0] != "0":
-                                self.lefthand.items[0] = self.lefthand.items[0].use(
-                                    self)[0]
+                                itemused = self.lefthand.items[0].use(self)
+                                self.lefthand.items[0] = copy.copy(itemused[0])
+                                if itemused[1] == "usetool" :
+                                    destroypos = [self.rect.centerx + self.facing[0]*16, self.rect.centery + self.facing[1]*16]
+                                    destroyrect = pygame.Rect(destroypos[0], destroypos[1], 1, 1)
+                                    entityhit = destroyrect.collidelist(entitylist)
+                                    if entityhit != -1 :
+                                        entitylist[entityhit].life -= 5
                         self.useleftitem = 1
                 if event.type == pygame.KEYUP:
                     if event.key == self.keyConfig["useRight"]:
@@ -276,13 +283,20 @@ class Player(Entity):
                     if event.key == self.keyConfig["useLeft"]:
                         if self.userightitem == 0:
                             if self.righthand.items[0] != "0":
-                                self.righthand.items[0] = self.righthand.items[0].use(
-                                    self)[0]
+                                itemused = self.righthand.items[0].use(self)
+                                self.righthand.items[0] = copy.copy(itemused[0])
+                                if itemused[1] == "usetool" :
+                                    destroypos = [self.rect.centerx + self.facing[0]*16, self.rect.centery + self.facing[1]*16]
+                                    destroyrect = pygame.Rect(destroypos[0], destroypos[1], 1, 1)
+                                    entityhit = destroyrect.collidelist(entitylist)
+                                    if entityhit != -1 :
+                                        entitylist[entityhit].life -= 5
                         self.userightitem = 1
                 if event.type == pygame.KEYUP:
                     if event.key == self.keyConfig["useLeft"]:
                         self.userightitem = 0
 
+        self.findDirection()
         self.clickinventory(events)
 
         for n in range(4):
