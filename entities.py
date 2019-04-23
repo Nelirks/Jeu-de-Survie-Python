@@ -8,6 +8,32 @@ import random
 PlayerFaces = {"right": 0, "down": 1, "left": 2, "up": 3}
 
 
+
+"""
+enregistrement des crafts: 
+crafts dans une liste dans la forme :
+    [(liste d'items nécessaires avec leur quantité ),(item de sortie,quantité) ]
+    cette liste d'items nécessaires est de la forme:
+        [(nom de l'item,qantité)]
+"""
+
+crafts =[
+    [
+        [
+            ["Apple",1],["Wood",1]],
+            ["Wood",2]
+        ]
+
+]
+craftTableImage = 0
+def initCrafts():
+    global craftTableImage
+    craftTableImage = pygame.image.load(os.path.join("assets","hud","crafting.png")).convert_alpha()
+
+def showCrafts(screen):
+    screen.blit(craftTableImage,(0,0))
+
+
 class Entity:
     """
     Système d'entités pouvant être sauvegardé

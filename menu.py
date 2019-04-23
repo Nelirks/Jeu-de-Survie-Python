@@ -8,8 +8,10 @@ import engine
 
 class Star:
 
-    def __init__(self, position, size, speed=(-10, 0)):
-        self.speed = speed
+    def __init__(self, position, size, speed=(-2, 0)):
+        self.speed = [0, 0]
+        self.speed[1] = speed[1]
+        self.speed[0] = speed[0]*size
         self.x = position[0]
         self.y = position[1]
         self.surface = pygame.surface.Surface((size*2, size))
@@ -28,28 +30,29 @@ class Stars:
     """
     une nuée d'étoiles défilant
     """
-
+    inter = 8
     liste = []
     line = 5
     frame = 0
 
     def render(self, surface):
-        if self.frame % 8 == 0:
+        if self.frame % self.inter == 0:
             width = surface.get_width()
             height = surface.get_height()
             for i in range(self.line):
                 x = width + random.randint(-10, 10)
                 y = random.randint(10, height-10)
-                self.liste.append(Star((x, y), random.randint(1, 5)))
+                self.liste.append(Star((x, y), random.randint(1, 6)))
         i = 0
+        out = self.liste
         for s in self.liste:
             s.render(surface)
             s.update()
-            if s.x < 0:
-                self.liste.pop(i)
-            else:
-                i += 1
+            if self.liste[i].x < 0:
+                out.pop(i)
+            i += 1
         self.frame += 1
+        self.liste = out
 
 
 game = engine.Engine((1280, 720),
@@ -57,16 +60,16 @@ game = engine.Engine((1280, 720),
 game.state = 0
 
 playerKeyConfig = {
-    "left": pygame.K_d,
-    "right": pygame.K_q,
+    "left": pygame.K_q,
+    "right": pygame.K_d,
     "down": pygame.K_s,
     "up": pygame.K_z,
     "useRight": pygame.K_r,
     "useLeft": pygame.K_a
 }
 playerKeyConfigUnicode = {
-    "left": "d",
-    "right": "q",
+    "left": "q",
+    "right": "d",
     "down": "s",
     "up": "z",
     "useRight": "r",
@@ -246,7 +249,10 @@ def credits():
                                    1, (255, 255, 255)), (510, 180))
     game.screen.blit(font40.render("Léo MOUGIN",
                                    1, (255, 255, 255)), (510, 210))
-
+    game.screen.blit(font40.render("Son :",
+                                   1, (255, 255, 255)), (480, 260))
+    game.screen.blit(font40.render("Nicolas PASSINI",
+                                   1, (255, 255, 255)), (510, 290))
     while credit == 1:
         events = game.runEvents()
         for event in events:
