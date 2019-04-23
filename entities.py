@@ -321,6 +321,9 @@ class Player(Entity):
                                     entityhit = destroyrect.collidelist(entitylist)
                                     if entityhit != -1 :
                                         loot = entitylist[entityhit].takeDamage(5)
+                                        if loot != "0" :
+                                            for n in range (len(loot)) :
+                                                self.inventory.additem(loot[n][0](loot[n][1]), -1)
                         self.userightitem = 1
                 if event.type == pygame.KEYUP:
                     if event.key == self.keyConfig["useLeft"]:
