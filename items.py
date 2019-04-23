@@ -35,7 +35,7 @@ class Item:
         return surface
     
     def use(self, user) :
-        return(self)
+        return(self, "0")
 
 
 class Wood(Item):
@@ -60,7 +60,7 @@ class Consommable(Item):
         if self.quantity <= 0:
             return("0")
         else :
-            return(self)
+            return(self,"0")
 
 
 
@@ -90,24 +90,18 @@ class Weapon(Item):
         entity.takeDamage(self.damage)
 
 
-'''
-class MagicWeapon(Weapon):
-    """
-    arme magiqe : applique des dégats magiques d'un certain type
-    pour une arme totalement magique, mettre damage = 0
-    """
-    mDamageType = "fire"
-    magicDamage = 0
+class Tool(Item) :
+    def __init__(self, nom, quantity,  texture, description):
+        super().__init__(nom, quantity, texture, description)
+        
 
-    def __init__(self, nom, texture, damage=0, magicDamage=0, mDamageType="fire", description=''):
-        self.mDamageType = mDamageType
-        self.magicDamage = magicDamage
-        super().__init__(nom, texture, damage=damage, description=description)
+    def use(self, user) :
+        #playerpos = (user.rect.centerx + user.facing[0]*15, user.rect.centery + user.facing[1]*18)
+        return(self, "usetool")
 
-    def applyDamage(self, entity):
-        entity.takeMagicDamage(self.magicDamage, self.mDamageType)
-        super().applyDamage(entity)
-'''
+class Axe(Tool) :
+    def __init__(self, quantity):
+        super().__init__("Axe", quantity, os.path.join("assets", "items", "Axe.png"), "")
 
 
 class ItemContainer:

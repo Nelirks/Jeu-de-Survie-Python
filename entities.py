@@ -130,21 +130,25 @@ class Player(Entity):
             i += 1
 
         """
-
-        if self.direction[3]:  # vers le haut
-            if self.direction[0]:  # droite et haut
-                self.texture = self.textures["backRight"]
-            elif self.direction[2]:  # gauche et haut
-                self.texture = self.textures["backLeft"]
-            else:  # juste le haut
-                self.texture = self.textures["back"]
-        else:  # vers le bas ou bas-gauche/bas-droit
-            if self.direction[0]:  # droite
-                self.texture = self.textures["right"]
-            elif self.direction[2]:  # gauche
-                self.texture = self.textures["left"]
-            else:
-                self.texture = self.textures["front"]
+        if self.direction != [0,0,0,0] :
+            if self.direction[3]:  # vers le haut
+                self.facing = (0,-1)
+                if self.direction[0]:  # droite et haut
+                    self.texture = self.textures["backRight"]
+                elif self.direction[2]:  # gauche et haut
+                    self.texture = self.textures["backLeft"]
+                else:  # juste le haut
+                    self.texture = self.textures["back"]
+            else:  # vers le bas ou bas-gauche/bas-droit
+                if self.direction[0]:  # droite
+                    self.texture = self.textures["right"]
+                    self.facing = (0,1)
+                elif self.direction[2]:  # gauche
+                    self.texture = self.textures["left"]
+                    self.facing = (0,-1)
+                else:
+                    self.texture = self.textures["front"]
+                    self.facing = (1,0)
 
     def render(self, surface):
         """
@@ -261,7 +265,7 @@ class Player(Entity):
                         if self.useleftitem == 0:
                             if self.lefthand.items[0] != "0":
                                 self.lefthand.items[0] = self.lefthand.items[0].use(
-                                    self)
+                                    self)[0]
                         self.useleftitem = 1
                 if event.type == pygame.KEYUP:
                     if event.key == self.keyConfig["useRight"]:
@@ -273,7 +277,7 @@ class Player(Entity):
                         if self.userightitem == 0:
                             if self.righthand.items[0] != "0":
                                 self.righthand.items[0] = self.righthand.items[0].use(
-                                    self)
+                                    self)[0]
                         self.userightitem = 1
                 if event.type == pygame.KEYUP:
                     if event.key == self.keyConfig["useLeft"]:
