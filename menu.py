@@ -4,6 +4,7 @@ import os
 import random
 import math
 import engine
+import pickle
 
 
 class Star:
@@ -75,6 +76,16 @@ playerKeyConfigUnicode = {
     "useRight": "r",
     "useLeft": "a"
 }
+if (os.path.isfile("keys") == False):
+    file = open("keys", "wb")
+    pickle.dump((playerKeyConfig, playerKeyConfigUnicode), file)
+    file.close()
+else:
+    file = open("keys", "rb")
+    out = pickle.load(file)
+    file.close()
+    playerKeyConfig = out[0]
+    playerKeyConfigUnicode = out[1]
 
 playEvent = pygame.USEREVENT + 4
 creditsEvent = pygame.USEREVENT + 3
@@ -228,6 +239,9 @@ def settings():
     playerKeyConfigUnicode["down"] = editDownButton.text
     playerKeyConfigUnicode["useLeft"] = editOLeftButton.text
     playerKeyConfigUnicode["useRight"] = editORightButton.text
+    file = open("keys", "wb")
+    pickle.dump((playerKeyConfig, playerKeyConfigUnicode), file)
+    file.close()
 
 
 def credits():

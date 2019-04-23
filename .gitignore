@@ -6,6 +6,8 @@ __pycache__/
 #nautilus
 .directory
 
+#keyconfig 
+keys
 
 # C extensions
 *.so
