@@ -38,11 +38,6 @@ class Item:
         return(self, "0")
 
 
-class Wood(Item):
-    def __init__(self, quantity):
-        super().__init__("Bois", quantity, os.path.join("assets", "items", "Wood.png"))
-
-
 class Consommable(Item):
     # Classe consommmable : Item avec des effets quand il est consommé
     def __init__(self, nom, quantity, texture, lifegain=0, hungergain=0, thirstgain=0, buff="", description=""):
@@ -63,11 +58,19 @@ class Consommable(Item):
             return(self,"0")
 
 
+class Wood(Item):
+    def __init__(self, quantity):
+        super().__init__("Bois", quantity, os.path.join("assets", "items", "Wood.png"))
+
 
 class Apple(Consommable):
     def __init__(self, quantity):
         super().__init__("Pomme", quantity, os.path.join(
             "assets", "items", "Apple.png"), 10, 25, 10)
+
+
+itemsList = {"Apple": Apple,
+             "Wood": Wood}
 
 
 class Weapon(Item):
@@ -144,11 +147,12 @@ class ItemContainer:
                 for n in range(len(self.items)):
                     if self.items[len(self.items)-n-1] != "0":
                         if self.items[len(self.items)-n-1].nom == itemadded.nom and self.items[len(self.items)-n-1].quantity + itemadded.quantity <= 99:
-                            self.items[len(self.items)-n - 1].quantity += itemadded.quantity
+                            self.items[len(self.items)-n -
+                                       1].quantity += itemadded.quantity
                             olditem = "0"
                             itemalreadyadded = 1
                             break
-                    else :
+                    else:
                         itemplace = len(self.items)-n-1
                 if itemalreadyadded == 0:
                     self.items[itemplace] = itemadded
@@ -164,8 +168,8 @@ class ItemContainer:
             else:
                 self.items[place] = itemadded
                 olditem = "0"
-        if self.items[place] != "0" :
-            if self.items[place].quantity > 99 :
+        if self.items[place] != "0":
+            if self.items[place].quantity > 99:
                 olditem = copy.copy(self.items[place])
                 olditem.quantity -= 99
                 self.items[place].quantity = 99
