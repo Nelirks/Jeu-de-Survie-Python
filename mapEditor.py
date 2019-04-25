@@ -16,18 +16,21 @@ usage : python mapEditor.py
 def mapEditor(carte):
     e = engine.Engine((10, 10))
 
-    ws = carte.tileSize  # réserve solide
+    heightS = carte.tileSize  # réserve solide
     we = carte.tileSize*2  # réserve entités
     y = 0
     height = carte.height
+    width = carte.width
     if carte.height < carte.tileSize * 5:
         height = carte.tileSize * 5
-
+    if carte.width < carte.tileSize * 5:
+        width = carte.tileSize * 5
+    x = 0
     for t in carte.textures:  # déterminer le nombre de colonnes
-        if y >= height:
-            ws += carte.tileSize
+        if x >= width:
+            heightS += carte.tileSize
             y = 0
-        y += carte.tileSize
+        x += carte.tileSize
 
     # déterminer le nombre de colonnes (entités)
     for t in entities.entitiesList:
@@ -35,8 +38,8 @@ def mapEditor(carte):
             we += carte.tileSize*2
             y = 0
         y += carte.tileSize*2
-    e = engine.Engine((carte.width+ws + we+2, height),
-                      ((carte.width+ws + we)*2, height*2))
+    e = engine.Engine((carte.width + we+2, height + heightS+2),
+                      ((carte.width + we)*2, (height + heightS+2)*2))
     textures = carte.textures
     entites = entities.entitiesList
     Selected = 0
@@ -57,10 +60,13 @@ def mapEditor(carte):
     for en in entites:
         etextures[en] = pygame.image.load(
             os.path.join("assets", "entities", en+".png"))
-    print(e.menuState)
+    e.realScreen = pygame.display.set_mode(
+        ((carte.width + we)*2, (height + heightS)*2))
     while e.state != 0 and e.menuState == 0:
         events = e.runEvents()
         for ev in events:
+            if ev.type == pygame.QUIT:
+                e.state = 0
             if ev.type == pygame.KEYDOWN:
                 if ev.key == pygame.K_s:
                     carte.save()
@@ -102,21 +108,21 @@ def mapEditor(carte):
                         entities.entitiesList[entityIndex[entitySelected]](pos[0]//2, pos[1]//2))
                     carte.render(cs)
                 e.screen.blit(cs, (0, 0))
-        y = 0
-        x = carte.width + 2
+        y = carte.height + 1
+        x = 0
 
         for t in textures:
-            if y >= height:
-                y = 0
-                x += carte.tileSize
+            if x >= width:
+                x = 0
+                y += carte.tileSize
             e.screen.blit(textures[t], (x, y))
             if tindex[Selected] == t:
                 pygame.draw.rect(e.screen, (255, 0, 0), pygame.Rect(
                     x, y, carte.tileSize, carte.tileSize), 1)
 
-            y += carte.tileSize
+            x += carte.tileSize
         y = 0
-        x += carte.tileSize
+        x = carte.width + 2
         for en in entites:
             if y >= height:
                 y = 0

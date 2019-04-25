@@ -107,7 +107,7 @@ class Player(Entity):
                   "backLeft", "right", "left"]
 
         self.scaleratio = scaleratio
-
+        initCrafts()
         self.inventory = items.ItemContainer(inventorysize)
         self.inventoryweight = inventoryweight
         self.level = 0

@@ -300,14 +300,14 @@ class Carte:
     blockingTiles = ["0"]
     textures = dict()
 
-    def __init__(self, path, mode="load", dimensions=(10, 10), tileSize=32, setNum="-1", blockingTiles=["0"], playerPosition=(0, 0)):
+    def __init__(self, path, mode="load", dimensions=(10, 10), tileSize=32, setNum="-1", playerPosition=(0, 0)):
         """
         __init__(path, mode="load", dimensions=(10, 10), tileSize=64)  : création de l'objet carte
             path : chemin d'accès ,
             mode : ["load" / "new" / "edit" ] charger / créer / éditer , charger (load) par défaut
             dimensions : taille en x et y
         """
-        self.blockingTiles = blockingTiles
+        
         self.grid = []
         self.tileSize = tileSize
         self.path = path
@@ -414,12 +414,17 @@ class Carte:
         self.textures = dict()
         for f in textureList:
             # charger les textures en les optimisant
-            self.textures[f.split(".")[0]] = pygame.image.load(
+            if(f != "blockingTiles.txt"):
+             self.textures[f.split(".")[0]] = pygame.image.load(
                 os.path.join(path, f)).convert()
         savedEntities = self.entities
         self.entities = []
         for entity in savedEntities:
             self.entities.append(entity.transform())
+        bfile = open(os.path.join(path,"blockingTiles.txt"),"r")
+        self.blockingTiles = bfile.readlines()
+        bfile.close()
+        
 
     def save(self):
         """Sauvegarde de la carte à l'emplacement spécifié lors de la création"""
