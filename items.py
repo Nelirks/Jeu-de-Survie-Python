@@ -33,8 +33,8 @@ class Item:
         surface = pygame.Surface(CONST_TileItemSize, CONST_TileItemSize)
         surface.blit(self.texture, (0, 0))
         return surface
-    
-    def use(self, user) :
+
+    def use(self, user):
         return(self, "0")
 
 
@@ -54,18 +54,18 @@ class Consommable(Item):
         self.quantity -= 1
         if self.quantity <= 0:
             return("0", "0")
-        else :
-            return(self,"0")
+        else:
+            return(self, "0")
 
 
 class Wood(Item):
     def __init__(self, quantity):
-        super().__init__("Bois", quantity, os.path.join("assets", "items", "Wood.png"))
+        super().__init__("Wood", quantity, os.path.join("assets", "items", "Wood.png"))
 
 
 class Apple(Consommable):
     def __init__(self, quantity):
-        super().__init__("Pomme", quantity, os.path.join(
+        super().__init__("Apple", quantity, os.path.join(
             "assets", "items", "Apple.png"), 10, 25, 10)
 
 
@@ -93,16 +93,16 @@ class Weapon(Item):
         entity.takeDamage(self.damage)
 
 
-class Tool(Item) :
+class Tool(Item):
     def __init__(self, nom, quantity,  texture, description):
         super().__init__(nom, quantity, texture, description)
-        
 
-    def use(self, user) :
+    def use(self, user):
         #playerpos = (user.rect.centerx + user.facing[0]*15, user.rect.centery + user.facing[1]*18)
         return(self, "usetool")
 
-class Axe(Tool) :
+
+class Axe(Tool):
     def __init__(self, quantity):
         super().__init__("Axe", quantity, os.path.join("assets", "items", "Axe.png"), "")
 
