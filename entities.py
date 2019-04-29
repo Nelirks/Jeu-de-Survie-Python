@@ -107,6 +107,8 @@ class Player(Entity):
                   "backLeft", "right", "left"]
 
         self.scaleratio = scaleratio
+        self.hitmarker = 0
+        self.hitpos=[0,0]
         initCrafts()
         self.inventory = items.ItemContainer(inventorysize)
         self.inventoryweight = inventoryweight
@@ -216,6 +218,14 @@ class Player(Entity):
         surface.blit(righthandsurface, (362, 223))
         surface.blit(lefthandsurface, (116, 223))
 
+        # Affichage hitmarker
+        if self.hitmarker > 0:
+            hitm = self.hitmarker *2
+            hit = pygame.Surface((hitm,hitm))
+            hit.fill((200,0,0))
+            surface.blit(hit,(self.hitpos[0]-hitm/2,self.hitpos[1]-hitm/2))
+            self.hitmarker -= 1
+
         # Affichage de l'item tenu avec le curseur
         cursorinventorysurface = self.cursorinventory.render(34)
         surface.blit(cursorinventorysurface,
@@ -296,8 +306,11 @@ class Player(Entity):
                                 self.lefthand.items[0] = copy.copy(itemused[0])
                                 if itemused[1] == "usetool" :
                                     destroypos = [self.rect.centerx + self.facing[0]*16, self.rect.centery + self.facing[1]*16]
-                                    destroyrect = pygame.Rect(destroypos[0], destroypos[1], 1, 1)
+                                    destroyrect = pygame.Rect(destroypos[0]-2, destroypos[1]-2, 4, 4)
                                     entityhit = destroyrect.collidelist(entitylist)
+                                    #hitmarker
+                                    self.hitpos = destroypos
+                                    self.hitmarker = 4
                                     if entityhit != -1 :
                                         loot = entitylist[entityhit].takeDamage(5)
                                         if loot != "0" :
@@ -317,8 +330,11 @@ class Player(Entity):
                                 self.righthand.items[0] = copy.copy(itemused[0])
                                 if itemused[1] == "usetool" :
                                     destroypos = [self.rect.centerx + self.facing[0]*16, self.rect.centery + self.facing[1]*16]
-                                    destroyrect = pygame.Rect(destroypos[0], destroypos[1], 1, 1)
+                                    destroyrect = pygame.Rect(destroypos[0]-2, destroypos[1]-2, 4, 4)
                                     entityhit = destroyrect.collidelist(entitylist)
+                                    #hitmarker
+                                    self.hitpos = destroypos
+                                    self.hitmarker =4
                                     if entityhit != -1 :
                                         loot = entitylist[entityhit].takeDamage(5)
                                         if loot != "0" :

@@ -307,7 +307,7 @@ class Carte:
             mode : ["load" / "new" / "edit" ] charger / créer / éditer , charger (load) par défaut
             dimensions : taille en x et y
         """
-        
+
         self.grid = []
         self.tileSize = tileSize
         self.path = path
@@ -415,16 +415,20 @@ class Carte:
         for f in textureList:
             # charger les textures en les optimisant
             if(f != "blockingTiles.txt"):
-             self.textures[f.split(".")[0]] = pygame.image.load(
-                os.path.join(path, f)).convert()
+                self.textures[f.split(".")[0]] = pygame.image.load(
+                    os.path.join(path, f)).convert()
         savedEntities = self.entities
         self.entities = []
         for entity in savedEntities:
             self.entities.append(entity.transform())
-        bfile = open(os.path.join(path,"blockingTiles.txt"),"r")
-        self.blockingTiles = bfile.readlines()
+        bfile = open(os.path.join(path, "blockingTiles.txt"), "r")
+        line = bfile.readline()
+        allStr = ""
+        while line != "":
+            allStr += line
+            line = bfile.readline()
+        self.blockingTiles = allStr.split("\n")
         bfile.close()
-        
 
     def save(self):
         """Sauvegarde de la carte à l'emplacement spécifié lors de la création"""
