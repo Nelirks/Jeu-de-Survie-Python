@@ -52,6 +52,8 @@ class Craft():
         for i in itemsIn:
             self.itemsIn.append(items.itemsList[i[0]](i[1]))
         self.selected = 0
+        self.focused = 0
+        self.rect = pygame.Rect(position, (32, 32))
 
     def update(self, events):
         for event in events:
@@ -59,6 +61,13 @@ class Craft():
                 pos = pygame.mouse.get_pos()
                 mX = pos[0]*ratio
                 mY = pos[1]*ratio
+                if self.rect.collidepoint(mX, mY):
+                    self.focused = 1
+                else:
+                    self.focused = 0
+            if event.type == pygame.MOUSEBUTTONUP:
+                if self.focused == 1:
+                    self.selected = 1
 
 
 def showCrafts(screen):
