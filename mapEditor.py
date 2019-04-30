@@ -29,7 +29,7 @@ def mapEditor(carte):
     for t in carte.textures:  # déterminer le nombre de colonnes
         if x >= width:
             heightS += carte.tileSize
-            y = 0
+            x = 0
         x += carte.tileSize
 
     # déterminer le nombre de colonnes (entités)
@@ -39,7 +39,7 @@ def mapEditor(carte):
             y = 0
         y += carte.tileSize*2
     e = engine.Engine((carte.width + we+2, height + heightS+2),
-                      ((carte.width + we)*2, (height + heightS+2)*2))
+                      ((carte.width + we+2)*2, (height + heightS+2)*2))
     textures = carte.textures
     entites = entities.entitiesList
     Selected = 0
@@ -60,8 +60,9 @@ def mapEditor(carte):
     for en in entites:
         etextures[en] = pygame.image.load(
             os.path.join("assets", "entities", en+".png"))
+    print(we, heightS)
     e.realScreen = pygame.display.set_mode(
-        ((carte.width + we)*2, (height + heightS)*2))
+        ((carte.width + we+2)*2, (height + heightS+2)*2))
     while e.state != 0 and e.menuState == 0:
         events = e.runEvents()
         for ev in events:

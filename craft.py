@@ -45,12 +45,20 @@ class Craft():
 
         self.position = position
         self.texture = itemsTextureIndex[itemOut[0]]
-        self.number = number
         self.position = position
         self.itemOut = items.itemsList[itemOut[0]](itemOut[1])
         self.itemsIn = []
+        self.screenRatio = ratio
         for i in itemsIn:
             self.itemsIn.append(items.itemsList[i[0]](i[1]))
+        self.selected = 0
+
+    def update(self, events):
+        for event in events:
+            if event.type == pygame.MOUSEMOTION:
+                pos = pygame.mouse.get_pos()
+                mX = pos[0]*ratio
+                mY = pos[1]*ratio
 
 
 def showCrafts(screen):
