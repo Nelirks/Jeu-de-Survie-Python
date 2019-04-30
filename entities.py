@@ -274,7 +274,7 @@ class Player(Entity):
                         self.cursorinventory.items[0] = self.righthand.additem(
                             self.cursorinventory.items[0], 0, mode)
 
-    def update(self, wallrects, entitylist, events):
+    def update(self, wallrects, entitylist, events, mapset):
 
         # Création d'une liste de déplacements en pixels en fonction de la direction
         move = [(self.speed, 0),
@@ -282,6 +282,10 @@ class Player(Entity):
         # Création d'une liste des touches
         keys = [self.keyConfig["right"],
                 self.keyConfig["down"], self.keyConfig["left"], self.keyConfig["up"]]
+
+        if mapset == "1" :
+            self.changethirst(5)
+
         for event in events:
             if event.type == pygame.MOUSEMOTION:
                 self.mousepos = [pygame.mouse.get_pos(
