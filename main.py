@@ -57,7 +57,7 @@ def mainLoop(game, playerControls):
                 pevents = []
             """
             rects = wall.get_rects()
-            p1.update(rects, wall.entities, pevents)
+            p1.update(rects, wall.entities, pevents, wall.setNum)
 
         elif game.state == 2:
             p1.direction = [0, 0, 0, 0]

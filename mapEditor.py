@@ -76,7 +76,7 @@ def mapEditor(carte):
                     Selected += 1
                     if Selected >= maxSindex:
                         Selected = 0
-                if ev.key == pygame.K_CAPSLOCK:
+                if ev.key == pygame.K_a:
                     entitySelected += 1
                     if entitySelected >= maxEindex:
                         entitySelected = 0
@@ -108,9 +108,10 @@ def mapEditor(carte):
                     carte.entities.append(
                         entities.entitiesList[entityIndex[entitySelected]](pos[0]//2, pos[1]//2))
                     carte.render(cs)
-                e.screen.blit(cs, (0, 0))
         y = carte.height + 1
         x = 0
+        e.screen.fill((0, 0, 0))
+        e.screen.blit(cs, (0, 0))
 
         for t in textures:
             if x >= width:
@@ -132,6 +133,7 @@ def mapEditor(carte):
             if entityIndex[entitySelected] == en:
                 pygame.draw.rect(e.screen, (255, 225, 0), pygame.Rect(
                     x, y, carte.tileSize*2, carte.tileSize*2), 1)
+            y += carte.tileSize*2
 
         e.waitFramerate()
 
