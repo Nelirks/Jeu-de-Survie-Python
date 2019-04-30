@@ -66,7 +66,8 @@ playerKeyConfig = {
     "down": pygame.K_s,
     "up": pygame.K_z,
     "useRight": pygame.K_r,
-    "useLeft": pygame.K_a
+    "useLeft": pygame.K_a,
+    "openCraft": pygame.K_e
 }
 playerKeyConfigUnicode = {
     "left": "q",
@@ -74,7 +75,8 @@ playerKeyConfigUnicode = {
     "down": "s",
     "up": "z",
     "useRight": "r",
-    "useLeft": "a"
+    "useLeft": "a",
+    "openCraft": "e"
 }
 if (os.path.isfile("keys") == False):
     file = open("keys", "wb")

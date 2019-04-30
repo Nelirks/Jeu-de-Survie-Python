@@ -3,36 +3,9 @@ import pygame
 import os
 import items
 import random
-import copy
-
+import craft
 
 PlayerFaces = {"right": 0, "down": 1, "left": 2, "up": 3}
-
-
-
-"""
-enregistrement des crafts: 
-crafts dans une liste dans la forme :
-    [(liste d'items nécessaires avec leur quantité ),(item de sortie,quantité) ]
-    cette liste d'items nécessaires est de la forme:
-        [(nom de l'item,qantité)]
-"""
-
-crafts =[
-    [
-        [
-            ["Apple",1],["Wood",1]],
-            ["Wood",2]
-        ]
-
-]
-craftTableImage = 0
-def initCrafts():
-    global craftTableImage
-    craftTableImage = pygame.image.load(os.path.join("assets","hud","crafting.png")).convert_alpha()
-
-def showCrafts(screen):
-    screen.blit(craftTableImage,(0,0))
 
 
 class Entity:
@@ -91,7 +64,8 @@ class Player(Entity):
         "down": pygame.K_s,
         "up": pygame.K_z,
         "useRight": pygame.K_r,
-        "useLeft": pygame.K_a
+        "useLeft": pygame.K_a,
+        "openCraft": pygame.K_e
     }
     mousepos = [0, 0]
 
@@ -108,13 +82,14 @@ class Player(Entity):
 
         self.scaleratio = scaleratio
         self.hitmarker = 0
-        self.hitpos=[0,0]
-        initCrafts()
+        self.hitpos = [0, 0]
+        craft.initCrafts(scaleratio)  # charge les texturesç
+        self.showcraft = 0
         self.inventory = items.ItemContainer(inventorysize)
         self.inventoryweight = inventoryweight
         self.level = 0
 
-        self.facing = (0,1)
+        self.facing = (0, 1)
 
         self.lefthand = items.ItemContainer(1)
         self.righthand = items.ItemContainer(1)
@@ -137,6 +112,8 @@ class Player(Entity):
             "assets", "hud", "Hunger.png")).convert_alpha()
         self.thirstbar = pygame.image.load(os.path.join(
             "assets", "hud", "Thirst.png")).convert_alpha()
+
+        self.showcraftHold = 0
 
         self.textures = dict()
         for a in txname:
@@ -162,9 +139,9 @@ class Player(Entity):
             i += 1
 
         """
-        if self.direction != [0,0,0,0] :
+        if self.direction != [0, 0, 0, 0]:
             if self.direction[3]:  # vers le haut
-                self.facing = (0,-1)
+                self.facing = (0, -1)
                 if self.direction[0]:  # droite et haut
                     self.texture = self.textures["backRight"]
                 elif self.direction[2]:  # gauche et haut
@@ -174,13 +151,13 @@ class Player(Entity):
             else:  # vers le bas ou bas-gauche/bas-droit
                 if self.direction[0]:  # droite
                     self.texture = self.textures["right"]
-                    self.facing = (1,0)
+                    self.facing = (1, 0)
                 elif self.direction[2]:  # gauche
                     self.texture = self.textures["left"]
-                    self.facing = (-1,0)
+                    self.facing = (-1, 0)
                 else:
                     self.texture = self.textures["front"]
-                    self.facing = (0,1)
+                    self.facing = (0, 1)
 
     def render(self, surface):
         """
@@ -220,12 +197,13 @@ class Player(Entity):
 
         # Affichage hitmarker
         if self.hitmarker > 0:
-            hitm = self.hitmarker *2
-            hit = pygame.Surface((hitm,hitm))
-            hit.fill((200,0,0))
-            surface.blit(hit,(self.hitpos[0]-hitm/2,self.hitpos[1]-hitm/2))
+            hitm = self.hitmarker * 2
+            hit = pygame.Surface((hitm, hitm))
+            hit.fill((200, 0, 0))
+            surface.blit(hit, (self.hitpos[0]-hitm/2, self.hitpos[1]-hitm/2))
             self.hitmarker -= 1
-
+        if self.showcraft == 1:
+            craft.showCrafts(surface)
         # Affichage de l'item tenu avec le curseur
         cursorinventorysurface = self.cursorinventory.render(34)
         surface.blit(cursorinventorysurface,
@@ -302,52 +280,69 @@ class Player(Entity):
                             # met la direction à 0 -> ne veut pas bouger
                             self.direction[n] = 0
                 # Utilisation de l'item de la main gauche
-                if event.type == pygame.KEYDOWN:
-                    if event.key == self.keyConfig["useRight"]:
-                        if self.useleftitem == 0:
-                            if self.lefthand.items[0] != "0":
-                                itemused = self.lefthand.items[0].use(self)
-                                self.lefthand.items[0] = copy.copy(itemused[0])
-                                if itemused[1] == "usetool" :
-                                    destroypos = [self.rect.centerx + self.facing[0]*16, self.rect.centery + self.facing[1]*16]
-                                    destroyrect = pygame.Rect(destroypos[0]-2, destroypos[1]-2, 4, 4)
-                                    entityhit = destroyrect.collidelist(entitylist)
-                                    #hitmarker
-                                    self.hitpos = destroypos
-                                    self.hitmarker = 4
-                                    if entityhit != -1 :
-                                        loot = entitylist[entityhit].takeDamage(5)
-                                        if loot != "0" :
-                                            for n in range (len(loot)) :
-                                                self.inventory.additem(loot[n][0](loot[n][1]), -1)
-                        self.useleftitem = 1
-                if event.type == pygame.KEYUP:
-                    if event.key == self.keyConfig["useRight"]:
-                        self.useleftitem = 0
+            if event.type == pygame.KEYDOWN:
+                if event.key == self.keyConfig["useRight"]:
+                    if self.useleftitem == 0:
+                        if self.lefthand.items[0] != "0":
+                            itemused = self.lefthand.items[0].use(self)
+                            self.lefthand.items[0] = copy.copy(itemused[0])
+                            if itemused[1] == "usetool":
+                                destroypos = [
+                                    self.rect.centerx + self.facing[0]*16, self.rect.centery + self.facing[1]*16]
+                                destroyrect = pygame.Rect(
+                                    destroypos[0]-2, destroypos[1]-2, 4, 4)
+                                entityhit = destroyrect.collidelist(entitylist)
+                                # hitmarker
+                                self.hitpos = destroypos
+                                self.hitmarker = 4
+                                if entityhit != -1:
+                                    loot = entitylist[entityhit].takeDamage(5)
+                                    if loot != "0":
+                                        for n in range(len(loot)):
+                                            self.inventory.additem(
+                                                loot[n][0](loot[n][1]), -1)
+                    self.useleftitem = 1
+            if event.type == pygame.KEYUP:
+                if event.key == self.keyConfig["useRight"]:
+                    self.useleftitem = 0
 
                 # Utilisation de l'item de la main droite
-                if event.type == pygame.KEYDOWN:
-                    if event.key == self.keyConfig["useLeft"]:
-                        if self.userightitem == 0:
-                            if self.righthand.items[0] != "0":
-                                itemused = self.righthand.items[0].use(self)
-                                self.righthand.items[0] = copy.copy(itemused[0])
-                                if itemused[1] == "usetool" :
-                                    destroypos = [self.rect.centerx + self.facing[0]*16, self.rect.centery + self.facing[1]*16]
-                                    destroyrect = pygame.Rect(destroypos[0]-2, destroypos[1]-2, 4, 4)
-                                    entityhit = destroyrect.collidelist(entitylist)
-                                    #hitmarker
-                                    self.hitpos = destroypos
-                                    self.hitmarker =4
-                                    if entityhit != -1 :
-                                        loot = entitylist[entityhit].takeDamage(5)
-                                        if loot != "0" :
-                                            for n in range (len(loot)) :
-                                                self.inventory.additem(loot[n][0](loot[n][1]), -1)
-                        self.userightitem = 1
-                if event.type == pygame.KEYUP:
-                    if event.key == self.keyConfig["useLeft"]:
-                        self.userightitem = 0
+            if event.type == pygame.KEYDOWN:
+                if event.key == self.keyConfig["useLeft"]:
+                    if self.userightitem == 0:
+                        if self.righthand.items[0] != "0":
+                            itemused = self.righthand.items[0].use(self)
+                            self.righthand.items[0] = copy.copy(itemused[0])
+                            if itemused[1] == "usetool":
+                                destroypos = [
+                                    self.rect.centerx + self.facing[0]*16, self.rect.centery + self.facing[1]*16]
+                                destroyrect = pygame.Rect(
+                                    destroypos[0]-2, destroypos[1]-2, 4, 4)
+                                entityhit = destroyrect.collidelist(entitylist)
+                                # hitmarker
+                                self.hitpos = destroypos
+                                self.hitmarker = 4
+                                if entityhit != -1:
+                                    loot = entitylist[entityhit].takeDamage(5)
+                                    if loot != "0":
+                                        for n in range(len(loot)):
+                                            self.inventory.additem(
+                                                loot[n][0](loot[n][1]), -1)
+                    self.userightitem = 1
+            if event.type == pygame.KEYUP:
+                if event.key == self.keyConfig["useLeft"]:
+                    self.userightitem = 0
+            if event.type == pygame.KEYUP:
+                if event.key == self.keyConfig["openCraft"]:
+                    self.showcraftHold = 0
+            if event.type == pygame.KEYDOWN:
+                if event.key == self.keyConfig["openCraft"]:
+                    if self.showcraftHold == 0:
+                        self.showcraftHold = 1
+                        if self.showcraft == 0:
+                            self.showcraft = 1
+                        else:
+                            self.showcraft = 0
 
         self.findDirection()
         self.clickinventory(events)
@@ -397,8 +392,9 @@ class Collectable(Entity):
             return(self.loot)
         return("0")
 
+
 class Tree(Collectable):
-    def __init__(self, x, y, life=10, loot=[(items.Apple,2), (items.Wood,4)], name="tree"):
+    def __init__(self, x, y, life=10, loot=[(items.Apple, 2), (items.Wood, 4)], name="tree"):
         texture = pygame.image.load(
             os.path.join("assets", "entities", "tree.png"))
         super().__init__(x, y, texture, life=life, loot=loot, name=name)

@@ -231,7 +231,6 @@ class Button(GUIElement):
                 if self.focused == 1:
                     pygame.event.post(self.eventOnClicked)
 
-
 class KeyCustomizerButton(Button):
     def __init__(self, position, size, defaultKey, defaultKeyUnicode, background=(0, 0, 0, 0), focusedBackground=(100, 100, 100, 50), font=None, fontSize=20, fontColor=(255, 255, 255, 255)):
         self.key = defaultKey
