@@ -402,13 +402,13 @@ class AppleTree(Collectable):
 class Fir(Collectable):
     def __init__(self, x, y, life=10, loot=[(items.Apple, 2), (items.Wood, 4)], name="tree"):
         texture = pygame.image.load(
-            os.path.join("assets", "entities", "Apple Tree.png"))
+            os.path.join("assets", "entities", "Fir.png"))
         super().__init__(x, y, texture, life=life, loot=loot, name=name)
 
 class Tree(Collectable):
     def __init__(self, x, y, life=10, loot=[(items.Apple, 2), (items.Wood, 4)], name="tree"):
         texture = pygame.image.load(
-            os.path.join("assets", "entities", "Tree.png"))
+            os.path.join("assets", "entities", "tree.png"))
         super().__init__(x, y, texture, life=life, loot=loot, name=name)
 
 
