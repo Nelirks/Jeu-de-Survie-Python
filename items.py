@@ -69,8 +69,15 @@ class Apple(Consommable):
             "assets", "items", "Apple.png"), 10, 25, 10)
 
 
+class Pompot(Consommable):
+    def __init__(self,  quantity):
+        super().__init__("Pompot", quantity, os.path.join("assets", "items",
+                                                          "Pompot.png"), lifegain=30, hungergain=40, thirstgain=30)
+
+
 itemsList = {"Apple": Apple,
-             "Wood": Wood}
+             "Wood": Wood,
+             "Pompot": Pompot}
 
 
 class Weapon(Item):
@@ -124,6 +131,7 @@ class ItemContainer:
 # Permet également de retirer des objets de l'inventaire en rajoutant un objet "0", avec 3 modes : all, half et one
     def additem(self, itemadded, place, mode="all"):
         itemalreadyadded = 0
+        itemplace = 0  # besoin de fix le placement auto quand l'inventaire est plein
         if itemadded == "0":
             if mode == "all":
                 olditem = self.items[place]
@@ -152,6 +160,12 @@ class ItemContainer:
                                        1].quantity += itemadded.quantity
                             olditem = "0"
                             itemalreadyadded = 1
+                            if self.items[len(self.items)-n - 1].quantity < 0:
+                                item = self.items[len(self.items)-n - 1]
+                                self.items[len(self.items)-n - 1] = "0"
+                                self.additem(item, -1)
+                            elif self.items[len(self.items)-n - 1].quantity == 0:
+                                self.items[len(self.items)-n - 1] = "0"
                             break
                     else:
                         itemplace = len(self.items)-n-1
@@ -182,6 +196,14 @@ class ItemContainer:
             if i == "0":
                 compteur += 1
         return compteur
+
+    def haveItem(self, name, quantity):
+        q = 0
+        for i in self.items:
+            if i != "0":
+                if i.nom == name:
+                    q += i.quantity
+        return q >= quantity
 
     # Crée une surface avec tous les items dans un rectangle de largeur donnée en pixel
 

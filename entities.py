@@ -254,7 +254,8 @@ class Player(Entity):
                             self.cursorinventory.items[0], 0, mode)
 
     def update(self, wallrects, entitylist, events, mapset):
-        craft.update(events,self.inventory)
+        if self.showcraft:
+            craft.update(events, self.inventory)
         # Création d'une liste de déplacements en pixels en fonction de la direction
         move = [(self.speed, 0),
                 (0, self.speed), (-self.speed, 0), (0, -self.speed)]
@@ -281,7 +282,7 @@ class Player(Entity):
                             self.direction[n] = 0
                 # Utilisation de l'item de la main gauche
             if event.type == pygame.KEYDOWN:
-                if event.key == self.keyConfig["useRight"]:
+                if event.key == self.keyConfig["useLeft"]:
                     if self.useleftitem == 0:
                         if self.lefthand.items[0] != "0":
                             itemused = self.lefthand.items[0].use(self)
@@ -303,12 +304,12 @@ class Player(Entity):
                                                 loot[n][0](loot[n][1]), -1)
                     self.useleftitem = 1
             if event.type == pygame.KEYUP:
-                if event.key == self.keyConfig["useRight"]:
+                if event.key == self.keyConfig["useLeft"]:
                     self.useleftitem = 0
 
                 # Utilisation de l'item de la main droite
             if event.type == pygame.KEYDOWN:
-                if event.key == self.keyConfig["useLeft"]:
+                if event.key == self.keyConfig["useRight"]:
                     if self.userightitem == 0:
                         if self.righthand.items[0] != "0":
                             itemused = self.righthand.items[0].use(self)
@@ -330,7 +331,7 @@ class Player(Entity):
                                                 loot[n][0](loot[n][1]), -1)
                     self.userightitem = 1
             if event.type == pygame.KEYUP:
-                if event.key == self.keyConfig["useLeft"]:
+                if event.key == self.keyConfig["useRight"]:
                     self.userightitem = 0
             if event.type == pygame.KEYUP:
                 if event.key == self.keyConfig["openCraft"]:

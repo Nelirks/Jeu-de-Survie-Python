@@ -190,6 +190,8 @@ def settings():
         (490, 280), (100, 50), playerKeyConfig["useRight"], playerKeyConfigUnicode["useRight"], fontSize=50, background=(100, 100, 100))
     editOLeftButton = engine.KeyCustomizerButton(
         (490, 340), (100, 50), playerKeyConfig["useLeft"], playerKeyConfigUnicode["useLeft"], fontSize=50, background=(100, 100, 100))
+    editCraftButton = engine.KeyCustomizerButton(
+        (490, 400), (100, 50), playerKeyConfig["openCraft"], playerKeyConfigUnicode["openCraft"], fontSize=50, background=(100, 100, 100))
     while setting == 1:
         events = game.runEvents()
         game.screen.fill((0, 0, 0))  # effacer l'écran
@@ -204,9 +206,11 @@ def settings():
         game.screen.blit(font30.render(
             "Droite :", 1, (255, 255, 255)), (400, 230))
         game.screen.blit(font30.render(
-            "Objet gauche :", 1, (255, 255, 255)), (350, 290))
+            "Objet droite :", 1, (255, 255, 255)), (350, 290))
         game.screen.blit(font30.render(
-            "Objet droite :", 1, (255, 255, 255)), (350, 350))
+            "Objet gauche :", 1, (255, 255, 255)), (350, 350))
+        game.screen.blit(font30.render(
+            "Menu Craft :", 1, (255, 255, 255)), (350, 410))
         # bouton retour
         game.screen.blit(backButton.render(), backButton.position)
         backButton.update(events)
@@ -217,6 +221,7 @@ def settings():
         game.screen.blit(editDownButton.render(), editDownButton.position)
         game.screen.blit(editORightButton.render(), editORightButton.position)
         game.screen.blit(editOLeftButton.render(), editOLeftButton.position)
+        game.screen.blit(editCraftButton.render(), editCraftButton.position)
         # actualisation des configurateurs des touches
         playerKeyConfig["left"] = editLeftButton.update(events)
         playerKeyConfig["down"] = editDownButton.update(events)
@@ -224,6 +229,7 @@ def settings():
         playerKeyConfig["up"] = editUpButton.update(events)
         playerKeyConfig["useRight"] = editORightButton.update(events)
         playerKeyConfig["useLeft"] = editOLeftButton.update(events)
+        playerKeyConfig["openCraft"] = editCraftButton.update(events)
         for event in events:
 
             if event.type == pygame.KEYUP:
@@ -241,6 +247,7 @@ def settings():
     playerKeyConfigUnicode["down"] = editDownButton.text
     playerKeyConfigUnicode["useLeft"] = editOLeftButton.text
     playerKeyConfigUnicode["useRight"] = editORightButton.text
+    playerKeyConfigUnicode["openCraft"] = editCraftButton.text
     file = open("keys", "wb")
     pickle.dump((playerKeyConfig, playerKeyConfigUnicode), file)
     file.close()

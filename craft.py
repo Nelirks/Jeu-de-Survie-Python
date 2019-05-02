@@ -2,8 +2,9 @@ import pygame
 import items
 import os
 import engine
+import copy
 """
-enregistrement des crafts: 
+enregistrement des crafts:
 crafts dans une liste dans la forme :
     [(liste d'items nécessaires avec leur quantité ),(item de sortie,quantité) ]
     cette liste d'items nécessaires est de la forme:
@@ -15,8 +16,12 @@ craftClickEvent = pygame.USEREVENT + 2
 # initialisation des crafts
 crafts = [
     {
-        "input": (["Apple", 1], ["Wood", 1]),
+        "input": (["Apple", 4], ["Wood", 1]),
         "output": ["Wood", 2]
+    },
+    {
+        "input": [["Apple", 3]],
+        "output":["Pompot", 1]
     }
 ]
 craftTableImage = 0
@@ -64,10 +69,15 @@ class Craft():
         self.focused = 0
         self.basicfont = pygame.font.SysFont("Source Code Pro", 12)
         self.rect = pygame.Rect(position, (32, 32))
+        self.playeInventory = []
+        self.craftPossible = 0
+        self.focusedOut = 0
+        self.outRect = pygame.Rect((377, 105), (34, 34))
+        self.impossibleSurface = pygame.Surface(
+            (34, 34), pygame.SRCALPHA, 32).convert_alpha()
+        self.impossibleSurface.fill(pygame.Color(100, 100, 100, 150))
 
     def update(self, events, playerInventory):
-        if self.selected:
-            playerInventory.additem(items.Apple(1), -1)
 
         for event in events:
             if event.type == pygame.MOUSEMOTION:
@@ -78,17 +88,35 @@ class Craft():
                     self.focused = 1
                 else:
                     self.focused = 0
+
+                if self.outRect.collidepoint(mX, mY) and self.selected:
+                    self.focusedOut = 1
+                else:
+                    self.focusedOut = 0
             if event.type == pygame.MOUSEBUTTONUP:
+
+                if self.focusedOut == 1 and self.craftPossible == 1:
+                    self.playeInventory.additem(copy.copy(self.itemOut), -1)
+                    for i in self.itemsIn:
+                        e = copy.copy(i)
+                        e.quantity *= -1
+                        self.playeInventory.additem(e, -1)
                 if self.focused == 1:
                     self.selected = 1
                 else:
-                    self.selected = 0
+                    if self.focusedOut == 1:
+                        self.selected = 1
+                    else:
+                        self.selected = 0
+        self.playeInventory = playerInventory
+        self.craftPossible = 1
+        for i in self.itemsIn:
+            if playerInventory.haveItem(i.nom, i.quantity) == 0:
+                self.craftPossible = 0
 
     def render(self, screen):
         screen.blit(self.texture, self.position)
-        outQuantity = self.basicfont.render(
-            str(self.itemOut.quantity), False, (255, 255, 255))
-        screen.blit(outQuantity, (self.position[0]+18, self.position[1]+21))
+
         if self.focused:
             pygame.draw.rect(screen, (255, 255, 0),
                              pygame.Rect(self.position, (32, 32)), 1)  # carré jaune qui entoure
@@ -96,8 +124,16 @@ class Craft():
             pygame.draw.rect(screen, (255, 255, 255),
                              pygame.Rect(self.position, (32, 32)), 1)  # carré blanc qui entoure
             compteur = 0
-            x = 50
-            y = 100
+
+            screen.blit(self.itemOut.texture, (378, 106))
+            outQuantity = self.basicfont.render(
+                str(self.itemOut.quantity), False, (255, 255, 255))
+            screen.blit(
+                outQuantity, (378+20, 106+18))
+            if self.craftPossible == 0:
+                screen.blit(self.impossibleSurface, (377, 105))
+            x = 59
+            y = 106
             for e in self.itemsIn:
                 if compteur >= 1:
                     x += 5
@@ -109,9 +145,12 @@ class Craft():
                     x += 15
                 compteur += 1
                 screen.blit(e.texture, (x, y))
+                color = (255, 255, 255)
+                if self.playeInventory.haveItem(e.nom, e.quantity) == 0:
+                    color = (255, 0, 0)
                 itemquantity = self.basicfont.render(
-                    str(e.quantity), False, (255, 255, 255))
-                screen.blit(itemquantity, (x+18, y+21))
+                    str(e.quantity), False, color)
+                screen.blit(itemquantity, (x+20, y+18))
                 x += self.rect.width
 
 
@@ -119,9 +158,12 @@ craftsButtonList = []
 
 
 def createCrafts():
+    global craftsButtonList
     x = 2
     y = 2
+    craftsButtonList = []
     for c in crafts:
+
         craftsButtonList.append(Craft((x, y), c["output"], c["input"]))
         x += 32
 
@@ -130,7 +172,7 @@ def showCrafts(screen):
     screen.blit(craftTableImage, (0, 0))
     for c in craftsButtonList:
         c.render(screen)
-    #compteur = 0
+    # compteur = 0
     # for c in crafts:
     #    screen.blit(itemsTextureIndex[c["output"][0]], (x, y))
     #    compteur += 1
