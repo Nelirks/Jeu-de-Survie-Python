@@ -30,7 +30,7 @@ class Item:
         """
         retourne une surface avec l'item
         """
-        surface = pygame.Surface(CONST_TileItemSize, CONST_TileItemSize)
+        surface = pygame.Surface((32, 32))
         surface.blit(self.texture, (0, 0))
         return surface
 
@@ -113,6 +113,7 @@ class ItemContainer:
         self.items = []
         for n in range(size):
             self.items.append("0")
+        self.basicfont = pygame.font.SysFont("Source Code Pro", 12)
 
     # Augmentation de la longueur des listes en cas d'augmentation de l'inventaire
     def sizeincrease(self, sizeup):
@@ -175,9 +176,17 @@ class ItemContainer:
                 self.items[place].quantity = 99
         return(olditem)
 
+    def getFreePlace(self):
+        compteur = 0
+        for i in self.items:
+            if i == "0":
+                compteur += 1
+        return compteur
+
     # Crée une surface avec tous les items dans un rectangle de largeur donnée en pixel
+
     def render(self, largeur):
-        basicfont = pygame.font.SysFont("Source Code Pro", 12)
+
         itemperline = (largeur)//34
         itempercolumn = ceil(len(self.items)/itemperline)
         surfacefinale = pygame.Surface(
@@ -186,7 +195,7 @@ class ItemContainer:
             x = n % itemperline
             y = n//itemperline
             if self.items[n] != "0":
-                itemquantity = basicfont.render(
+                itemquantity = self.basicfont.render(
                     str(self.items[n].quantity), False, (255, 255, 255))
                 surfacefinale.blit(self.items[n].texture, (x*34+1, y*34+1))
                 surfacefinale.blit(itemquantity, (x*34+18, y*34+21))

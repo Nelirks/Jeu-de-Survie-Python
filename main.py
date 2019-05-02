@@ -40,7 +40,7 @@ def mainLoop(game, playerControls):
     py = wall.playerPosition[1] * wall.tileSize
     ratio = game.resolution[0]/game.targetResolution[0]
     p1 = entities.Player(
-        px, py, "1", ratio)  # joueur
+        px, py, "1", wall, ratio)  # joueur
     p1.direction = [0, 0, 0, 0]
     p1.keyConfig = playerControls
     events = []

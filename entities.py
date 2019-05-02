@@ -70,7 +70,7 @@ class Player(Entity):
     }
     mousepos = [0, 0]
 
-    def __init__(self, x, y, setNum, scaleratio=1, hunger=100, thirst=100, life=100, speed=2, inventoryweight=204, inventorysize=12):
+    def __init__(self, x, y, setNum, carte, scaleratio=1, hunger=100, thirst=100, life=100, speed=2, inventoryweight=204, inventorysize=12):
         """
         création de l'entitée joueur :
         le nom du set (setNum) correspond à un dossier dans les assets avec le nom du set et à l'intérieur les textures
@@ -84,7 +84,7 @@ class Player(Entity):
         self.scaleratio = scaleratio
         self.hitmarker = 0
         self.hitpos = [0, 0]
-        craft.initCrafts(scaleratio)  # charge les texturesç
+        craft.initCrafts(scaleratio, carte)  # charge les texturesç
         self.showcraft = 0
         self.inventory = items.ItemContainer(inventorysize)
         self.inventoryweight = inventoryweight
@@ -254,14 +254,14 @@ class Player(Entity):
                             self.cursorinventory.items[0], 0, mode)
 
     def update(self, wallrects, entitylist, events, mapset):
-
+        craft.update(events,self.inventory)
         # Création d'une liste de déplacements en pixels en fonction de la direction
         move = [(self.speed, 0),
                 (0, self.speed), (-self.speed, 0), (0, -self.speed)]
         # Création d'une liste des touches
         keys = [self.keyConfig["right"],
                 self.keyConfig["down"], self.keyConfig["left"], self.keyConfig["up"]]
-        if mapset == 2 :
+        if mapset == 2:
             self.changethirst(-1/10)
 
         for event in events:
@@ -399,17 +399,20 @@ class AppleTree(Collectable):
             os.path.join("assets", "entities", "Apple Tree.png"))
         super().__init__(x, y, texture, life=life, loot=loot, name=name)
 
+
 class Fir(Collectable):
     def __init__(self, x, y, life=10, loot=[(items.Apple, 2), (items.Wood, 4)], name="tree"):
         texture = pygame.image.load(
             os.path.join("assets", "entities", "Fir.png"))
         super().__init__(x, y, texture, life=life, loot=loot, name=name)
 
+
 class Tree(Collectable):
     def __init__(self, x, y, life=10, loot=[(items.Apple, 2), (items.Wood, 4)], name="tree"):
         texture = pygame.image.load(
             os.path.join("assets", "entities", "tree.png"))
         super().__init__(x, y, texture, life=life, loot=loot, name=name)
+
 
 class PalmTree(Collectable):
     def __init__(self, x, y, life=10, loot=[(items.Apple, 2), (items.Wood, 4)], name="tree"):
@@ -429,4 +432,5 @@ class SavableEntity:
 
 
 # liste des entitées disponibles
-entitiesList = {"Apple Tree": AppleTree, "Fir" : Fir, "tree" : Tree, "Palm Tree" : PalmTree}
+entitiesList = {"Apple Tree": AppleTree,
+                "Fir": Fir, "tree": Tree, "Palm Tree": PalmTree}
