@@ -395,33 +395,37 @@ class Collectable(Entity):
 
 
 class AppleTree(Collectable):
-    def __init__(self, x, y, life=10, loot=[(items.Apple, 2), (items.Wood, 4)], name="tree"):
+    def __init__(self, x, y, life=10, loot=[(items.Apple, 2), (items.Wood, 4)]):
         texture = pygame.image.load(
             os.path.join("assets", "entities", "Apple Tree.png"))
-        super().__init__(x, y, texture, life=life, loot=loot, name=name)
+        super().__init__(x, y, texture, life=life, loot=loot, name="Apple Tree")
 
 
 class Fir(Collectable):
-    def __init__(self, x, y, life=10, loot=[(items.Apple, 2), (items.Wood, 4)], name="tree"):
+    def __init__(self, x, y, life=10, loot=[(items.Apple, 2), (items.Wood, 4)]):
         texture = pygame.image.load(
             os.path.join("assets", "entities", "Fir.png"))
-        super().__init__(x, y, texture, life=life, loot=loot, name=name)
+        super().__init__(x, y, texture, life=life, loot=loot, name="Fir")
 
 
 class Tree(Collectable):
-    def __init__(self, x, y, life=10, loot=[(items.Apple, 2), (items.Wood, 4)], name="tree"):
+    def __init__(self, x, y, life=10, loot=[(items.Apple, 2), (items.Wood, 4)]):
         texture = pygame.image.load(
             os.path.join("assets", "entities", "tree.png"))
-        super().__init__(x, y, texture, life=life, loot=loot, name=name)
+        super().__init__(x, y, texture, life=life, loot=loot, name="tree")
 
 
 class PalmTree(Collectable):
-    def __init__(self, x, y, life=10, loot=[(items.Apple, 2), (items.Wood, 4)], name="tree"):
+    def __init__(self, x, y, life=10, loot=[(items.Apple, 2), (items.Wood, 4)]):
         texture = pygame.image.load(
             os.path.join("assets", "entities", "Palm Tree.png"))
-        super().__init__(x, y, texture, life=life, loot=loot, name=name)
+        super().__init__(x, y, texture, life=life, loot=loot, name="Palm Tree")
 
 
+
+# liste des entitées disponibles
+entitiesList = {"Apple Tree": AppleTree,
+                "Fir": Fir, "tree": Tree, "Palm Tree": PalmTree}
 class SavableEntity:
     def __init__(self, name, x, y):
         self.x = x
@@ -431,7 +435,3 @@ class SavableEntity:
     def transform(self):
         return entitiesList[self.name](self.x, self.y)
 
-
-# liste des entitées disponibles
-entitiesList = {"Apple Tree": AppleTree,
-                "Fir": Fir, "tree": Tree, "Palm Tree": PalmTree}

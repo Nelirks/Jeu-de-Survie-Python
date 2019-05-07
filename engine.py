@@ -458,6 +458,7 @@ class Carte:
             self.path, "entities"), "wb")  # sauvegarder les entitées
         saveEntities = []
         for entity in self.entities:
+            print(entity.name)
             saveEntities.append(entities.SavableEntity(
                 entity.name, entity.rect.x, entity.rect.y))
 
