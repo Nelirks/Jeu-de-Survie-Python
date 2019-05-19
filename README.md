@@ -10,5 +10,5 @@ Jeu créé dans le cadre du projet d'ISN de terminale S
 * installer pygame avec la commande `python -m pip install pygame` 
 * télécharger les [fichiers du jeu](https://github.com/Nelirks/Bwaaah/archive/first.zip) 
 * extraire l'archive télécharger dans un dossier
-* éxécuter le fichier `start.py` en double clickant dessus ou en ouvrant un terminal `python start.py` 
+* éxécuter le fichier `start.py` en double cliquant dessus ou en ouvrant un terminal `python start.py` 
 
