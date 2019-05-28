@@ -16,7 +16,7 @@ usage : python mapEditor.py
 def mapEditor(carte):
     e = engine.Engine((10, 10))
 
-    heightS = carte.tileSize  # réserve solide
+    heightS = carte.tileSize + 1  # réserve solide
     we = carte.tileSize*2  # réserve entités
     y = 0
     height = carte.height
@@ -25,19 +25,19 @@ def mapEditor(carte):
         height = carte.tileSize * 5
     if carte.width < carte.tileSize * 5:
         width = carte.tileSize * 5
-    x = 0
-    for t in carte.textures:  # déterminer le nombre de colonnes
-        if x >= width:
-            heightS += carte.tileSize
-            x = 0
-        x += carte.tileSize
-
     # déterminer le nombre de colonnes (entités)
     for t in entities.entitiesList:
         if y >= height:
             we += carte.tileSize*2
             y = 0
         y += carte.tileSize*2
+    x = 1
+    for t in carte.textures:  # déterminer le nombre de lignes
+        if x >= width+we-31:
+            heightS += carte.tileSize + 2
+            x = 1
+        x += carte.tileSize + 2
+
     e = engine.Engine((carte.width + we+2, height + heightS+2),
                       ((carte.width + we+2)*2, (height + heightS+2)*2))
     textures = carte.textures
@@ -85,12 +85,43 @@ def mapEditor(carte):
 
                 p = pygame.mouse.get_pressed()
                 if p[0]:
-                    y = math.floor(pos[1] / (carte.tileSize*2))
-                    x = math.floor(pos[0] / (carte.tileSize*2))
-                    try:
-                        carte.edit(x, y, tindex[Selected])
-                    except:
-                        print("invalid location")
+                    carteRect = cs.get_rect()
+                    carteRect.width = carteRect.width*2
+                    carteRect.height = carteRect.height*2
+                    screenRect = e.realScreen.get_rect()
+                    if carteRect.collidepoint(pos):
+                        y = math.floor(pos[1] / (carte.tileSize*2))
+                        x = math.floor(pos[0] / (carte.tileSize*2))
+                        try:
+                            carte.edit(x, y, tindex[Selected])
+                        except:
+                            print("invalid location")
+                    elif screenRect.collidepoint(pos):
+
+                        print(pos)
+                        y = carte.height + 1
+                        x = 1
+                        e.screen.fill((0, 0, 0))
+                        e.screen.blit(cs, (0, 0))
+
+                        for t in textures:
+                            if x >= width+we-31:
+                                x = 1
+                                y += carte.tileSize+2
+                            textRect = textures[t].get_rect()
+                            textRect.x = x*2
+                            textRect.y = y*2
+                            textRect.width = textRect.width*2
+                            textRect.height = textRect.height * 2
+                            if textRect.collidepoint(pos):
+                                for k in range(len(tindex)):
+                                    if tindex[k] == t:
+                                        Selected = k
+
+                            x += carte.tileSize+2
+                    else:
+                        print(pos)
+
                     carte.render(cs)
                 if p[1]:
                     y = pos[1] // 2
@@ -108,21 +139,21 @@ def mapEditor(carte):
                     carte.entities.append(
                         entities.entitiesList[entityIndex[entitySelected]](pos[0]//2, pos[1]//2))
                     carte.render(cs)
-        y = carte.height + 1
-        x = 0
+        y = carte.height + 2
+        x = 1
         e.screen.fill((0, 0, 0))
         e.screen.blit(cs, (0, 0))
 
         for t in textures:
-            if x >= width:
-                x = 0
-                y += carte.tileSize
+            if x >= width+we-31:
+                x = 1
+                y += carte.tileSize + 2
             e.screen.blit(textures[t], (x, y))
             if tindex[Selected] == t:
                 pygame.draw.rect(e.screen, (255, 0, 0), pygame.Rect(
                     x, y, carte.tileSize, carte.tileSize), 1)
 
-            x += carte.tileSize
+            x += carte.tileSize + 2
         y = 0
         x = carte.width + 2
         for en in entites:

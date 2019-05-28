@@ -152,8 +152,10 @@ def mainMenu():
                 game.state = 1
                 # fenêtre pour le jeu
                 game.changeMode((512, 288), (1280, 720))
-                main.mainLoop(game, playerKeyConfig)
+                score = main.mainLoop(game, playerKeyConfig)
                 game.changeMode((1280, 720), (1280, 720))
+                if score == -1:
+                    mort(score)
                 pygame.mixer_music.load(os.path.join(
                     "assets", "music", "main_Menu.mp3"))
                 pygame.mixer_music.play(-1)
@@ -251,6 +253,26 @@ def settings():
     file = open("keys", "wb")
     pickle.dump((playerKeyConfig, playerKeyConfigUnicode), file)
     file.close()
+
+
+def mort(score):
+    global game
+    p = 1
+    font90 = pygame.font.Font(None, 90)
+
+    event = []
+    game.state = 0
+    while p == 1:
+        game.screen.fill((0, 0, 0))
+        game.screen.blit(font90.render("Game Over !",
+                                       1, (255, 255, 255)), (10, 10))
+        game.waitFramerate()
+        event = game.runEvents()
+        for e in event:
+            if e.type == pygame.KEYUP:
+                p = 0
+    event = []
+    game.runEvents()
 
 
 def credits():

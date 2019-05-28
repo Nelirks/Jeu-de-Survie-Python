@@ -87,6 +87,7 @@ def mainLoop(game, playerControls):
         events = game.runEvents()  # en fin de boucle pour éviter les conflicts
         if p1.life <= 0:
             game.state = 0
+            return -1
 
         entitiesL = wall.entities
         i = 0
