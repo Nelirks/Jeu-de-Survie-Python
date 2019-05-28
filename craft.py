@@ -22,6 +22,10 @@ crafts = [
     {
         "input": [["Apple", 3]],
         "output":["Pompot", 1]
+    },
+    {
+        "input": [["Coconut", 1]],
+        "output":["HalfCoconut", 2]
     }
 ]
 craftTableImage = 0

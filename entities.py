@@ -416,7 +416,7 @@ class Tree(Collectable):
 
 
 class PalmTree(Collectable):
-    def __init__(self, x, y, life=10, loot=[(items.Apple, 2), (items.Wood, 4)]):
+    def __init__(self, x, y, life=10, loot=[(items.Coconut, 2), (items.Wood, 4)]):
         texture = pygame.image.load(
             os.path.join("assets", "entities", "Palm Tree.png"))
         super().__init__(x, y, texture, life=life, loot=loot, name="Palm Tree")

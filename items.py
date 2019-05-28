@@ -74,10 +74,20 @@ class Pompot(Consommable):
         super().__init__("Pompot", quantity, os.path.join("assets", "items",
                                                           "Pompot.png"), lifegain=30, hungergain=40, thirstgain=30)
 
+class Coconut(Item):
+    def __init__(self, quantity):
+        super().__init__("Coconut", quantity, os.path.join("assets", "items", "Coconut.png"))
+
+class HalfCoconut(Consommable):
+    def __init__(self,  quantity):
+        super().__init__("HalfCoconut", quantity, os.path.join("assets", "items",
+                                                          "HalfCoconut.png"), lifegain=5, hungergain=5, thirstgain=40)
 
 itemsList = {"Apple": Apple,
              "Wood": Wood,
-             "Pompot": Pompot}
+             "Pompot": Pompot,
+             "Coconut": Coconut,
+             "HalfCoconut" : HalfCoconut}
 
 
 class Weapon(Item):
