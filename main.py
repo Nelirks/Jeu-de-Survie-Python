@@ -47,7 +47,7 @@ def mainLoop(game, playerControls):
 
     p1.inventory.additem(items.Apple(12), 0)
     p1.inventory.additem(items.Apple(34), 1)
-    p1.inventory.additem(items.Axe(1), -1)
+    p1.inventory.additem(items.PlasmaPickaxaxe(1), -1)
     while game.state == 1 or game.state == 2:  # en jeu ou dans le menu pause
         if game.state == 1:
             pevents = events

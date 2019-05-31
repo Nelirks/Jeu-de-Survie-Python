@@ -1,6 +1,7 @@
 # coding: utf-8
 import pygame
 from math import ceil
+from math import floor
 import os
 import copy
 
@@ -25,6 +26,14 @@ class Item:
         self.description = description
         self.texture = pygame.image.load(texturedir).convert_alpha()
         self.quantity = quantity
+        self.textures = []
+
+        self.framequantity = self.texture.get_width() // 32
+        for n in range (self.framequantity):
+            self.textures.append(self.texture.subsurface(pygame.rect.Rect(n*32, 0, 32, 32)))
+        self.frame = 0
+
+
 
     def render(self):
         """
@@ -119,9 +128,9 @@ class Tool(Item):
         return(self, "usetool")
 
 
-class Axe(Tool):
+class PlasmaPickaxaxe(Tool):
     def __init__(self, quantity):
-        super().__init__("Axe", quantity, os.path.join("assets", "items", "Axe.png"), "")
+        super().__init__("Axe", quantity, os.path.join("assets", "items", "PlasmaPickaxaxeAnimated.png"), "")
 
 
 class ItemContainer:
@@ -229,6 +238,9 @@ class ItemContainer:
             if self.items[n] != "0":
                 itemquantity = self.basicfont.render(
                     str(self.items[n].quantity), False, (255, 255, 255))
-                surfacefinale.blit(self.items[n].texture, (x*34+1, y*34+1))
+                surfacefinale.blit(self.items[n].textures[floor(self.items[n].frame)], (x*34+1, y*34+1))
+                self.items[n].frame += 0.2
+                if floor(self.items[n].frame) == self.items[n].framequantity :
+                    self.items[n].frame = 0
                 surfacefinale.blit(itemquantity, (x*34+18, y*34+21))
         return surfacefinale
