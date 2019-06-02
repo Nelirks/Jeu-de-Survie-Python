@@ -421,11 +421,17 @@ class PalmTree(Collectable):
             os.path.join("assets", "entities", "Palm Tree.png"))
         super().__init__(x, y, texture, life=life, loot=loot, name="Palm Tree")
 
+class Rock(Collectable) :
+    def __init__(self, x, y, life=20, loot=[]):
+        texture = pygame.image.load(
+            os.path.join("assets", "entities", "Rock.png"))
+        super().__init__(x, y, texture, life=life, loot=loot, name="Rock")
+
 
 
 # liste des entitées disponibles
 entitiesList = {"Apple Tree": AppleTree,
-                "Fir": Fir, "tree": Tree, "Palm Tree": PalmTree}
+                "Fir": Fir, "tree": Tree, "Palm Tree": PalmTree, "Rock" : Rock}
 class SavableEntity:
     def __init__(self, name, x, y):
         self.x = x
