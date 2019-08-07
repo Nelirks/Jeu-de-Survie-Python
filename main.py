@@ -4,9 +4,16 @@ import entities
 import pygame
 import menu
 import items
-import engine
+from engine import carte, engine
+
+# si main est lancé en tant que programme principal
+if __name__ == "__main__":
+    menu.mainMenu()
+
+
 pygame.init()
 pygame.key.set_repeat(50, 1)
+
 
 # résolution du rendu :512*288
 # résolution cible : 1280*720
@@ -32,8 +39,8 @@ def changeMap(mapPosition, player, modX, modY):
 
 def mainLoop(game, playerControls):
     mapPosition = [0, 0]
-    wall = engine.Carte(os.path.join("assets", "levels", str(mapPosition)),
-                        mode="load")  # objet carte
+    wall = carte.Carte(os.path.join("assets", "levels", str(mapPosition)),
+                       mode="load")  # objet carte
     back = wall.renderSurface()  # surface carte
     # coolframe = 0
     px = wall.playerPosition[0] * wall.tileSize

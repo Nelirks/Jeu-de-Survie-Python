@@ -12,5 +12,5 @@ Dans l'optique de faire un jeu multijoueur la carte ne sera plus composé de ré
 - tous les chunks d'une zone sont stockés dans un sous dossier nommé du nom de la zone
 - un chunck est stocké dans un fichier (avec pickle) avec l'extention `.chunck`
 - le nom d'un chunck détermine ça position dans la zone format : `X.Y.chunck` ex : `5.1.chunck`
-- chaque fichier de chunck contient un dictionnaire avec les entités dans `dictinonnaire["entities"]` et les tuiles solides dans `dictionnnaire["solid"]`
-- chaque zone contient dans son dossier un fichier `info` contenant le nombre de chunk dans la largeur et le nombre de chunck dans la longueur dans une liste enregistré avec pickle : `[X,Y]`
+- chaque fichier de chunck contient un dictionnaire avec les entités dans `dictinonnaire["entities"]`, les tuiles solides dans `dictionnnaire["solid"]` et sa position dans `dictionnaire["position"]`
+- chaque zone contient dans son dossier un fichier `info` contenant le nombre de chunk dans la largeur, le nombre de chunck dans la longueur et le numéro du set dans une liste enregistré avec pickle : `[X,Y,setNum]`

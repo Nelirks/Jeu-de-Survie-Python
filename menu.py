@@ -3,7 +3,7 @@ import main
 import os
 import random
 import math
-import engine
+from engine import engine
 import pickle
 
 
@@ -305,3 +305,7 @@ def credits():
                 credit = 0
         events = []
         game.waitFramerate()
+
+
+if __name__ == "__main__":
+    mainMenu()
