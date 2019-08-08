@@ -104,6 +104,9 @@ class Carte:
             self.playerPosition = playerPosition
             info.close()
 
+            en = open(os.path.join(path, "entities"), "rb")
+            self.entities = pickle.load(en)
+
             self.loadChuncks()
 
             self.loadTextures()
@@ -154,9 +157,9 @@ class Carte:
         # charger les infos des chuncks
         path = os.path.join("assets", "chuncks", self.zone)
         self.chuncks = []
-        for y in range(0, self.size[1]):
+        for x in range(0, self.size[1]):
             line = []
-            for x in range(0, self.size[0]):
+            for y in range(0, self.size[0]):
                 file = open(os.path.join(
                     path, "{}.{}.chunck".format(x, y)), "rb")
                 line.append(pickle.load(file))
@@ -235,11 +238,12 @@ class Carte:
                         surface.blit(self.textures[p], (x, y))
                         y += self.tileSize
                     x += self.tileSize
-                RenderedLine.append(surface)
+                c["surfaceSolid"] = surface
+                RenderedLine.append(c)
             self.renderedChuncks.append(RenderedLine)
 
     def save(self):
-        pass
+        pass  # TO DO
 
     def render(self, playerPosition, screenSize=[16, 6]):
         """
@@ -250,6 +254,7 @@ class Carte:
         x = playerPosition[0]
         y = playerPosition[1]
 
+        # position des chuncks
         xmin = math.floor(x - screenSize[0]/2 * 32)
         ymin = math.floor(y - screenSize[1]/2 * 32)
         xmax = math.floor(x + screenSize[0]/2 * 32)
@@ -261,7 +266,34 @@ class Carte:
         ymin = math.floor(min(ymin, self.size[1]*16*32)/(16*32))
 
         # liste des chuncks à rendre (4 max pour 4 coins: haut gauche, bas gauche, haut droite,bas droite)
-        chuncks = [self.chuncks[xmin][ymin],
-                   self.chuncks[xmin][ymax], self.chuncks[xmax][ymin], self.chuncks[xmax][ymax]]
+        chuncks = [self.renderedChuncks[xmin][ymin],
+                   self.renderedChuncks[xmin][ymax], self.renderedChuncks[xmax][ymin], self.renderedChuncks[xmax][ymax]]
         chuncks = simplify(chuncks)  # enlever les doubles
-        organised = [["", ""], ["", ""]]
+
+        # la surface de l'écran
+        out = pygame.Surface((screenSize[0]*32, screenSize[1]*32))
+        screenCornerPosition = [
+            playerPosition[0]-screenSize[0]*32/2, playerPosition[1]-screenSize[1]*32/2]
+        """
+        if len(chuncks) == 1:
+            out.blit(chuncks[0], (chuncks[0]["position"][0]-screenCornerPosition[0],
+                                  chuncks[0]["position"][1]-screenCornerPosition[1]))"""
+        for chunck in chuncks:
+            surface = chunck["surfaceSolid"]
+
+            out.blit(surface, (chunck["position"][0]-screenCornerPosition[0],
+                               chunck["position"][1]-screenCornerPosition[1]))
+        """
+        if len(chuncks) == 2:
+            # chuncks 0 au dessus de chuncks 1
+            if chuncks[0]["position"][0] > chuncks[1]["position"][0]:
+                pass
+            # chuncks 1 au dessus de chuncks 0
+            if chuncks[0]["position"][0] < chuncks[1]["position"][0]:
+                pass
+            # chuncks 0 à droite de chuncks 1
+            if chuncks[0]["position"][1] > chuncks[1]["position"][1]:
+                pass
+            # chuncks 0 à gauche de chuncks 1
+            if chuncks[0]["position"][1] > chuncks[1]["position"][1]:
+                pass"""
