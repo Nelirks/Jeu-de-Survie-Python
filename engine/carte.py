@@ -42,7 +42,7 @@ class Carte:
     """
 
 
-    doc dans /assets/chuncks/readme.md
+    doc dans /assets/levels/readme.md
 
 
     Objet Carte : permet de charger une carte à partir d'un fichier, de l'afficher et d'en créer une. À faire avant tout le reste (la taille reste modifiable).
@@ -72,7 +72,7 @@ class Carte:
     blockingTiles = ["0"]
     textures = dict()
 
-    def __init__(self, zone, mode="load", dimensions=(10, 10), setNum="-1", playerPosition=(0, 0)):
+    def __init__(self, path, mode="load", dimensions=(10, 10), setNum="-1", playerPosition=(0, 0)):
         """
         __init__(path, mode="load", dimensions=(10, 10), )  : création de l'objet carte
             path : chemin d'accès ,
@@ -80,10 +80,9 @@ class Carte:
             dimensions : taille en x et y
         """
 
-        self.grid = []
         self.tileSize = tileSize = 32
-        self.zone = zone
-        path = os.path.join("assets", "chuncks", zone)
+        self.path = path
+
         # détection du mode
 
         """
@@ -93,25 +92,21 @@ class Carte:
             un fichier entities contenant la grille des entitées (premier plan , ex : arbres, monstres)
         """
         if mode == "load":
-            info = open(os.path.join(path, "info"),
-                        "rb")   # obtention des infos
-            inf = pickle.load(info)  # nombre de chuncks
-            self.size = inf[0:1]
+            zoneFile = open(path,
+                            "rb")   # obtention des infos
+            zoneData = pickle.load(zoneFile)
+            self.size = zoneData["size"]  # nombre de tuiles
             # nombre de tuiles
-            self.width = self.size[0]*16
-            self.height = self.size[1]*16
-            self.setNum = inf[3]
+            self.width = self.size[0]*tileSize
+            self.height = self.size[1]*tileSize
+            self.setNum = zoneData["set"]
             self.playerPosition = playerPosition
-            info.close()
+            zoneFile.close()
 
-            en = open(os.path.join(path, "entities"), "rb")
-            self.entities = pickle.load(en)
-
-            self.loadChuncks()
+            self.sgrid = zoneData["solid"]
+            self.entities = zoneData["entities"]
 
             self.loadTextures()
-
-            self.renderChuncksSolid()
 
         elif mode == "new":  # création d'une nouvelle carte
             self.sgrid = doubleArraygen(dimensions[0], dimensions[1])
@@ -153,21 +148,9 @@ class Carte:
         else:
             raise ValueError("invalid mode")
 
-    def loadChuncks(self):
-        # charger les infos des chuncks
-        path = os.path.join("assets", "chuncks", self.zone)
-        self.chuncks = []
-        for x in range(0, self.size[1]):
-            line = []
-            for y in range(0, self.size[0]):
-                file = open(os.path.join(
-                    path, "{}.{}.chunck".format(x, y)), "rb")
-                line.append(pickle.load(file))
-            self.chuncks.append(line)
-
     def get_rects(self, playerPosition):
         """
-        renvoi les hitboxs du chunck dans une ligne 
+        renvoi les hitboxs du chunck dans une ligne
         playerPosition : [x,y]
         """
         # déterminer le chunck en question
@@ -199,20 +182,26 @@ class Carte:
         note : il ne doit pas avoir d'autres points que le .png dans le nom de chaque image
         il doit obligatoirement avoir une texture par défaut «0.png»
         """
+
+        self.renderedSolid = []
         path = os.path.join(os.path.curdir, "assets", "sets", str(self.setNum))
         # trouve tous les fichiers dans le dossier sans les dossiers
         textureList = [f for f in os.listdir(
             path) if os.path.isfile(os.path.join(path, f))]
         self.textures = dict()
+        # charge les textures
         for f in textureList:
             # charger les textures en les optimisant
             if(f != "blockingTiles.txt"):
                 self.textures[f.split(".")[0]] = pygame.image.load(
                     os.path.join(path, f)).convert()
+
+        # transformation des entités
         savedEntities = self.entities
         self.entities = []
         for entity in savedEntities:
             self.entities.append(entity.transform())
+        # récupération des tuiles bloquantes
         bfile = open(os.path.join(path, "blockingTiles.txt"), "r")
         line = bfile.readline()
         allStr = ""
@@ -222,78 +211,80 @@ class Carte:
         self.blockingTiles = allStr.split("\n")
         bfile.close()
 
-    def renderChuncksSolid(self):
-        self.renderedChuncks = []
-        for line in self.chuncks:
-            RenderedLine = []
-            for c in line:
-                solid = c["solid"]
-                surface = pygame.surface.Surface(
-                    (self.tileSize*16, self.tileSize*16))
-                x = 0
-                for l in solid:
-                    y = 0
-                    for p in l:
-                        # ajoute la texture à l'index p aux coordonnées x et y
-                        surface.blit(self.textures[p], (x, y))
-                        y += self.tileSize
-                    x += self.tileSize
-                c["surfaceSolid"] = surface
-                RenderedLine.append(c)
-            self.renderedChuncks.append(RenderedLine)
+        # assosiation de texture à l'emplacement
+        x = 0
+        for l in self.sgrid:
+            y = 0
+            line = []
+            for p in l:
+                # ajoute la texture à l'index p aux coordonnées x et y
+                line.append(self.textures[p])
+                y += self.tileSize
+            self.renderedSolid.append(line)
+            x += self.tileSize
 
-    def save(self):
-        pass  # TO DO
+    def save(self, path=None):
+        # détecter si on veut sauvegarder dans un autre fichier
+        if path != None:
+            if not os.path.exists(path):
+                os.makedirs(self.path)
+        else:
+            path = self.path
+        zoneData = dict()
+        zoneData["set"] = self.setNum
+        zoneData["size"] = self.size
+        zoneData["solid"] = self.sgrid
 
-    def render(self, playerPosition, screenSize=[16, 6]):
+        # transformer les entités
+        saveEntities = []
+        for entity in self.entities:
+            saveEntities.append(entities.SavableEntity(
+                entity.name, entity.rect.x, entity.rect.y))
+        zoneData["entities"] = saveEntities
+
+        zoneFile = open(path, "w")  # écrire dans le fichier zone
+        pickle.dump(zoneData, zoneFile)
+        zoneFile.close()
+
+    def render(self, playerPosition, screenSize=[16*32, 6*32]):
         """
         gère l'affichage autour du personnage
         playerPosition est la position du personnage dans la zone (au centre de l'écran)
         """
-        # chercher les chuncks à afficher
-        x = playerPosition[0]
-        y = playerPosition[1]
-
-        # position des chuncks
-        xmin = math.floor(x - screenSize[0]/2 * 32)
-        ymin = math.floor(y - screenSize[1]/2 * 32)
-        xmax = math.floor(x + screenSize[0]/2 * 32)
-        ymax = math.floor(y + screenSize[1]/2 * 32)
-
-        xmin = math.floor(max(0, xmin)/(16*32))
-        ymin = math.floor(max(0, ymin)/(16*32))
-        xmax = math.floor(min(ymax, self.size[0]*16*32)/(16*32))
-        ymin = math.floor(min(ymin, self.size[1]*16*32)/(16*32))
-
-        # liste des chuncks à rendre (4 max pour 4 coins: haut gauche, bas gauche, haut droite,bas droite)
-        chuncks = [self.renderedChuncks[xmin][ymin],
-                   self.renderedChuncks[xmin][ymax], self.renderedChuncks[xmax][ymin], self.renderedChuncks[xmax][ymax]]
-        chuncks = simplify(chuncks)  # enlever les doubles
 
         # la surface de l'écran
-        out = pygame.Surface((screenSize[0]*32, screenSize[1]*32))
-        screenCornerPosition = [
-            playerPosition[0]-screenSize[0]*32/2, playerPosition[1]-screenSize[1]*32/2]
-        """
-        if len(chuncks) == 1:
-            out.blit(chuncks[0], (chuncks[0]["position"][0]-screenCornerPosition[0],
-                                  chuncks[0]["position"][1]-screenCornerPosition[1]))"""
-        for chunck in chuncks:
-            surface = chunck["surfaceSolid"]
+        out = pygame.Surface((screenSize[0], screenSize[1]))
 
-            out.blit(surface, (chunck["position"][0]-screenCornerPosition[0],
-                               chunck["position"][1]-screenCornerPosition[1]))
-        """
-        if len(chuncks) == 2:
-            # chuncks 0 au dessus de chuncks 1
-            if chuncks[0]["position"][0] > chuncks[1]["position"][0]:
-                pass
-            # chuncks 1 au dessus de chuncks 0
-            if chuncks[0]["position"][0] < chuncks[1]["position"][0]:
-                pass
-            # chuncks 0 à droite de chuncks 1
-            if chuncks[0]["position"][1] > chuncks[1]["position"][1]:
-                pass
-            # chuncks 0 à gauche de chuncks 1
-            if chuncks[0]["position"][1] > chuncks[1]["position"][1]:
-                pass"""
+        # les coins avec détection de bordures
+        minX = max(playerPosition[0]-math.floor(screenSize[0]/2), 0)
+        if minX == 0:
+            maxX = screenSize[0]
+        else:
+            maxX = min(playerPosition[0]+screenSize[0], self.width)
+            if maxX == self.width:
+                minX = self.width - screenSize[0]
+
+        minY = max(playerPosition[1]-math.floor(screenSize[1]/2), 0)
+        if minY == 0:
+            maxY = screenSize[0]
+        else:
+            maxY = min(playerPosition[1] +
+                       math.floor(screenSize[1]/2), self.height)
+            if maxY == self.height:
+                minX = self.height - screenSize[0]
+
+        # les tuiles limite
+        minTX = math.floor(minX/32)
+        minTY = math.floor(minY/32)
+        maxTX = math.floor(maxX/32)
+        maxTY = math.floor(maxY/32)
+        for x in range(minTX, maxTX+1):
+            for y in range(minTY, maxTY+1):
+                position = [x*self.tileSize - minX, y*self.tileSize-minY]
+                out.blit(self.renderedSolid[x][y], position)
+
+        # recherche des entités à afficher
+        entitiesToDraw = []
+        for e in self.entities:
+            if e.x + e.rect.width > minX and e.x < maxX and e.y + e.rect.height > minY and e.y < maxY:
+                entitiesToDraw.append(e)
